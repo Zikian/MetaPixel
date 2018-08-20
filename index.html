@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>New Document</title>
+
+        <link rel="stylesheet" href="common.css">
+        <link rel="stylesheet" href="header.css">
+        <link rel="stylesheet" href="editor.css">
+        <link rel="stylesheet" href="color_selector.css">
+        <link rel="stylesheet" href="widgets.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="toolbar">
+            <div id="file">
+                <i class="far fa-file-image" id="file-icon"></i>
+                <span>File</span>
+            </div>
+            <div id="dropdown">
+                <ul>
+                    <li><i class="far fa-file"></i>New</li>
+                    <li id="clear-button"><i class="far fa-trash-alt"></i>Clear</li>
+                    <li id="save-as"><i class="far fa-save"></i></i>Save As</li>
+                </ul>
+            </div>
+        </div>
+        <div class="editor">
+            <div id="toolbox">
+                <span>TOOLBAR</span>
+                <div id="drawtool" class="tool"><i class="fas fa-pencil-alt"></i></div>
+                <div id="eraser" class="tool"><i class="fas fa-eraser"></i></div>
+                <div id="line" class="tool"></div>
+            </div>
+            <div id="canvas-area">
+                <div id="canvas-wrapper">
+                    <canvas id="main-canvas"></canvas>
+                    <canvas id="line-canvas"></canvas>
+                    <div id="mouse-indicator"></div>
+                </div>
+            </div>
+            
+            <div id="color-picker">
+                <header id="color-picker-header"><span>Foreground Color</span></header>
+                <div id="body">
+                    <canvas id="color-square"></canvas>
+                    <div id="color-slider"></div>
+                    <div id="hue-slider"></div>
+                    <div id="values">
+                        <img src="images/Alhpa_Triangle.png" id="new-color-alpha-img">
+                        <img src="images/Alhpa_Triangle.png" id="old-color-alpha-img">
+                        <div id="new-color-rect"></div>
+                        <div id="old-color-rect"></div>
+                        <span id="new-color-span">NEW</span>
+                        <span id="old-color-span">OLD</span>
+                        <div id="hue" class="button-slider-wrapper"></div>
+                        <div id="saturation" class="button-slider-wrapper"></div>
+                        <div id="lightness" class="button-slider-wrapper"></div>
+                        <div id="alpha" class="button-slider-wrapper"></div>
+                        <div id="red" class="button-slider-wrapper"></div>
+                        <div id="green" class="button-slider-wrapper"></div>
+                        <div id="blue" class="button-slider-wrapper"></div>
+                        <div id="hex" class="button-slider-wrapper"></div>
+                    </div>
+                    <div id="buttons">
+                        <button id="color-picker-ok">OK</button>
+                        <button id="color-picker-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="utils.js"></script>
+        <script src="types.js"></script>
+        <script src="state.js"></script>
+        <script src="active_element.js"></script>
+        <script src="actions.js"></script>
+    </body>
+</html>

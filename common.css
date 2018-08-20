@@ -1,0 +1,26 @@
+@font-face{
+    font-family: Montserrat-Light;
+    src: url(fonts/Montserrat-Light.ttf)
+}
+@font-face{
+    font-family: Montserrat-Regular;
+    src: url(fonts/Montserrat-Regular.ttf)
+}
+
+html, body{
+    margin: 0;
+    background-color: rgb(59, 59, 65);
+    height: 100%;
+    overflow: hidden;
+}
+
+body{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 30px 1fr;
+}
+
+span, input{
+    font-family: Montserrat-Regular;
+    color: white;
+}

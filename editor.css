@@ -1,0 +1,98 @@
+.editor{
+    display: grid;
+    grid-template-columns: 100px 1fr 200px;
+    grid-row: 2;
+}
+
+.editor #toolbox{
+    grid-template-rows: 2;
+
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: auto;
+    align-self: auto;
+    border-top: 1px solid black;
+
+    text-align: center;
+}
+
+.editor #toolbox span{
+    display: block;
+    margin: 14px 0 14px 0;
+    font-family: Montserrat-Light;
+    font-size: 10pt;
+    color: white;
+}
+
+.editor #toolbox .tool{
+    width: 50px;
+    height: 50px;
+    background-color: rgb(59, 59, 65);
+    text-align: center;
+    float: left;
+}
+
+.editor #toolbox #drawtool{
+    box-shadow:0px 0px 0px 3px yellow inset;
+    background-color: rgb(66, 66, 66);
+}
+
+.editor #toolbox #line{
+    background-image: url(images/line_tool.gif);
+    background-size: 56%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.editor #toolbox i{
+    line-height: 50px;
+    font-size: 26px;
+    color: white;
+}
+
+.editor #others{
+    grid-row: 1;
+    grid-column: 3  ;
+    justify-self: auto;
+    align-self: auto;
+    border-top: 2px solid black;
+}
+
+.editor #canvas-area{
+    position: relative;
+    grid-column: 2;
+    align-self: center;
+    height: 100%;
+    background-color: rgb(26, 27, 32);
+    overflow: hidden;
+    z-index: 0;
+}
+
+.editor #canvas-area #canvas-wrapper{
+    position: absolute;
+
+    width: 500px;
+    height: 500px;
+
+    background-image: url(images/checkers.gif);
+    background-repeat: repeat;
+}
+
+.editor #canvas-area #canvas-wrapper #main-canvas{
+    position: relative;
+    image-rendering: pixelated;
+}
+
+.editor #canvas-area #canvas-wrapper #line-canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.editor #canvas-area #canvas-wrapper #mouse-indicator{
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.603);
+}

@@ -1,0 +1,204 @@
+#color-picker{
+    position: absolute;
+    display: grid;
+    grid-template-rows: 25px 1fr;
+    background-color:rgb(59, 59, 65);
+    left: 200px;
+    top: 200px;
+    width: 550px;
+    height: 350px;
+    border-radius: 3px;
+    box-shadow: 0px 0px 11px 2px rgba(0,0,0,0.57);
+}
+
+#color-picker header{
+    grid-row: 1;
+    background-color: rgb(154, 154, 154);
+    border-radius: 4px 4px 0 0;
+    border-top: 1px solid rgb(202, 202, 202);
+}
+
+#color-picker header span{
+    font-family: Montserrat-Regular;
+    line-height: 25px;
+    margin-left: 10px;
+    font-size: 12pt;
+    color: black; 
+    width: 200px;
+    user-select: none;
+}
+
+#body{
+    display: grid;
+    grid-template-columns: 271px 40px 1fr;
+    grid-template-rows: 271px 1fr;
+    border: 1px solid rgb(23, 23, 23);
+    border-radius: 0 0 4px 4px;
+}
+
+#body #buttons{
+    grid-area: 2 / 1 / span 1 / span 3;
+    justify-self: center;
+    align-self: center;
+    height: 28px;
+    width: auto;
+    overflow: auto;
+}
+
+#body #buttons button:active{
+    background-color: rgb(217, 217, 217);
+    color: black; 
+}
+
+#body #buttons button{
+    height: 28px;
+    width: 80px;
+    border-radius: 14px;
+    margin: 0 5px 0 5px;
+    outline: none;
+    color: rgb(217, 217, 217);
+    font-family: Montserrat-Regular;
+    border: 1px solid rgb(217, 217, 217);
+    background-color: transparent;
+    font-size: 10pt;
+}
+
+#body #color-square{
+    position: absolute;
+    grid-row: 1;
+    grid-column: 1;
+    width: 256px;
+    height: 256px;
+    margin: 40px 0 0 15px;
+}
+
+#body #color-slider{
+    position: absolute;
+    grid-column: 1;
+    top: 0;
+    left: 0;
+    width: 256px;
+    height: 256px;
+    margin: 40px 0 0 15px;
+    user-select: none;     
+}
+
+#hue-slider{
+    grid-column: 2;
+    margin: 15px 15px 0 15px;
+    background: linear-gradient(to top,  #ff3232 0%,#fff130 20%,#45ff30 35%,#28fff0 52%,#282cff 71%,#ff28fb 88%,#ff0094 100%);
+    background-clip: content-box;
+}
+
+#values{
+    display: grid;
+    grid-column: 3;
+    grid-template-rows: 80px 40px 40px 40px 40px 40px;
+    grid-template-columns: 115px 115px;
+}
+
+#values #new-color-rect, #old-color-rect{
+    grid-row: 1;
+    width: 55%;
+    height: 74%;
+    margin-top: 15px;
+}
+
+#values #new-color-rect{
+    grid-column: 1;
+    justify-self: right;
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    z-index: 5;
+}
+
+#values #new-color-alpha-img{
+    position: absolute;
+    top: 41px;
+    right: 123px;
+    height: 63px;
+    width: 65px;
+}
+
+#values #old-color-alpha-img{
+    position: absolute;
+    top: 41px;
+    right: 58px;
+    height: 63px;
+    width: 65px;
+}
+
+#values #old-color-rect{
+    grid-column: 2;
+    justify-self: left;
+    border-right: 2px solid black;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+    z-index: 5;
+}
+
+#values #new-color-span{
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    float: right;
+    margin-top: 15px;
+}
+
+#values #old-color-span{
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    justify-self: right;
+    width: 36%;
+    margin-top: 15px;
+}
+
+
+
+#values .button-slider-wrapper{
+    align-self: center;
+    margin-right: 15px;
+}
+
+#values #hue{
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#values #saturation{
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#values #alpha{
+    grid-column: 1;
+    grid-row: 5;
+}
+
+#values #lightness{
+    grid-column: 1;
+    grid-row: 4;
+}
+
+#values #red{
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#values #green{
+    grid-column: 2;
+    grid-row: 3;
+}
+
+#values #blue{
+    grid-column: 2;
+    grid-row: 4;
+}
+
+#values #hex{
+    grid-column: 1;
+    grid-area: 6 / 1 / span 1 / span 2;
+    width: 120px;
+}

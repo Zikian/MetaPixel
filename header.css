@@ -1,0 +1,72 @@
+#toolbar{
+    display: grid;
+    grid-template-columns: 100px;
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#file{
+    position: relative;
+    grid-column: 1;
+    text-align: center;
+    height: 30px;
+}
+
+#file * {
+    pointer-events: none;
+}
+
+#file:hover{
+    background-color: gray;
+}
+
+#file #file-icon{
+    font-size: 14pt;
+    color: white;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#file span{
+    font-size: 10pt;
+    color: white;
+    font-family: Montserrat-Regular;
+    line-height: 30px;
+}
+
+#dropdown{
+    display: none;
+    position: relative;
+    width: 250px;
+    height: auto;
+    background-color: rgb(68, 68, 68);
+    border-radius: 0 5px 5px 5px;
+    z-index: 2;
+}
+
+#dropdown ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#dropdown li{
+    font-family: Montserrat-Regular;
+    font-size: 10pt;
+    color: white;
+    line-height: 40px;
+    padding-left: 20px;
+}
+
+#dropdown li:hover{
+    background-color: gray;
+}
+
+#dropdown li i{
+    font-size: 14pt;
+    margin-right: 5px;
+}
+
+#dropdown #newfile:hover{
+    background-color: rgb(50, 50, 50);
+}
