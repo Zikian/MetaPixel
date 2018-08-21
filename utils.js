@@ -1,5 +1,15 @@
+function clamp(x, a, b) {
+  return Math.max(a, Math.min(b, x));
+}
+
 function canvas_mouse_pos(){
     return [state.abs_mouse_pos[0] - state.canvas_wrapper.offsetLeft - state.canvas_area.offsetLeft, state.abs_mouse_pos[1] - state.canvas_wrapper.offsetTop - state.canvas_area.offsetTop];
+}
+
+function pixel_pos(){
+    x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.draw_size));
+    y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.draw_size));
+    return [x, y];
 }
 
 function download_img(img){
@@ -51,7 +61,11 @@ function hsl(h, s, l){
 }
 
 function hsla(h, s, l, a){
-    return "hsl(" + h + "," + s + "%," + l + "%," + a + ")";
+    return "hsla(" + h + "," + s + "%," + l + "%," + a + ")";
+}
+
+function rgba(arr){
+    return "rgba(" + arr[0] + "," + arr[1] + "," + arr[2] + "%," + arr[3] + ")";
 }
 
 function rgb_to_hsl(rgbArr){

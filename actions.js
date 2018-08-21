@@ -29,8 +29,8 @@ function zoom(e){
     state.mouse_indicator.style.height = state.main_canvas.draw_size + "px";
     state.mouse_indicator.style.width = state.main_canvas.draw_size + "px";
 
-    state.mouse_indicator.style.left = state.mouse_pos[0] * state.main_canvas.draw_size + "px";
-    state.mouse_indicator.style.top = state.mouse_pos[1] * state.main_canvas.draw_size + "px";
+    state.mouse_indicator.style.left = state.pixel_pos[0] * state.main_canvas.draw_size + "px";
+    state.mouse_indicator.style.top = state.pixel_pos[1] * state.main_canvas.draw_size + "px";
 
     let factor = prev_zoom/state.main_canvas.zoom;
     let delta_pos = [canvas_mouse_pos()[0] * (factor - 1), canvas_mouse_pos()[1] * (factor - 1)];
@@ -53,7 +53,7 @@ function change_tool(tool){
 function end_line(){
     state.main_canvas.draw_buffer = [];
     state.line_canvas.clear();
-    state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.mouse_pos[0], state.mouse_pos[1]);
+    state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
 }
 
 //USER ACTIONS
@@ -100,7 +100,7 @@ window.addEventListener('mouseup', function(e) {
 
 window.addEventListener('mousedown', function(e) {
     e.stopPropagation();
-    state.mouse_start = state.mouse_pos;
+    state.mouse_start = state.pixel_pos;
     state.input.mousedown = true;
 
     if(state.active_element == state.color_picker.color_slider.selector){
@@ -110,67 +110,90 @@ window.addEventListener('mousedown', function(e) {
         if(!state.input.shift){
             if (state.current_tool == state.drawtool){
                 state.main_canvas.draw_pixel(state.color_picker.current_color, state.mouse_indicator.offsetLeft, state.mouse_indicator.offsetTop);
+                state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color = state.color_picker.current_color;
+                state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba = state.color_picker.current_rgba;
+            } else if (state.current_tool == state.filltool){
+                state.main_canvas.fill(state.pixel_pos[0], state.pixel_pos[1], state.color_picker.current_rgba, state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba);
+                state.main_canvas.draw_data();
             }
         }
     }
 }, false);
 
 window.addEventListener("mousemove", function(e){
-    e.stopPropagation();
+    pauseEvent(e);
 
-    let prev_abs_mouse_pos = state.abs_mouse_pos.slice();
-    let x = e.pageX;
-    let y = e.pageY;
-    state.abs_mouse_pos = [x, y];
-    state.delta_mouse_pos = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
+    var prev_abs_mouse_pos = state.abs_mouse_pos.slice();
+    state.abs_mouse_pos = [e.pageX, e.pageY];
+    var delta_mouse_pos = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
     
-    x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.draw_size));
-    y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.draw_size));
-    state.mouse_pos = [x, y];
+    state.pixel_pos = pixel_pos();
 
-    state.mouse_indicator.style.left = x * state.main_canvas.draw_size + "px";
-    state.mouse_indicator.style.top = y * state.main_canvas.draw_size + "px";
+    state.mouse_indicator.style.left = state.pixel_pos[0] * state.main_canvas.draw_size + "px";
+    state.mouse_indicator.style.top = state.pixel_pos[1] * state.main_canvas.draw_size + "px";
 
-    if(state.active_element == state.color_picker.header){
-        drag_element(state.color_picker.window, state.delta_mouse_pos);
-    } else if(state.active_element == state.canvas_wrapper){
-        if (state.input.shift){
-            drag_element(state.canvas_wrapper, state.delta_mouse_pos)
-        } else {
-            if (state.current_tool == state.drawtool){
-                state.main_canvas.draw_buffer.push(state.mouse_pos);
-                if (state.main_canvas.draw_buffer.length == 2){
-                    state.main_canvas.line(state.main_canvas.draw_buffer[0][0], state.main_canvas.draw_buffer[0][1], state.main_canvas.draw_buffer[1][0], state.main_canvas.draw_buffer[1][1])
-                    state.main_canvas.draw_buffer.shift()
+    switch(state.active_element){
+        case state.color_picker.header:
+            drag_element(state.color_picker.window,  delta_mouse_pos);
+            state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
+            break;
+        case state.canvas_wrapper:
+            if (state.input.shift){
+                drag_element(state.canvas_wrapper, delta_mouse_pos)
+            } else {
+                switch(state.current_tool){
+                    case state.drawtool:
+                        state.main_canvas.draw_buffer.push(state.pixel_pos);
+                        if (state.main_canvas.draw_buffer.length == 2){
+                            state.main_canvas.line(state.main_canvas.draw_buffer[0][0], state.main_canvas.draw_buffer[0][1], state.main_canvas.draw_buffer[1][0], state.main_canvas.draw_buffer[1][1])
+                            state.main_canvas.draw_buffer.shift()
+                        }
+                        break;
+                    case state.erasertool:
+                        state.main_canvas.draw_buffer.push(state.pixel_pos);
+                        if (state.main_canvas.draw_buffer.length == 2){
+                            state.main_canvas.line(state.main_canvas.draw_buffer[0][0], state.main_canvas.draw_buffer[0][1], state.main_canvas.draw_buffer[1][0], state.main_canvas.draw_buffer[1][1], true)
+                            state.main_canvas.draw_buffer.shift()
+                        }
+                        break;
+                    case state.linetool:
+                        state.line_canvas.clear();
+                        state.line_end = state.pixel_pos;
+                        state.line_canvas.line(state.mouse_start[0], state.mouse_start[1], state.line_end[0], state.line_end[1])
+                        break;
                 }
-            } else if(state.current_tool == state.erasertool){
-                state.main_canvas.draw_buffer.push(state.mouse_pos);
-                if (state.main_canvas.draw_buffer.length == 2){
-                    state.main_canvas.line(state.main_canvas.draw_buffer[0][0], state.main_canvas.draw_buffer[0][1], state.main_canvas.draw_buffer[1][0], state.main_canvas.draw_buffer[1][1], true)
-                    state.main_canvas.draw_buffer.shift()
-                }
-            } else if(state.current_tool == state.linetool){
-                state.line_canvas.clear();
-                state.line_end = state.mouse_pos;
-                state.line_canvas.line(state.mouse_start[0], state.mouse_start[1], state.line_end[0], state.line_end[1])
             }
-        }
-    } 
-
-    for(var i = 0; i < mouse_move_functions.length; i++){
-        mouse_move_functions[i]();
+            break;
     }
+
+    mouse_move_functions.forEach(function(element) {
+        element();
+    });
 });
 
 document.addEventListener("keydown", function(event){
-    if (event.keyCode == 16){
-        state.input.shift = true;
-    }
-    if (event.keyCode == 67){
-        state.color_picker.old_color = state.color_picker.current_rgb;
-        state.color_picker.old_alpha = state.color_picker.current_alpha;
-        state.color_picker.toggle_display();
-        state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.current_color;
+    switch(event.keyCode){
+        case 16: // SHIFT
+            state.input.shift = true;
+            break;
+        case 67: // C
+            state.color_picker.old_color = state.color_picker.current_rgb;
+            state.color_picker.old_alpha = state.color_picker.current_alpha;
+            state.color_picker.toggle_display();
+            state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.current_color;
+            break;
+        case 68: // D
+            change_tool(state.drawtool);
+            break;
+        case 69: // E
+            change_tool(state.erasertool);
+            break;
+        case 70: // F
+            change_tool(state.filltool);
+            break;
+        case 76: // L
+            change_tool(state.linetool);
+            break;
     }
 })
 

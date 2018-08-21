@@ -24,6 +24,7 @@ class Color_Picker{
         this.current_lightness = 100;
         this.current_alpha = 1;
         this.current_rgb = [255, 255, 255];
+        this.current_rgba = [255, 255, 255, 255]
         this.current_color = "white";
         this.new_color = this.current_color;
         this.old_color = this.current_rgb;
@@ -87,70 +88,86 @@ class Color_Picker{
     }
 
     update_color(origin){
-        if(origin == "hue-slider"){
-            this.current_hue = Math.round(this.hue_slider.value * 360/256);
-        } else if (origin == "hue"){
-            this.current_hue = this.hue_input.input.value;
-        } else if (origin == "hue-input-slider"){
-            this.current_hue = this.hue_input.slider_to_input();
-        } else if (origin == "color-slider"){
-            this.current_saturation = Math.round(this.color_slider.value[0] * 100 / 256);
-            this.current_lightness = 100 - Math.round(this.color_slider.value[1] * 100 / 256);
-        } else if (origin == "saturation-input-slider"){
-            this.current_saturation = this.saturation_input.slider.value;
-        } else if (origin == "saturation"){
-            this.current_saturation = this.saturation_input.input.value;
-        } else if (origin == "lightness-input-slider"){
-            this.current_lightness = this.lightness_input.slider.value;
-        } else if (origin == "lightness"){
-            this.current_lightness = this.lightness_input.input.value;
-        } 
+        var HEX, HSL;
 
-        this.current_rgb = hsl_to_rgb(this.current_hue, this.current_saturation, this.current_lightness);
-        
-        if (origin == "alpha-input-slider"){
-            this.current_alpha = this.alpha_input.slider.value / 100;
-        } else if (origin == "alpha"){
-            this.current_alpha = this.alpha_input.input_to_slider() / 100;
-        } else if (origin == "red-input-slider" || origin == "green-input-slider" || origin == "blue-input-slider"){
-            this.current_rgb = [this.red_input.slider_to_input(), this.green_input.slider_to_input(), this.blue_input.slider_to_input()]
-            var HSL = rgb_to_hsl(this.current_rgb);
-            this.current_hue = Math.round(HSL[0]);
-            this.current_saturation = Math.round(HSL[1]);
-            this.current_lightness = Math.round(HSL[2]);
-        } else if (origin == "red" | origin == "green" || origin == "blue"){
-            this.current_rgb = [this.red_input.input.value, this.green_input.input.value, this.blue_input.input.value];
-            var HSL = rgb_to_hsl(this.current_rgb);
-            this.current_hue = Math.round(HSL[0]);
-            this.current_saturation = Math.round(HSL[1]);
-            this.current_lightness = Math.round(HSL[2]);
-            this.current_alpha = this.old_alpha;
-        } 
-        
+        switch (origin){
+            case "hue-slider":
+                this.current_hue = Math.round(this.hue_slider.value * 360/256);
+                break;
+            case "hue":
+                this.current_hue = this.hue_input.input.value;
+                break;
+            case "hue-input-slider":
+                this.current_hue = this.hue_input.slider_to_input();
+                break;
+            case "color-slider":
+                this.current_saturation = Math.round(this.color_slider.value[0] * 100 / 256);
+                this.current_lightness = 100 - Math.round(this.color_slider.value[1] * 100 / 256);
+                break;
+            case "saturation-input-slider":
+                this.current_saturation = this.saturation_input.slider.value;
+                break;
+            case "saturation":
+                this.current_saturation = this.saturation_input.input.value;
+                break;
+            case "lightness-input-slider":
+                this.current_lightness = this.lightness_input.slider.value;
+                break;
+            case "lightness":
+                this.current_lightness = this.lightness_input.input.value;
+                break;
+            case "alpha-input-slider":
+                this.current_alpha = this.alpha_input.slider.value / 100;
+                break;
+            case "alpha":
+                this.current_alpha = this.alpha_input.input.value / 255;
+                break;
+            case "red-input-slider":    // Fallthrough
+            case "green-input-slider":
+            case "blue-input-slider":
+                this.current_rgb = [this.red_input.slider_to_input(), this.green_input.slider_to_input(), this.blue_input.slider_to_input()]
+                HSL = rgb_to_hsl(this.current_rgb);
+                this.current_hue = Math.round(HSL[0]);
+                this.current_saturation = Math.round(HSL[1]);
+                this.current_lightness = Math.round(HSL[2]);
+                this.current_alpha = this.alpha_input.input_to_slider() / 100;
+                break;
+            case "red":    // Fallthrough
+            case "green":
+            case "blue":
+                this.current_rgb = [this.red_input.input.value, this.green_input.input.value, this.blue_input.input.value];
+                HSL = rgb_to_hsl(this.current_rgb);
+                this.current_hue = Math.round(HSL[0]);
+                this.current_saturation = Math.round(HSL[1]);
+                this.current_lightness = Math.round(HSL[2]);
+                this.current_alpha = this.alpha_input.input_to_slider() / 100;
+                break;
+            case "cancel":
+                this.new_color = this.old_color;
+                this.current_rgb = this.old_color;
+                HSL = rgb_to_hsl(this.current_rgb);
+                this.current_hue = Math.round(HSL[0]);
+                this.current_saturation = Math.round(HSL[1]);
+                this.current_lightness = Math.round(HSL[2]);
+                this.current_alpha = this.old_alpha;
+                break;
+            case "hex":
+                HEX = this.hex_input.input.value;
+                this.current_rgb = hex_to_rgb(this.hex_input.input.value);
+                HSL = rgb_to_hsl(this.current_rgb)
+                this.current_hue = Math.round(HSL[0]);
+                this.current_saturation = Math.round(HSL[1]);
+                this.current_lightness = Math.round(HSL[2]);
+                this.current_alpha = this.alpha_input.input_to_slider() / 100;
+                break;
+        }
+
         this.new_color = this.current_color;
-        if (origin == "cancel"){
-            this.new_color = this.old_color;
-            this.current_rgb = this.old_color;
-            var HSL = rgb_to_hsl(this.current_rgb);
-            this.current_hue = Math.round(HSL[0]);
-            this.current_saturation = Math.round(HSL[1]);
-            this.current_lightness = Math.round(HSL[2]);
-            this.current_alpha = this.old_alpha;
-        }
-        
-        var HEX = rgb_to_hex(this.current_rgb)
-        if (origin == "hex"){
-            HEX = this.hex_input.input.value;
-            this.current_rgb = hex_to_rgb(this.hex_input.input.value);
-            var HSL = rgb_to_hsl(this.current_rgb)
-            this.current_hue = Math.round(HSL[0]);
-            this.current_saturation = Math.round(HSL[1]);
-            this.current_lightness = Math.round(HSL[2]);
-            this.current_alpha = this.old_alpha;
-        }
+        this.current_rgb = hsl_to_rgb(this.current_hue, this.current_saturation, this.current_lightness);
+        this.current_rgba = [this.current_rgb[0], this.current_rgb[1], this.current_rgb[2], this.current_alpha];
+        HEX = rgb_to_hex(this.current_rgb)
 
         this.current_color = hsla(this.current_hue, this.current_saturation, this.current_lightness, this.current_alpha);
-        var hue_color = hsl(this.current_hue, 100, 50);
 
         this.hue_input.input.value = this.current_hue;
         this.hue_input.slider.value = this.hue_input.input_to_slider();
@@ -170,7 +187,7 @@ class Color_Picker{
         this.alpha_input.slider.value = this.alpha_input.input_to_slider();
         this.hex_input.input.value = HEX;
 
-        this.hue_slider.selector.style.backgroundColor = hue_color;
+        this.hue_slider.selector.style.backgroundColor = hsl(this.current_hue, 100, 50);
         this.color_slider.selector.style.backgroundColor = this.current_color;
         state.mouse_indicator.style.backgroundColor = this.current_color;
         this.new_color_rect.style.backgroundColor = this.current_color;
@@ -187,12 +204,10 @@ class Slider{
         this.height = h;
         this.width = w;
         this.max_value = max_value
+        this.value = 0
         if(type == "square"){
             this.value = [0, 0];
-        } else {
-            this.value = 0
         }
-
         this.init(w, h);
     }
 
@@ -317,12 +332,26 @@ class Canvas{
         }
     }
 
+    fill(x, y, new_color, old_color){
+        var node = this.data[x][y];
+        if(x == 1 && y == 1){
+            console.log(node.rgba, old_color);
+        }
+        if(rgba(node.rgba) == rgba(old_color)){
+            node.rgba = new_color;
+            node.color = state.color_picker.current_color;
+    
+            if(y < this.h - 1){ this.fill(x, y + 1, new_color, old_color); }
+            if(y > 0){ this.fill(x, y - 1, new_color, old_color); }
+            if(x < this.w - 1){ this.fill(x + 1, y, new_color, old_color); }
+            if(x > 0){ this.fill(x - 1, y, new_color, old_color); }
+        }
+    }
+
     draw_data(){
         for(var x = 0; x < this.w; x++){
             for(var y = 0; y < this.h; y++){
-                if(this.data[x][y].filled == true){
-                    this.draw_pixel(this.data[x][y].color, x * this.draw_size, y * this.draw_size);
-                }
+                this.draw_pixel(this.data[x][y].color, Math.round(x * this.draw_size), Math.round(y * this.draw_size));
             }
         }
     }
@@ -332,9 +361,6 @@ class Canvas{
         this.ctx.rect(x, y, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
         this.ctx.fillStyle = color;
         this.ctx.fill();
-        if (this.contains(x, y)){
-            this.data[x][y].filled = true;   
-        }
     }
 
     erase_pixel(x, y){
@@ -358,6 +384,7 @@ class Canvas{
                     this.ctx.rect(x0 * this.draw_size, y0 * this.draw_size, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
                     this.data[x0][y0].filled = true;
                     this.data[x0][y0].color = state.color_picker.current_color;
+                    this.data[x0][y0].rgba = state.color_picker.current_rgba;
                 }
                 this.ctx.fillStyle = state.color_picker.current_color;
                 this.ctx.fill();
@@ -395,11 +422,9 @@ class Canvas{
     }
 }
 
-class Pixel_Data{
-    constructor(){
-        this.color = [0, 0, 0];
-        this.filled = false;
-    }
+function Pixel_Data(){
+    this.color = "hsla(0, 100%, 100%, 0)";
+    this.rgba = [255, 255, 255, 0];
 }
 
 class Button_Slider{
@@ -502,18 +527,25 @@ class Button_Slider{
 
     hex_onchange(owner, input_elem){
         return function(){
-            if(input_elem.value.length == 0){
-                input_elem.value = "000000"
-            } else if (input_elem.value.length == 1){
-                input_elem.value = "00000" + input_elem.value;
-            } else if (input_elem.value.length == 2){
-                input_elem.value = "0000" + input_elem.value;
-            } else if (input_elem.value.length == 3) {
-                input_elem.value = input_elem.value[0] + input_elem.value[0] + input_elem.value[1] + input_elem.value[1] + input_elem.value[2] + input_elem.value[2] 
-            } else if (input_elem.value.length == 4) {
-                input_elem.value = "00" + input_elem.value;
-            } else if (input_elem.value.length == 5) {
-                input_elem.value = "0" + input_elem.value;
+            switch (input_elem.value.length){
+                case 0:
+                    input_elem.value = "000000"
+                    break;
+                case 1:
+                    input_elem.value = "00000" + input_elem.value;
+                    break;
+                case 2:
+                    input_elem.value = "0000" + input_elem.value;
+                    break;
+                case 3:
+                    input_elem.value = input_elem.value[0] + input_elem.value[0] + input_elem.value[1] + input_elem.value[1] + input_elem.value[2] + input_elem.value[2] 
+                    break;
+                case 4:
+                    input_elem.value = "00" + input_elem.value;
+                    break;
+                case 5:
+                    input_elem.value = "0" + input_elem.value;
+                    break
             }
             state.color_picker.update_color(owner.name);
         }

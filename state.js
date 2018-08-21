@@ -16,6 +16,7 @@ var state = {
     drawtool: document.getElementById("drawtool"),
     erasertool: document.getElementById("eraser"),
     linetool: document.getElementById("line"),
+    filltool: document.getElementById("fill"),
     tools: document.getElementsByClassName("tool"),
     clear: document.getElementById("clear-button"),
     save_as: document.getElementById("save-as"),
@@ -30,14 +31,12 @@ var state = {
         c: false,
     },
 
-    main_canvas: new Canvas(canvas,  30, 30),
-    line_canvas: new Canvas(line_canvas, 30, 30),
-
+    main_canvas: new Canvas(canvas,  40, 40),
+    line_canvas: new Canvas(line_canvas, 40, 40),
 
     dropdown_display: "none",
-    mouse_pos: [0, 0],
+    pixel_pos: [0, 0],
     abs_mouse_pos: [0, 0],
-    delta_mouse_pos: [0, 0],
     current_tool: drawtool,
     mouse_start: [],
     line_end: [],
