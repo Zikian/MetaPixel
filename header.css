@@ -41,7 +41,7 @@
     height: auto;
     background-color: rgb(68, 68, 68);
     border-radius: 0 5px 5px 5px;
-    z-index: 2;
+    z-index: 200;
 }
 
 #dropdown ul{

@@ -1,202 +1,3 @@
-class Color_Picker{
-    constructor(){
-        this.selected_slider = null;
-        this.position = [0, 0];
-        this.window = document.getElementById("color-picker");
-        this.header = document.getElementById("color-picker-header");
-        this.color_square = document.getElementById("color-square");
-        this.ctx = this.color_square.getContext("2d");
-        this.color_slider = new Slider("square", "color-slider", 255, 255, 255);
-        this.hue_slider = new Slider("vertical", "hue-slider", 10, 256, 360)
-        this.hue_input = new Button_Slider("hue", "H", 65, 360, 3, "number", 360);
-        this.saturation_input = new Button_Slider("saturation", "S", 65, 0, 3, "number", 100);
-        this.lightness_input = new Button_Slider("lightness", "L", 65, 100, 3, "number", 100);
-        this.alpha_input = new Button_Slider("alpha", "A", 65, 255, 3, "number", 255);
-        this.red_input = new Button_Slider("red", "R", 65, 255, 3, "number", 255);
-        this.green_input = new Button_Slider("green", "G", 65, 255, 3, "number", 255);
-        this.blue_input = new Button_Slider("blue", "B", 65, 255, 3, "number", 255);
-        this.hex_input = new Button_Slider("hex", "Hex", 70, "ffffff", 6, "hex", 255);
-        this.new_color_rect = document.getElementById("new-color-rect");
-        this.old_color_rect = document.getElementById("old-color-rect");
-
-        this.current_hue = 360;
-        this.current_saturation = 0;
-        this.current_lightness = 100;
-        this.current_alpha = 1;
-        this.current_rgb = [255, 255, 255];
-        this.current_rgba = [255, 255, 255, 255]
-        this.current_color = "white";
-        this.new_color = this.current_color;
-        this.old_color = this.current_rgb;
-        this.old_alpha = this.current_alpha
-        
-        this.init();
-    }
-
-    init(){
-        this.new_color_rect.style.backgroundColor = this.current_color;
-        this.old_color_rect.style.backgroundColor = this.current_color;
-        this.color_square.width = 256;
-        this.color_square.height = 256;
-        this.hue_slider.selector.style.backgroundColor = "hsl(0, 100%, 50%)";
-        this.color_slider.selector.style.backgroundColor = "white";
-        this.hue_slider.value = this.current_hue;
-        this.hue_slider.update_position()
-        this.hue_input.slider.value = this.hue_input.slider.height;
-        this.lightness_input.slider.value = this.current_lightness;
-        this.red_input.slider.value = Math.round(this.current_rgb[0] * 100 / 255);
-        this.green_input.slider.value = Math.round(this.current_rgb[1] * 100 / 255);
-        this.blue_input.slider.value = Math.round(this.current_rgb[2] * 100 / 255);
-        this.alpha_input.slider.value = this.alpha_input.slider.height;
-        this.draw_color_square(0);
-
-        document.getElementById("color-picker-cancel").onclick = this.cancel(this);
-        document.getElementById("color-picker-ok").onclick = this.ok(this);
-    }
-
-    draw_color_square(hue){
-        for(var row=0; row<256; row++){
-            var grad = this.ctx.createLinearGradient(1, 1, 256,1);
-            grad.addColorStop(0, 'hsl('+hue+', 0%, '+(100- row * 100 / 256)+'%)');
-            grad.addColorStop(1, 'hsl('+hue+', 100%, '+(100-row * 100 / 256)+'%)');
-            this.ctx.fillStyle=grad;
-            this.ctx.fillRect(0, row, 256, 1);
-        }
-    }
-
-    cancel(owner){
-        return function(){
-            owner.toggle_display();
-            owner.update_color("cancel")
-        }
-    }
-
-    ok(owner){
-        return function(){
-            owner.old_color = owner.current_rgb;
-            owner.toggle_display();
-            owner.old_color_rect.style.backgroundColor = owner.current_color;
-        }
-    }
-
-    toggle_display(){
-        if(getComputedStyle(this.window, null).display == "grid"){
-            this.window.style.display = "none";
-        } else {
-            this.window.style.display = "grid";
-        }
-    }
-
-    update_color(origin){
-        var HEX, HSL;
-
-        switch (origin){
-            case "hue-slider":
-                this.current_hue = Math.round(this.hue_slider.value * 360/256);
-                break;
-            case "hue":
-                this.current_hue = this.hue_input.input.value;
-                break;
-            case "hue-input-slider":
-                this.current_hue = this.hue_input.slider_to_input();
-                break;
-            case "color-slider":
-                this.current_saturation = Math.round(this.color_slider.value[0] * 100 / 256);
-                this.current_lightness = 100 - Math.round(this.color_slider.value[1] * 100 / 256);
-                break;
-            case "saturation-input-slider":
-                this.current_saturation = this.saturation_input.slider.value;
-                break;
-            case "saturation":
-                this.current_saturation = this.saturation_input.input.value;
-                break;
-            case "lightness-input-slider":
-                this.current_lightness = this.lightness_input.slider.value;
-                break;
-            case "lightness":
-                this.current_lightness = this.lightness_input.input.value;
-                break;
-            case "alpha-input-slider":
-                this.current_alpha = this.alpha_input.slider.value / 100;
-                break;
-            case "alpha":
-                this.current_alpha = this.alpha_input.input.value / 255;
-                break;
-            case "red-input-slider":    // Fallthrough
-            case "green-input-slider":
-            case "blue-input-slider":
-                this.current_rgb = [this.red_input.slider_to_input(), this.green_input.slider_to_input(), this.blue_input.slider_to_input()]
-                HSL = rgb_to_hsl(this.current_rgb);
-                this.current_hue = Math.round(HSL[0]);
-                this.current_saturation = Math.round(HSL[1]);
-                this.current_lightness = Math.round(HSL[2]);
-                this.current_alpha = this.alpha_input.input_to_slider() / 100;
-                break;
-            case "red":    // Fallthrough
-            case "green":
-            case "blue":
-                this.current_rgb = [this.red_input.input.value, this.green_input.input.value, this.blue_input.input.value];
-                HSL = rgb_to_hsl(this.current_rgb);
-                this.current_hue = Math.round(HSL[0]);
-                this.current_saturation = Math.round(HSL[1]);
-                this.current_lightness = Math.round(HSL[2]);
-                this.current_alpha = this.alpha_input.input_to_slider() / 100;
-                break;
-            case "cancel":
-                this.new_color = this.old_color;
-                this.current_rgb = this.old_color;
-                HSL = rgb_to_hsl(this.current_rgb);
-                this.current_hue = Math.round(HSL[0]);
-                this.current_saturation = Math.round(HSL[1]);
-                this.current_lightness = Math.round(HSL[2]);
-                this.current_alpha = this.old_alpha;
-                break;
-            case "hex":
-                HEX = this.hex_input.input.value;
-                this.current_rgb = hex_to_rgb(this.hex_input.input.value);
-                HSL = rgb_to_hsl(this.current_rgb)
-                this.current_hue = Math.round(HSL[0]);
-                this.current_saturation = Math.round(HSL[1]);
-                this.current_lightness = Math.round(HSL[2]);
-                this.current_alpha = this.alpha_input.input_to_slider() / 100;
-                break;
-        }
-
-        this.new_color = this.current_color;
-        this.current_rgb = hsl_to_rgb(this.current_hue, this.current_saturation, this.current_lightness);
-        this.current_rgba = [this.current_rgb[0], this.current_rgb[1], this.current_rgb[2], this.current_alpha];
-        HEX = rgb_to_hex(this.current_rgb)
-
-        this.current_color = hsla(this.current_hue, this.current_saturation, this.current_lightness, this.current_alpha);
-
-        this.hue_input.input.value = this.current_hue;
-        this.hue_input.slider.value = this.hue_input.input_to_slider();
-        this.hue_slider.update_position(360 - this.current_hue);
-        this.color_slider.update_position(256 - this.current_lightness * 255 / 100, this.current_saturation  * 256 / 100);
-        this.saturation_input.input.value = this.current_saturation;
-        this.saturation_input.slider.value = this.current_saturation;
-        this.lightness_input.input.value = this.current_lightness;
-        this.lightness_input.slider.value = this.current_lightness;
-        this.red_input.input.value = this.current_rgb[0];
-        this.red_input.slider.value = this.red_input.input_to_slider();
-        this.green_input.input.value = this.current_rgb[1];
-        this.green_input.slider.value = this.green_input.input_to_slider();
-        this.blue_input.input.value = this.current_rgb[2];
-        this.blue_input.slider.value = this.blue_input.input_to_slider();
-        this.alpha_input.input.value = Math.floor(this.current_alpha * 255);
-        this.alpha_input.slider.value = this.alpha_input.input_to_slider();
-        this.hex_input.input.value = HEX;
-
-        this.hue_slider.selector.style.backgroundColor = hsl(this.current_hue, 100, 50);
-        this.color_slider.selector.style.backgroundColor = this.current_color;
-        state.mouse_indicator.style.backgroundColor = this.current_color;
-        this.new_color_rect.style.backgroundColor = this.current_color;
-
-        this.draw_color_square(this.current_hue);
-    }
-    
-}
-
 class Slider{
     constructor(type, name, w, h, max_value){
         this.name = name;
@@ -334,13 +135,10 @@ class Canvas{
 
     fill(x, y, new_color, old_color){
         var node = this.data[x][y];
-        if(x == 1 && y == 1){
-            console.log(node.rgba, old_color);
-        }
         if(rgba(node.rgba) == rgba(old_color)){
             node.rgba = new_color;
             node.color = state.color_picker.current_color;
-    
+
             if(y < this.h - 1){ this.fill(x, y + 1, new_color, old_color); }
             if(y > 0){ this.fill(x, y - 1, new_color, old_color); }
             if(x < this.w - 1){ this.fill(x + 1, y, new_color, old_color); }
@@ -356,6 +154,31 @@ class Canvas{
         }
     }
 
+    draw_selection(x1, y1, x2, y2){
+        this.ctx.strokeStyle = 'red'; 
+        this.ctx.beginPath();
+        this.ctx.lineWidth = 1;
+        this.ctx.moveTo(x1,y1);
+        this.ctx.lineTo(x1,y2);
+        this.ctx.stroke();
+        this.ctx.moveTo(x1,y1);
+        this.ctx.lineTo(x2,y1);
+        this.ctx.stroke();
+        this.ctx.moveTo(x2,y2);
+        this.ctx.lineTo(x2,y1);
+        this.ctx.stroke();
+        this.ctx.moveTo(x2,y2);
+        this.ctx.lineTo(x1,y2);
+        this.ctx.stroke();
+    }
+
+    draw_rectangle(x1, y1, x2, y2){
+        this.line(x1, y1, x2, y1);
+        this.line(x1, y1, x1, y2);
+        this.line(x1, y2, x2, y2);
+        this.line(x2, y1, x2, y2);
+    }
+
     draw_pixel(color, x, y){
         this.ctx.beginPath();
         this.ctx.rect(x, y, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
@@ -365,7 +188,8 @@ class Canvas{
 
     erase_pixel(x, y){
         this.ctx.clearRect(x * this.draw_size, y * this.draw_size, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
-        this.data[x][y].filled = false;
+        this.data[x][y].color = "hsla(0, 100%, 100%, 0)"
+        this.data[x][y].rgba = [0, 0, 0, 0];
     }
 
     line(x0, y0, x1, y1, erase = false){

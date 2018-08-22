@@ -1,3 +1,11 @@
+function pauseEvent(e){
+    if(e.stopPropagation) e.stopPropagation();
+    if(e.preventDefault) e.preventDefault();
+    e.cancelBubble=true;
+    e.returnValue=false;
+    return false;
+}
+
 function clamp(x, a, b) {
   return Math.max(a, Math.min(b, x));
 }
@@ -22,6 +30,13 @@ function download_img(img){
         link.href = img;
         link.click();
     }
+}
+
+function handle_selection_size(){
+    state.selection_size_element.style.display = "block";
+    state.selection_size_element.style.left = state.abs_mouse_pos[0] - state.selection_size_element.clientWidth / 2 + "px";
+    state.selection_size_element.style.top = state.abs_mouse_pos[1] + 20 + "px";
+    document.getElementById("size-span").innerHTML = "W:" + Math.abs(state.mouse_start[0] - state.rectangle_end[0] - 1) + ", H:" + Math.abs(state.mouse_start[1] - state.rectangle_end[1] - 1);
 }
 
 function get_file_name(){
@@ -65,7 +80,7 @@ function hsla(h, s, l, a){
 }
 
 function rgba(arr){
-    return "rgba(" + arr[0] + "," + arr[1] + "," + arr[2] + "%," + arr[3] + ")";
+    return "rgba(" + arr[0] + "," + arr[1] + "," + arr[2] + "," + arr[3] + ")";
 }
 
 function rgb_to_hsl(rgbArr){

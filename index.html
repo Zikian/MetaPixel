@@ -7,8 +7,9 @@
         <link rel="stylesheet" href="common.css">
         <link rel="stylesheet" href="header.css">
         <link rel="stylesheet" href="editor.css">
-        <link rel="stylesheet" href="color_selector.css">
+        <link rel="stylesheet" href="colorpicker/color_picker.css">
         <link rel="stylesheet" href="widgets.css">
+        <link rel="stylesheet" href="toolbox.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
     <body>
@@ -27,11 +28,69 @@
         </div>
         <div class="editor">
             <div id="toolbox">
-                <span>TOOLBAR</span>
-                <div id="drawtool" class="tool"><i class="fas fa-pencil-alt"></i></div>
-                <div id="eraser" class="tool"><i class="fas fa-eraser"></i></div>
-                <div id="line" class="tool"></div>
-                <div id="fill" class="tool"><i class="fas fa-fill"></i></div>
+                <div id="color-preview">
+                    <div id="primary-color-rect" class="color-preview-square"></div>
+                    <div id="secondary-color-rect" class="color-preview-square"></div>
+                    <img src="images/Alhpa_Triangle.png" id="primary-alpha-img" class="color-preview-square">
+                    <img src="images/Alhpa_Triangle.png" id="secondary-alpha-img" class="color-preview-square">
+                </div>
+                <div id="color-preview-buttons">
+                    <div id="switch-colors-button">
+                        <div id="switch-colors"></div>
+                        <div id="switch-colors-icon"><i class="fas fa-arrows-alt-h" style="font-size: 14pt; line-height: 25px;"></i></div>
+                    </div>
+                    <div id="reset-colors-button">
+                        <div id="reset-colors"></div>
+                        <div id="reset-colors-icon"><img src="images/reset_colors_icon.png"></div>
+                    </div>
+                </div>
+                <div id="drawtool" class="tool">
+                    <i class="fas fa-pencil-alt"></i>
+                    <div id="draw-tool-tip" class="tool-tip">
+                        <span>Draw Tool (P)</span>
+                        <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="eraser" class="tool">
+                    <i class="fas fa-eraser"></i>
+                    <div id="eraser-tool-tip" class="tool-tip">
+                            <span>Eraser Tool (E)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="line" class="tool">
+                    <div id="line-tool-tip" class="tool-tip">
+                        <span>Line Tool (G)</span>
+                        <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="select" class="tool">
+                    <div id="select-tool-tip" class="tool-tip">
+                            <span>Select Tool (Alt)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="fill" class="tool">
+                    <i class="fas fa-fill-drip"></i>
+                    <div id="fill-tool-tip" class="tool-tip">
+                            <span>Fill Tool (F)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="rectangle" class="tool">
+                    <i class="fas fa-vector-square"></i>
+                    <div id="rectangle-tool-tip" class="tool-tip">
+                            <span>Rectangle Tool</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="eyedropper" class="tool">
+                    <i class="fas fa-eye-dropper"></i>
+                    <div id="eyedropper-tool-tip" class="tool-tip">
+                            <span>Eyedropper Tool (Alt)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
             </div>
             <div id="canvas-area">
                 <div id="canvas-wrapper">
@@ -40,9 +99,13 @@
                     <div id="mouse-indicator"></div>
                 </div>
             </div>
+
+            <div id="selection-size">
+                <span id="size-span"></span>
+            </div>
             
             <div id="color-picker">
-                <header id="color-picker-header"><span>Foreground Color</span></header>
+                <header id="color-picker-header"><span>Color Picker</span></header>
                 <div id="body">
                     <canvas id="color-square"></canvas>
                     <div id="color-slider"></div>
@@ -73,8 +136,8 @@
 
         <script src="utils.js"></script>
         <script src="types.js"></script>
+        <script src="colorpicker/color_picker.js"></script>
         <script src="state.js"></script>
-        <script src="active_element.js"></script>
         <script src="actions.js"></script>
     </body>
 </html>
