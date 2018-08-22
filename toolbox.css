@@ -1,0 +1,316 @@
+#toolbox{
+    grid-template-rows: 2;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: auto;
+    align-self: auto;
+    border-top: 1px solid black;
+    text-align: center;
+}
+
+.tool{
+    position: relative;
+    width: 50px;
+    height: 50px;
+    background-color: rgb(59, 59, 65);
+    float: left;
+}
+
+#color-preview{
+    position: relative;
+    width: 100%;
+    height: 100px;
+}
+
+.color-preview-square{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+#primary-color-rect{
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+}
+
+#primary-alpha-img{
+    top: 14px;
+    left: 14px;
+    z-index: 1;
+}
+
+#secondary-color-rect{
+    right: 14px;
+    bottom: 14px;
+    z-index: 1;
+}
+
+#secondary-alpha-img{
+    right: 14px;
+    bottom: 14px;
+    z-index: 0;
+}
+
+#color-preview-buttons{
+    width: 100%;
+    height: 25px;
+    margin-bottom: 15px;
+}
+
+#switch-colors-button{
+    position: relative;
+    width: 25px;
+    height: 25px;
+    margin-left: 18px;
+    border-radius: 3px;
+    border: 1px solid rgb(27, 27, 31);
+    float: left;
+}
+
+
+#switch-colors{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+#switch-colors-icon{
+    position: relative;
+    text-align: center;
+}
+
+#switch-colors-button:hover #switch-colors{
+    border-top: 1px solid rgb(157, 157, 157);
+}
+
+#switch-colors-button:active #switch-colors-icon{
+    top: 1px;
+}
+
+#switch-colors-button:active #switch-colors{
+    border: none;
+}
+
+#reset-colors-button{
+    position: relative;
+    width: 25px;
+    height: 25px;
+    margin-right: 18px;
+    border-radius: 3px;
+    border: 1px solid rgb(27, 27, 31);
+    float: right;
+}
+
+#reset-colors{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+#reset-colors-icon{
+    position: relative;
+    text-align: center;
+}
+
+#reset-colors-icon img{
+    margin-top: 4px;
+    width: 65%;
+    height: 65%;
+    user-select: none;
+}
+
+#reset-colors-button:hover #reset-colors{
+    border-top: 1px solid rgb(157, 157, 157);
+}
+
+#reset-colors-button:active #reset-colors-icon{
+    top: 1px;
+}
+
+#reset-colors-button:active #reset-colors{
+    border: none;
+}
+
+.tool-tip{
+    pointer-events: none;
+}
+
+#draw-tool-tip, #eraser-tool-tip, #line-tool-tip, #fill-tool-tip, #rectangle-tool-tip, #eyedropper-tool-tip, #select-tool-tip{
+    position: absolute;
+    display: none;
+    width: 100px;
+    height: 30px;
+    background-color: black;
+    border-radius: 5px;
+    z-index: 1000;
+    left: 60px;
+    top: 10px;
+    text-align: left;
+}
+
+#draw-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#draw-tool-tip i{
+    position: absolute;
+    color: black;
+    left: -8px;
+    top: -10px;
+}
+
+#drawtool:hover #draw-tool-tip{
+    display: block;
+}
+
+#eraser-tool-tip{
+    width: 106px;
+}
+
+#eraser-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#eraser-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#eraser:hover #eraser-tool-tip{
+    display: block
+}
+
+#line-tool-tip{
+    width: 93px;
+}
+
+#line-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#line-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#line:hover #line-tool-tip{
+    display: block;
+}
+
+#fill-tool-tip{
+    width: 82px;
+}
+
+#fill-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#fill-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#fill:hover #fill-tool-tip{
+    display: block;
+}
+
+#rectangle-tool-tip{
+    width: 111px;
+}
+
+#rectangle-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#rectangle-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#rectangle:hover #rectangle-tool-tip{
+    display: block;
+}
+
+#eyedropper-tool-tip{
+    width: 151px;
+}
+
+#eyedropper-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#eyedropper-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#eyedropper:hover #eyedropper-tool-tip{
+    display: block;
+}
+
+#select-tool-tip{
+    width: 114px;
+}
+
+#select-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#select-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#select:hover #select-tool-tip{
+    display: block;
+}
+
+#line{
+    background-image: url(images/line_tool.gif);
+    background-size: 56%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#select{
+    background-image: url(images/select_tool.png);
+    background-size: 66%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#toolbox i{
+    line-height: 50px;
+    font-size: 26px;
+    color: white;
+}
