@@ -55,7 +55,7 @@ class Color_Picker{
         this.green_input.slider.value = Math.round(this.current_rgb[1] * 100 / 255);
         this.blue_input.slider.value = Math.round(this.current_rgb[2] * 100 / 255);
         this.alpha_input.slider.value = this.alpha_input.slider.height;
-        this.draw_color_square(0);
+        this.draw_color_square(this.current_hue);
 
         document.getElementById("color-picker-cancel").onclick = this.cancel(this);
         document.getElementById("color-picker-ok").onclick = this.ok(this);

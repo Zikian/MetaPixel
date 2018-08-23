@@ -116,15 +116,48 @@ class Canvas{
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
         this.data = []
-        this.zoom = 500;
         this.w = w;
         this.h = h;
-        this.draw_size = this.zoom / this.w;
+        
+        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 90, 128]
+        this.current_zoom = 8;
+
+        this.canvas_width = this.current_zoom * this.w;
+        this.canvas_height = this.current_zoom * this.h;
+        
         this.draw_buffer = []
-        this.init();
+        this.init_data();
+
+        this.canvas.width = this.canvas_width;
+        this.canvas.height = this.canvas_height;
+        this.canvas.style.width = this.canvas_width;
+        this.canvas.style.height = this.canvas_height;
     }
 
-    init(){
+    zoom(direction){
+        var prev_zoom = this.current_zoom;
+        var zoom_stage_index = this.zoom_stages.indexOf(this.current_zoom);
+        if (direction == "in" && zoom_stage_index < this.zoom_stages.length - 1){
+            this.current_zoom = this.zoom_stages[zoom_stage_index + 1]; 
+        } else if (direction == "out" && zoom_stage_index > 0) {
+            this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
+        }
+
+        var y1 = state.abs_mouse_pos[1];
+        var h1 = this.h * prev_zoom;
+        var h2 = this.h * this.current_zoom;
+        var y2 = y1 * h2 / h1;
+        var deltaY = y2 - y1;
+
+        this.canvas_width = this.current_zoom * this.w;
+        this.canvas_height = this.current_zoom * this.h;
+        this.canvas.width = this.canvas_width;
+        this.canvas.height = this.canvas_height;
+
+        drag_element(state.canvas_wrapper, [0, 0]);
+    }
+
+    init_data(){
         for(var x = 0; x < this.w; x++){
             this.data.push([]);
             for(var y = 0; y < this.h; y++){
@@ -149,7 +182,7 @@ class Canvas{
     draw_data(){
         for(var x = 0; x < this.w; x++){
             for(var y = 0; y < this.h; y++){
-                this.draw_pixel(this.data[x][y].color, Math.round(x * this.draw_size), Math.round(y * this.draw_size));
+                this.draw_pixel(this.data[x][y].color, x * this.current_zoom, Math.round(y * this.current_zoom));
             }
         }
     }
@@ -181,15 +214,21 @@ class Canvas{
 
     draw_pixel(color, x, y){
         this.ctx.beginPath();
-        this.ctx.rect(x, y, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
+        this.ctx.rect(x, y, this.current_zoom, this.current_zoom);
         this.ctx.fillStyle = color;
         this.ctx.fill();
     }
 
     erase_pixel(x, y){
-        this.ctx.clearRect(x * this.draw_size, y * this.draw_size, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
-        this.data[x][y].color = "hsla(0, 100%, 100%, 0)"
-        this.data[x][y].rgba = [0, 0, 0, 0];
+        if(state.transparency){
+            this.ctx.clearRect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
+            this.data[x][y].color = "hsla(0, 100%, 100%, 0)"
+            this.data[x][y].rgba = [0, 0, 0, 0];
+        } else {
+            this.draw_pixel("rgb(255, 255, 255)", x * this.current_zoom, y * this.current_zoom);
+            this.data[x][y].color = "hsla(0, 100%, 100%, 1)"
+            this.data[x][y].rgba = [255, 255, 255, 1];
+        }
     }
 
     line(x0, y0, x1, y1, erase = false){
@@ -205,7 +244,7 @@ class Canvas{
                 if(erase){
                     this.erase_pixel(x0, y0);
                 } else {
-                    this.ctx.rect(x0 * this.draw_size, y0 * this.draw_size, Math.ceil(this.draw_size), Math.ceil(this.draw_size));
+                    this.ctx.rect(x0 * this.current_zoom, y0 * this.current_zoom, this.current_zoom, this.current_zoom);
                     this.data[x0][y0].filled = true;
                     this.data[x0][y0].color = state.color_picker.current_color;
                     this.data[x0][y0].rgba = state.color_picker.current_rgba;

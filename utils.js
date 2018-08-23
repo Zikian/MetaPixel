@@ -6,17 +6,27 @@ function pauseEvent(e){
     return false;
 }
 
+function update_mouse_indicator(){
+    state.mouse_indicator.style.width = state.main_canvas.current_zoom + "px";
+    state.mouse_indicator.style.height = state.main_canvas.current_zoom + "px";
+}
+
+function update_canvas_wrapper(){
+    state.canvas_wrapper.style.width = state.main_canvas.canvas_width + "px";
+    state.canvas_wrapper.style.height = state.main_canvas.canvas_height + "px";
+}
+
 function clamp(x, a, b) {
   return Math.max(a, Math.min(b, x));
 }
 
 function canvas_mouse_pos(){
-    return [state.abs_mouse_pos[0] - state.canvas_wrapper.offsetLeft - state.canvas_area.offsetLeft, state.abs_mouse_pos[1] - state.canvas_wrapper.offsetTop - state.canvas_area.offsetTop];
+    return [state.abs_mouse_pos[0] - state.canvas_wrapper.getBoundingClientRect().x, state.abs_mouse_pos[1] - state.canvas_wrapper.getBoundingClientRect().y];
 }
 
 function pixel_pos(){
-    x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.draw_size));
-    y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.draw_size));
+    x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.current_zoom));
+    y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.current_zoom));
     return [x, y];
 }
 
@@ -45,7 +55,7 @@ function get_file_name(){
         return null;
     }
     else {
-        return;
+        return name;
     }
 }
 

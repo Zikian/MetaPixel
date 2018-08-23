@@ -5,9 +5,10 @@
         <title>New Document</title>
 
         <link rel="stylesheet" href="common.css">
-        <link rel="stylesheet" href="header.css">
+        <link rel="stylesheet" href="header/header.css">
+        <link rel="stylesheet" href="new_document_panel/new_document_panel.css">
         <link rel="stylesheet" href="editor.css">
-        <link rel="stylesheet" href="colorpicker/color_picker.css">
+        <link rel="stylesheet" href="color_picker/color_picker.css">
         <link rel="stylesheet" href="widgets.css">
         <link rel="stylesheet" href="toolbox.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -20,12 +21,34 @@
             </div>
             <div id="dropdown">
                 <ul>
-                    <li><i class="far fa-file"></i>New</li>
+                    <li id="new-button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button"><i class="far fa-trash-alt"></i>Clear</li>
                     <li id="save-as"><i class="far fa-save"></i></i>Save As</li>
                 </ul>
             </div>
         </div>
+
+        <div id="new-document-panel">
+            <header id="new-document-header"><span>New Document</span><i id="new-document-cross" class="fas fa-times"></i></header>
+            <div id="new-document-body">
+                <div id=content-wrapper>
+                    <span>Document Name:</span>
+                    <input type="text" id="name-input" class="text-input" value="Untitled">
+                    <span>Width (px):</span>
+                    <input type="number" id="height-input" value="0" min="0">
+                    <span>Height (px):</span>
+                    <input type="number" id="width-input" value="0" min="0">
+                    <input type="checkbox" checked="checked" id="transparency-input">
+                    <span>Transparency</span>
+                    <div id="buttons">
+                        <button id="new-document-ok">OK</button>
+                        <button id="new-document-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <footer id="new-document-footer"></footer>
+        </div>
+
         <div class="editor">
             <div id="toolbox">
                 <div id="color-preview">
@@ -92,6 +115,7 @@
                     </div>
                 </div>
             </div>
+
             <div id="canvas-area">
                 <div id="canvas-wrapper">
                     <canvas id="main-canvas"></canvas>
@@ -136,8 +160,10 @@
 
         <script src="utils.js"></script>
         <script src="types.js"></script>
-        <script src="colorpicker/color_picker.js"></script>
+        <script src="color_picker/color_picker.js"></script>
+        <script src="new_document_panel/new_document_panel.js"></script>
         <script src="state.js"></script>
         <script src="actions.js"></script>
+        <script src="header/header.js"></script>
     </body>
 </html>
