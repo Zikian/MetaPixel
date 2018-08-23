@@ -1,3 +1,12 @@
+class Selection{
+    constructor(x, y, w, h){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+}
+
 class Slider{
     constructor(type, name, w, h, max_value){
         this.name = name;
@@ -121,17 +130,14 @@ class Canvas{
         
         this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 90, 128]
         this.current_zoom = 8;
-
-        this.canvas_width = this.current_zoom * this.w;
-        this.canvas_height = this.current_zoom * this.h;
         
         this.draw_buffer = []
         this.init_data();
 
-        this.canvas.width = this.canvas_width;
-        this.canvas.height = this.canvas_height;
-        this.canvas.style.width = this.canvas_width;
-        this.canvas.style.height = this.canvas_height;
+        this.canvas.width = this.w * this.current_zoom;
+        this.canvas.height = this.h * this.current_zoom;
+        this.canvas.style.width = this.canvas.width;
+        this.canvas.style.height = this.canvas.height;
     }
 
     zoom(direction){
@@ -149,12 +155,11 @@ class Canvas{
         var y2 = y1 * h2 / h1;
         var deltaY = y2 - y1;
 
-        this.canvas_width = this.current_zoom * this.w;
-        this.canvas_height = this.current_zoom * this.h;
-        this.canvas.width = this.canvas_width;
-        this.canvas.height = this.canvas_height;
+        this.canvas.width = this.w * this.current_zoom;
+        this.canvas.height = this.h * this.current_zoom;
 
         drag_element(state.canvas_wrapper, [0, 0]);
+        this.draw_data();
     }
 
     init_data(){
@@ -188,21 +193,53 @@ class Canvas{
     }
 
     draw_selection(x1, y1, x2, y2){
+        var x1 = state.mouse_start[0] * state.main_canvas.current_zoom;
+        var y1 = state.mouse_start[1] * state.main_canvas.current_zoom;
+        var x2 = state.rectangle_end[0] * state.main_canvas.current_zoom;
+        var y2 = state.rectangle_end[1] * state.main_canvas.current_zoom;
+
+        var pixel_size = this.current_zoom;
+
+        if (x1 == x2 && y1 == y2){ 
+            this.draw_selection_rectangle(x1, y1, x1 + pixel_size, y1 + pixel_size); 
+        }
+        else if (x1 < x2 && y1 == y2){
+            this.draw_selection_rectangle(x1, y1, x2 + pixel_size, y1 + pixel_size);
+        }
+        else if (x1 <= x2 && y1 < y2){
+            this.draw_selection_rectangle(x1, y1, x2 + pixel_size, y2 + pixel_size);
+        }
+        else if (x2 < x1 && y2 > y1){
+            this.draw_selection_rectangle(x2, y1, x1 + pixel_size, y2 + pixel_size);
+        }
+        else if (x2 < x1 && y2 == y1){
+            this.draw_selection_rectangle(x2, y2, x1 + pixel_size, y2 + pixel_size);
+        }
+        else if (x2 <= x1 && y2 < y1){
+            this.draw_selection_rectangle(x2, y2, x1 + pixel_size, y1 + pixel_size);
+        }
+        else if (y2 < y1 && x1 < x2){
+            this.draw_selection_rectangle(x1, y2, x2 + pixel_size, y1 + pixel_size);
+        }
+    }
+
+    draw_selection_rectangle(x1, y1, x2, y2){
         this.ctx.strokeStyle = 'red'; 
         this.ctx.beginPath();
         this.ctx.lineWidth = 1;
-        this.ctx.moveTo(x1,y1);
-        this.ctx.lineTo(x1,y2);
+        this.ctx.moveTo(x1, y1);
+        this.ctx.lineTo(x1, y2);
         this.ctx.stroke();
-        this.ctx.moveTo(x1,y1);
-        this.ctx.lineTo(x2,y1);
+        this.ctx.lineTo(x2, y2);
         this.ctx.stroke();
-        this.ctx.moveTo(x2,y2);
-        this.ctx.lineTo(x2,y1);
+        this.ctx.lineTo(x2, y1);
         this.ctx.stroke();
-        this.ctx.moveTo(x2,y2);
-        this.ctx.lineTo(x1,y2);
+        this.ctx.lineTo(x1, y1);
         this.ctx.stroke();
+
+        var w = Math.abs(x2 - x1)/state.main_canvas.current_zoom;
+        var h = Math.abs(y2 - y2)/state.main_canvas.current_zoom;
+        state.current_selection = new Selection(x1, y1, w, h);
     }
 
     draw_rectangle(x1, y1, x2, y2){
@@ -210,6 +247,7 @@ class Canvas{
         this.line(x1, y1, x1, y2);
         this.line(x1, y2, x2, y2);
         this.line(x2, y1, x2, y2);
+        selection_from_rectangle(x1, y1, x2, y2);
     }
 
     draw_pixel(color, x, y){

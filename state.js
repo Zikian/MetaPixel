@@ -15,13 +15,6 @@ var state = {
     canvas_area: document.getElementById("canvas-area"),
     canvas_wrapper: document.getElementById("canvas-wrapper"),
     mouse_indicator: document.getElementById("mouse-indicator"),
-    drawtool: document.getElementById("drawtool"),
-    erasertool: document.getElementById("eraser"),
-    linetool: document.getElementById("line"),
-    filltool: document.getElementById("fill"),
-    selectiontool: document.getElementById("select"),
-    rectangletool: document.getElementById("rectangle"),
-    eyedroppertool: document.getElementById("eyedropper"),
     tools: document.getElementsByClassName("tool"),
     selection_size_element: document.getElementById("selection-size"),
     switch_colors_button: document.getElementById("switch-colors-button"),
@@ -30,10 +23,12 @@ var state = {
     color_picker: new Color_Picker(),
     new_document_panel: new New_Document_Panel(),
     main_canvas: new Canvas(canvas,  40, 40),
+    tool_handler: new State_Machine("drawtool"),
+    current_selection: null,
     line_canvas: null,
 
     input: {
-        shift: false,
+        space: false,
     },
 
     transparency: true,
@@ -46,6 +41,7 @@ var state = {
     line_end: [],
     rectangle_end: [],
     saved_img: canvas.toDataURL("image/png"),
+    mouse_over_canvas_area: false
 };
 
 for(i = 0; i < state.tools.length; i++){
@@ -57,6 +53,6 @@ for(i = 0; i < state.tools.length; i++){
         }
     }
     state.tools[i].onclick = function(){
-        change_tool(this);
+        state.tool_handler.change_tool(this.id);
     }
 }

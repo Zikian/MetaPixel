@@ -94,6 +94,7 @@
     font-family: Montserrat-Regular;
     border: 1px solid black;
     font-size: 10pt;
+    background-color: transparent;
 }
 
 #new-document-body button:active{

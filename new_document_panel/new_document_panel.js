@@ -67,13 +67,17 @@ class New_Document_Panel{
             if (owner.name_input.value.length == 0){
                 owner.name_input.value = "Untitled";
             }
+            if (owner.width_input.value == 0){
+                owner.width_input.value = 1;
+            }
+            if (owner.height_input.value == 0){
+                owner.height_input.value = 1;
+            }
 
             state.document_name = owner.name_input.value;
             state.transparency = owner.transparency_input.checked;
-            if (state.main_canvas.canvas_width != 0 && state.main_canvas.canvas_height != 0){
-                state.main_canvas = new Canvas(canvas, owner.width_input.value, owner.height_input.value);
-                setup();
-            }
+            state.main_canvas = new Canvas(canvas, owner.width_input.value, owner.height_input.value);
+            setup();
             
             owner.panel.style.display = "none";
         }

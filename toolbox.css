@@ -32,6 +32,17 @@
     top: 14px;
     left: 14px;
     z-index: 2;
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+}
+
+#primary-color-rect:hover{
+    cursor: pointer;
+    animation: hover-anim 0.3s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
 }
 
 #primary-alpha-img{
@@ -45,6 +56,22 @@
     bottom: 14px;
     z-index: 1;
 }
+
+#secondary-color-rect:hover{
+    cursor: pointer;
+    animation: hover-anim 0.3s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes hover-anim{
+    from{box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);}
+    to{box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.73);}
+}
+
 
 #secondary-alpha-img{
     right: 14px;
@@ -67,7 +94,6 @@
     border: 1px solid rgb(27, 27, 31);
     float: left;
 }
-
 
 #switch-colors{
     position: absolute;

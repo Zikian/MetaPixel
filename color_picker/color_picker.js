@@ -4,6 +4,7 @@ class Color_Picker{
         this.position = [0, 0];
         this.window = document.getElementById("color-picker");
         this.header = document.getElementById("color-picker-header");
+        this.header_text = document.getElementById("color-picker-header-text");
         this.color_square = document.getElementById("color-square");
         this.ctx = this.color_square.getContext("2d");
         this.color_slider = new Slider("square", "color-slider", 255, 255, 255);
@@ -33,6 +34,7 @@ class Color_Picker{
         this.primary_color = [0, 0, 0, 1];
         this.secondary_color = [255, 255, 255, 1];
         this.current_color = "black";
+        this.selected_color = "primary";
         this.new_color = this.current_color;
         this.old_color = this.current_rgb;
         this.old_alpha = this.current_alpha
@@ -155,21 +157,26 @@ class Color_Picker{
             case "eyedropper":
                 this.current_color = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color;
                 this.current_rgba = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba
-                this.current_rgb = this.current_rgba.slice(0, 3);
-                this.update_hsl_from_rgb(this.current_rgb);
-                this.current_alpha = this.current_rgba[3];
+                this.update_from_rgba(this.current_rgba);
                 break;
-            case "switch-selected-color":
+            case "switch-colors":
                 var new_primary_color = this.secondary_color;
                 this.secondary_color = this.primary_color;
                 this.primary_color = new_primary_color;
                 this.current_rgba = this.primary_color;
-                this.current_rgb = this.current_rgba.slice(0, 3);
-                this.update_hsl_from_rgb(this.current_rgb)
-                this.current_alpha = this.current_rgba[3];
+                this.update_from_rgba(this.current_rgba);
                 break;
             case "reset-colors":
                 this.init_color_vars();
+                break;
+            case "to-background":
+                this.current_rgba = this.secondary_color;
+                this.update_from_rgba(this.current_rgba);
+                break;
+            case "to-foreground":
+                this.current_rgba = this.primary_color;
+                this.update_from_rgba(this.current_rgba);
+                break;
         }
 
         this.new_color = this.current_color;
@@ -178,7 +185,15 @@ class Color_Picker{
 
         this.current_color = hsla(this.current_hue, this.current_saturation, this.current_lightness, this.current_alpha);
         
-        this.primary_color = this.current_rgba;
+        if(this.selected_color == "primary"){
+            this.header_text.innerHTML = "Color Picker (Foreground)"
+            this.primary_color = this.current_rgba;
+        } else {
+            if(origin != "switch-colors"){
+                this.header_text.innerHTML = "Color Picker (Background)"
+                this.secondary_color = this.current_rgba;
+            }
+        }
 
         this.hue_input.input.value = this.current_hue;
         this.hue_input.slider.value = this.hue_input.input_to_slider();
@@ -214,5 +229,11 @@ class Color_Picker{
         this.current_hue = Math.round(HSL[0]);
         this.current_saturation = Math.round(HSL[1]);
         this.current_lightness = Math.round(HSL[2]);
+    }
+
+    update_from_rgba(rgba){
+        this.current_rgb = rgba.slice(0, 3);
+        this.update_hsl_from_rgb(this.current_rgb);
+        this.current_alpha = rgba[3];
     }
 }
