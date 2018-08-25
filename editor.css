@@ -24,8 +24,16 @@
 
 #canvas-area #canvas-wrapper{
     position: absolute;
-    background-image: url(images/checkers.gif);
-    background-repeat: repeat;
+    /* background-image: url(images/checkers.gif);
+    background-repeat: repeat; */
+
+    background: repeating-linear-gradient(
+    135deg,
+    #ffffff,
+    #ffffff 2.5px,
+    #dbdbdb 2.5px,
+    #dbdbdb 5px
+    );
 }
 
 #canvas-area #canvas-wrapper #main-canvas{
@@ -33,10 +41,11 @@
     image-rendering: pixelated;
 }
     
-#canvas-area #canvas-wrapper #line-canvas{
+#canvas-area #canvas-wrapper #preview-canvas{
     position: absolute;
     top: 0;
     left: 0;
+    image-rendering: pixelated;
 }
 
 #canvas-area #canvas-wrapper #mouse-indicator{
@@ -45,6 +54,11 @@
     top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.603);
+}
+
+.selection-canvas{
+    position: absolute;
+    z-index: 40;
 }
 
 #selection-size{

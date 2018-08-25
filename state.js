@@ -1,7 +1,7 @@
 var canvas_area = document.getElementById("canvas-area");
 var canvas_wrapper = document.getElementById("canvas-wrapper");
 var canvas = document.getElementById("main-canvas");
-var line_canvas = document.getElementById("line-canvas");
+var preview_canvas = document.getElementById("preview-canvas");
 
 var mouse_up_functions = [];
 var mouse_move_functions = [];
@@ -23,25 +23,24 @@ var state = {
     color_picker: new Color_Picker(),
     new_document_panel: new New_Document_Panel(),
     main_canvas: new Canvas(canvas,  40, 40),
+    preview_canvas: null,
+    selection_canvas: null,
     tool_handler: new State_Machine("drawtool"),
     current_selection: null,
-    line_canvas: null,
-
-    input: {
-        space: false,
-    },
 
     transparency: true,
     document_name: "Untitled Document",
     active_element: null,
     pixel_pos: [0, 0],
     abs_mouse_pos: [0, 0],
+    delta_mouse: [0, 0],
+    delta_pixel_pos: [0, 0],
     current_tool: drawtool,
     mouse_start: [],
     line_end: [],
     rectangle_end: [],
-    saved_img: canvas.toDataURL("image/png"),
-    mouse_over_canvas_area: false
+    selection_end: [],
+    saved_img: canvas.toDataURL("image/png")
 };
 
 for(i = 0; i < state.tools.length; i++){

@@ -136,8 +136,9 @@ class Color_Picker{
             case "red-input-slider":    // Fallthrough
             case "green-input-slider":
             case "blue-input-slider":
-                this.current_rgb = [this.red_input.slider_to_input(), this.green_input.slider_to_input(), this.blue_input.slider_to_input()]
-                this.current_alpha = this.alpha_input.input_to_slider() / 100;
+                this.current_rgba = [this.red_input.slider_to_input(), this.green_input.slider_to_input(), this.blue_input.slider_to_input(), this.alpha_input.input_to_slider() / 100]
+                this.current_alpha = this.current_rgba[3];
+                this.update_from_rgba(this.current_rgba)
                 break;
             case "red":    // Fallthrough
             case "green":
@@ -155,6 +156,7 @@ class Color_Picker{
                 this.current_alpha = this.alpha_input.input_to_slider() / 100;
                 break;
             case "eyedropper":
+                if(!state.main_canvas.contains_mouse()){ return; }
                 this.current_color = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color;
                 this.current_rgba = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba
                 this.update_from_rgba(this.current_rgba);

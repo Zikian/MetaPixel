@@ -164,10 +164,11 @@
     pointer-events: none;
 }
 
-#draw-tool-tip, #eraser-tool-tip, #line-tool-tip, #fill-tool-tip, #rectangle-tool-tip, #eyedropper-tool-tip, #select-tool-tip{
+/* TOOL TIPS */
+
+#draw-tool-tip, #eraser-tool-tip, #line-tool-tip, #fill-tool-tip, #rectangle-tool-tip, #eyedropper-tool-tip, #select-tool-tip, #hand-tool-tip{
     position: absolute;
     display: none;
-    width: 100px;
     height: 30px;
     background-color: black;
     border-radius: 5px;
@@ -175,6 +176,12 @@
     left: 60px;
     top: 10px;
     text-align: left;
+}
+
+/* DRAW TOOL */
+
+#draw-tool-tip{
+    width: 100px;
 }
 
 #draw-tool-tip span{
@@ -194,6 +201,8 @@
 #drawtool:hover #draw-tool-tip{
     display: block;
 }
+
+/* ERASER TOOL */
 
 #eraser-tool-tip{
     width: 106px;
@@ -216,8 +225,10 @@
     display: block
 }
 
+/* LINE TOOL */
+
 #line-tool-tip{
-    width: 93px;
+    width: 122px;
 }
 
 #line-tool-tip span{
@@ -236,6 +247,8 @@
 #line:hover #line-tool-tip{
     display: block;
 }
+
+/* FILL TOOL */
 
 #fill-tool-tip{
     width: 82px;
@@ -258,8 +271,10 @@
     display: block;
 }
 
+/* RECTANGLE TOOL */
+
 #rectangle-tool-tip{
-    width: 111px;
+    width: 132px;
 }
 
 #rectangle-tool-tip span{
@@ -278,6 +293,8 @@
 #rectangle:hover #rectangle-tool-tip{
     display: block;
 }
+
+/* EYEDROPPER TOOL */
 
 #eyedropper-tool-tip{
     width: 151px;
@@ -300,11 +317,16 @@
     display: block;
 }
 
+/* SELECT TOOL */
+
 #select-tool-tip{
-    width: 114px;
+    top: -21px;
+    width: 200px;
+    height: 90px;
 }
 
 #select-tool-tip span{
+    display: block;
     font-size: 10pt;
     margin-left: 6px;
     margin-right: 5px;
@@ -314,10 +336,33 @@
 #select-tool-tip i{
     position: absolute;
     left: -8px;
-    top: -10px;
+    top: 21px;
 }
 
 #select:hover #select-tool-tip{
+    display: block;
+}
+
+/* HAND TOOL */
+
+#hand-tool-tip{
+    width: 132px;
+}
+
+#hand-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#hand-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+#hand:hover #hand-tool-tip{
     display: block;
 }
 

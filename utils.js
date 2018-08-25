@@ -113,8 +113,6 @@ function selection_from_rectangle(x1, y1, x2, y2){
 }
 
 function calculate_size(x1, y1, x2, y2){
-    console.log(x1, y1, x2, y2)
     var w = Math.abs(x2 - x1)/state.main_canvas.current_zoom;
     var h = Math.abs(y2 - y1)/state.main_canvas.current_zoom;
-    state.current_selection = new Selection(x1, y1, w, h)
 }

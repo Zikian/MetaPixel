@@ -1,6 +1,6 @@
 function setup(){
     state.main_canvas.clear();
-    state.line_canvas = new Canvas(line_canvas, state.main_canvas.w, state.main_canvas.h)
+    state.preview_canvas = new Canvas(preview_canvas, state.main_canvas.w, state.main_canvas.h)
     update_mouse_indicator();
     update_canvas_wrapper();
     state.canvas_wrapper.style.left = (state.canvas_area.offsetWidth - state.canvas_wrapper.clientWidth)/2 + "px";
@@ -13,27 +13,22 @@ function setup(){
     }
     state.tool_handler.change_tool("drawtool");
     state.color_picker.update_color();
+    state.current_selection = new Selection();
 }
 setup();
-
-state.canvas_wrapper.addEventListener("mouseup", function(){
-    state.tool_handler.current_tool.mouseup_actions();
-});
 
 window.addEventListener('mouseup', function(e) {
     mouse_up_functions.forEach(function(element){
         element();
     });
+    state.tool_handler.current_tool.mouseup_actions();
     state.active_element = null;
 }, false);
 
 window.addEventListener('mousedown', function(e) {
     e.stopPropagation();
     state.mouse_start = state.pixel_pos;
-
-    if(state.active_element == state.canvas_wrapper && !state.input.space){
-        state.tool_handler.current_tool.mousedown_actions();
-    }  
+    state.tool_handler.current_tool.mousedown_actions();
 }, false);
 
 window.addEventListener("mousemove", function(e){
@@ -41,29 +36,27 @@ window.addEventListener("mousemove", function(e){
 
     var prev_abs_mouse_pos = state.abs_mouse_pos.slice();
     state.abs_mouse_pos = [e.pageX, e.pageY];
-    var delta_mouse_pos = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
+    state.delta_mouse = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
     
+    var prev_pixel_pos = state.pixel_pos
     state.pixel_pos = pixel_pos();
+    state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
 
-    state.mouse_indicator.style.left = state.pixel_pos[0] * state.main_canvas.current_zoom + "px";
-    state.mouse_indicator.style.top = state.pixel_pos[1] * state.main_canvas.current_zoom + "px";
-
-    if(state.mouse_over_canvas_area && state.input.space){
-        drag_element(state.canvas_wrapper, delta_mouse_pos);
+    if (state.main_canvas.contains_mouse()){
+        state.mouse_indicator.style.left = state.pixel_pos[0] * state.main_canvas.current_zoom + "px";
+        state.mouse_indicator.style.top = state.pixel_pos[1] * state.main_canvas.current_zoom + "px";
     }
 
     switch(state.active_element){
         case state.color_picker.header:
-            drag_element(state.color_picker.window,  delta_mouse_pos);
+            drag_element(state.color_picker.window,  state.delta_mouse);
             state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
             break;
         case state.new_document_panel.header:
-            drag_element(state.new_document_panel.panel, delta_mouse_pos);
+            drag_element(state.new_document_panel.panel, state.delta_mouse);
             break;
-        case state.canvas_wrapper:
-            if (!state.input.space){
-                state.tool_handler.current_tool.mousemove_actions();
-            }
+        case state.canvas_area:
+            state.tool_handler.current_tool.mousemove_actions();
             break;
     }
 
@@ -77,11 +70,11 @@ document.addEventListener("keydown", function(event){
         return;
     }   
     switch(event.keyCode){
+        case 8: // BACKSPACE
+            state.main_canvas.clear_selection();
+            break;
         case 32: // SPACE
-            if(state.mouse_over_canvas_area){
-                document.body.style.cursor = "grab";
-            }
-            state.input.space = true;
+            state.tool_handler.change_tool("hand");
             break;
         case 18: // ALT
             state.tool_handler.change_tool("eyedropper");
@@ -101,8 +94,8 @@ document.addEventListener("keydown", function(event){
         case 70: // F
             state.tool_handler.change_tool("fill");
             break;
-        case 71: // G
-            state.tool_handler.change_tool("line");
+        case 82: // R
+            state.tool_handler.change_tool("rectangle")
             break;
         case 83: // S
             state.tool_handler.change_tool("select");
@@ -112,40 +105,70 @@ document.addEventListener("keydown", function(event){
             break;
         case 187: // +
             state.main_canvas.zoom("in");
-            state.line_canvas.zoom("in");
+            state.preview_canvas.zoom("in");
+            state.current_selection.resize();
             update_mouse_indicator();
             update_canvas_wrapper();
             break;
         case 189: // -
             state.main_canvas.zoom("out");
-            state.line_canvas.zoom("out");
+            state.preview_canvas.zoom("out");
+            state.current_selection.resize();
             update_mouse_indicator();
             update_canvas_wrapper();
+            break;
+        case 16:
+            state.tool_handler.change_tool("line");
             break;
     }
 })
 
 document.addEventListener("keyup", function(event){
-    if (event.keyCode == 32){
-        document.body.style.cursor = "default";
-        state.input.space = false;
+    switch (event.keyCode){
+        case 32: // SPACE
+            if(state.tool_handler.prev_tool.id != "select"){
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+            }
+            break;
+        case 18: // ALT
+            if(state.tool_handler.prev_tool.id != "select"){
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+            }
+            break;
+        case 16: // SHIFT
+        if(state.tool_handler.prev_tool.id != "select"){
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+            }
+            break;
     }
 })
 
 state.canvas_area.addEventListener("wheel", function(e){
     if (e.deltaY > 0){
         state.main_canvas.zoom("in");
-        state.line_canvas.zoom("in");
+        state.preview_canvas.zoom("in");
+        state.current_selection.resize();
     } else {
         state.main_canvas.zoom("out")
-        state.line_canvas.zoom("out")
+        state.preview_canvas.zoom("out")
+        state.current_selection.resize();
     }
     update_mouse_indicator();
     update_canvas_wrapper();
 })
 
-state.canvas_wrapper.onmousedown = function(){
-    state.active_element = state.canvas_wrapper;
+state.canvas_area.onmousedown = function(){
+    state.active_element = state.canvas_area;
+}
+
+state.canvas_wrapper.onmouseout = function(){
+    state.mouse_indicator.style.backgroundColor = "transparent";
+}
+
+state.canvas_wrapper.onmouseover = function(){
+    if (state.tool_handler.current_tool.id != "eraser"){
+        state.mouse_indicator.style.backgroundColor = state.color_picker.current_color;
+    }
 }
 
 state.switch_colors_button.onclick = function(){
@@ -167,11 +190,3 @@ document.getElementById("secondary-color-rect").onmousedown = function(){
     state.color_picker.selected_color = "secondary";
     state.color_picker.update_color("to-background");
 }
-
-state.canvas_area.onmouseover = function(){
-    state.mouse_over_canvas_area = true;
-};
-
-state.canvas_area.onmouseout = function(){
-    state.mouse_over_canvas_area = false;
-};
