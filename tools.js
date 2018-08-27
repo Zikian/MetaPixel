@@ -56,8 +56,11 @@ class Draw_Tool extends Tool{
     mousedown_actions(){
         if(!state.current_selection.contains_mouse()){ return; }
         state.main_canvas.draw_pixel(state.color_picker.current_color, state.mouse_indicator.offsetLeft, state.mouse_indicator.offsetTop);
-        state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color = state.color_picker.current_color;
-        state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba = state.color_picker.current_rgba;
+        var data = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]]
+        state.history_manager.push_prev_data(data);
+        data.color = state.color_picker.current_color;
+        data.rgba = state.color_picker.current_rgba; 
+        state.history_manager.push_new_data(data);  
     }
 
     mousemove_actions(){
@@ -69,6 +72,7 @@ class Draw_Tool extends Tool{
     }
 
     mouseup_actions(){
+        state.history_manager.add_history("pen-stroke")
         state.main_canvas.draw_buffer = [];
     }
 }
@@ -95,6 +99,7 @@ class Eraser_Tool extends Tool{
     }
 
     mouseup_actions(){
+        state.history_manager.add_history("erase");
         state.main_canvas.draw_buffer = [];
     }
 
@@ -115,6 +120,7 @@ class Line_Tool extends Tool{
     mouseup_actions(){
         state.main_canvas.clear_preview();
         state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
+        state.history_manager.add_history("line");
     }
 }
 
@@ -127,6 +133,7 @@ class Selection_Tool extends Tool{
     }
 
     mousedown_actions(){
+        state.history_manager.prev_selection = state.current_selection.get_selection_info();
         if(state.active_element == state.canvas_area && !state.current_selection.contains_mouse()){
             state.current_selection.clear();
         }
@@ -154,6 +161,8 @@ class Selection_Tool extends Tool{
         state.current_selection.forming = false;
         state.current_selection.being_dragged = false;
         state.current_selection.get_intersection();
+        state.history_manager.new_selection = state.current_selection.get_selection_info();
+        state.history_manager.add_history("selection")
     }
 
     on_exit(){
@@ -169,6 +178,7 @@ class Fill_Tool extends Tool{
     mousedown_actions(){
         state.main_canvas.fill(state.pixel_pos[0], state.pixel_pos[1], state.color_picker.current_rgba, state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba);
         state.main_canvas.draw_data();
+        state.history_manager.add_history("fill");
     }
 }
 
@@ -207,6 +217,7 @@ class Rectangle_Tool extends Tool{
         state.main_canvas.clear_preview();
         state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
         state.selection_size_element.style.display = "none";
+        state.history_manager.add_history("rectangle");
     }
 }
 
@@ -220,7 +231,6 @@ class Hand_Tool extends Tool{
     
     mousemove_actions(){
         drag_element(state.canvas_wrapper, state.delta_mouse);
-        console.log(state.delta_mouse)
         state.current_selection.move(state.delta_mouse[0], state.delta_mouse[1]);
     }
 

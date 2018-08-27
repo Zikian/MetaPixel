@@ -28,6 +28,18 @@ class Selection{
         this.right_ctx = this.right_border.getContext("2d")
     }
 
+    get_selection_info(){
+        return {
+            x: this.x,
+            y: this.y,
+            w: this.w,
+            h: this.h,
+            true_w: this.true_w,
+            true_h: this.true_h,
+            exists: this.exists
+        }
+    }
+
     draw(){
         var pixel_size = state.main_canvas.current_zoom;
 
@@ -133,12 +145,12 @@ class Selection{
     }
 
     contains_mouse(){
-        var x = state.abs_mouse_pos[0];
-        var y = state.abs_mouse_pos[1];
-        return (x >= this.x + state.canvas_area.offsetLeft &&
-                x <= this.x + state.canvas_area.offsetLeft + this.true_w &&
-                y >= this.y + state.canvas_area.offsetTop &&
-                y <= this.y + state.canvas_area.offsetTop + this.true_h)
+        var x = state.abs_mouse_pos[0] - state.canvas_area.offsetLeft;
+        var y = state.abs_mouse_pos[1] - state.canvas_area.offsetTop;
+        return (x >= this.x &&
+                x <= this.x + this.true_w &&
+                y >= this.y &&
+                y <= this.y + this.true_h)
     }
 
     contains_pixel_pos(x, y){
@@ -165,7 +177,10 @@ class Selection{
     }
 
     resize(){
-        if(!this.exists) { return; }
+        if(!this.exists) { 
+            this.wrap_around_canvas();
+            return;
+        }
 
         var old_zoom = state.main_canvas.prev_zoom;
         var old_pixel_x = (this.x - state.canvas_wrapper.offsetLeft)/state.main_canvas.prev_zoom;

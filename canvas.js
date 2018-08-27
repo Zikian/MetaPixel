@@ -70,6 +70,7 @@ class Canvas{
         if(!state.current_selection.contains_pixel_pos(x, y)) { return; }
         if(rgba(node.rgba) == rgba(new_color)){ return; }
         if(rgba(node.rgba) == rgba(old_color)){
+            state.history_manager.push_prev_data(node);
             node.rgba = new_color;
             node.color = rgba(new_color);
 
@@ -112,6 +113,10 @@ class Canvas{
     }
 
     draw_pixel(color, x, y){
+        if(color == "hsla(0, 100%, 100%, 0)"){
+            this.erase_pixel(x / state.main_canvas.current_zoom, y / state.main_canvas.current_zoom);
+            return;
+        }
         this.ctx.beginPath();
         this.ctx.rect(x, y, this.current_zoom, this.current_zoom);
         this.ctx.fillStyle = color;
@@ -119,15 +124,19 @@ class Canvas{
     }
 
     erase_pixel(x, y){
+        var data = this.data[x][y];
+        if (data.color == "hsla(0, 100%, 100%, 0)" || data.color == "hsla(0, 100%, 100%, 1)"){ return; }
+        state.history_manager.push_prev_data(data);
         if(state.transparency){
             this.ctx.clearRect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
-            this.data[x][y].color = "hsla(0, 100%, 100%, 0)"
-            this.data[x][y].rgba = [255, 255, 255, 0];
+            data.color = "hsla(0, 100%, 100%, 0)"
+            data.rgba = [255, 255, 255, 0];
         } else {
             this.draw_pixel("rgb(255, 255, 255)", x * this.current_zoom, y * this.current_zoom);
-            this.data[x][y].color = "hsla(0, 100%, 100%, 1)"
-            this.data[x][y].rgba = [255, 255, 255, 1];
+            data.color = "hsla(0, 100%, 100%, 1)"
+            data.rgba = [255, 255, 255, 1];
         }
+        state.history_manager.push_new_data(data);
     }
 
     line(x0, y0, x1, y1, erase = false){
@@ -144,8 +153,13 @@ class Canvas{
                     this.erase_pixel(x0, y0);
                 } else {
                     this.draw_pixel(state.color_picker.current_color, x0 * this.current_zoom, y0 * this.current_zoom);
-                    this.data[x0][y0].color = state.color_picker.current_color;
-                    this.data[x0][y0].rgba = state.color_picker.current_rgba;
+                    var data = this.data[x0][y0]
+                    if (data.color != state.color_picker.current_color){
+                        state.history_manager.push_prev_data(data);
+                        data.color = state.color_picker.current_color;
+                        data.rgba = state.color_picker.current_rgba;
+                        state.history_manager.push_new_data(data);
+                    }
                 }
             }
     
@@ -231,10 +245,14 @@ class Canvas{
         y1 /= state.main_canvas.current_zoom;
         for(var x = x1; x < x1 + w; x++){
             for(var y = y1; y < y1 + h; y++){
-                this.data[x][y].color = "transparent";
-                this.data[x][y].rgba = [255, 255, 255 ,0]
+                var data = this.data[x][y];
+                state.history_manager.push_prev_data(data);
+                data.color = "transparent";
+                data.rgba = [255, 255, 255 ,0];
+                state.history_manager.push_new_data(data);
             }
         }
+        state.history_manager.add_history("clear-selection")
     }
 }
 

@@ -27,7 +27,7 @@ window.addEventListener('mouseup', function(e) {
 window.addEventListener('mousedown', function(e) {
     e.stopPropagation();
     state.mouse_start = state.pixel_pos;
-    if(state.active_element == state.canvas_area){
+    if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
         state.tool_handler.current_tool.mousedown_actions();
     }
 }, false);
@@ -77,6 +77,9 @@ document.addEventListener("keydown", function(event){
         case 32: // SPACE
             state.tool_handler.change_tool("hand");
             break;
+        case 17: // CTRL
+            state.input.ctrl = true;
+            break;
         case 18: // ALT
             state.tool_handler.change_tool("eyedropper");
             break;
@@ -104,14 +107,27 @@ document.addEventListener("keydown", function(event){
         case 88: // X
             state.color_picker.update_color("switch-colors");
             break;
+        case 90: // Z
+            if (state.input.ctrl && !state.input.shift){
+                state.history_manager.undo_last();
+            }
+            if (state.input.ctrl && state.input.shift){
+                state.history_manager.redo_last();
+            }
+            break;
         case 187: // +
             state.main_canvas.zoom("in");
             break;
         case 189: // -
             state.main_canvas.zoom("out");
             break;
-        case 16:
-            state.tool_handler.change_tool("line");
+        case 16: // SHIFT
+            state.input.shift = true;
+            if (!state.input.ctrl){
+                state.tool_handler.change_tool("line");
+            } else {
+                state.input.last_shortcut = "ctrl-shift";
+            }
             break;
     }
 })
@@ -129,10 +145,15 @@ document.addEventListener("keyup", function(event){
             }
             break;
         case 16: // SHIFT
-        if(state.tool_handler.prev_tool.id != "select"){
+            state.input.shift = false;
+            if(state.input.last_shortcut != "ctrl-shift" && state.tool_handler.prev_tool.id != "select"){
                 state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
             }
+            state.input.last_shortcut = null;
             break;
+        case 17: // CTRL
+            state.input.ctrl = false;
+        
     }
 })
 

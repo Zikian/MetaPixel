@@ -25,6 +25,7 @@ var state = {
     selection_canvas: null,
     tool_handler: new State_Machine("drawtool"),
     current_selection: null,
+    history_manager: new History_Manager(),
 
     transparency: true,
     document_name: "Untitled Document",
@@ -38,7 +39,13 @@ var state = {
     line_end: [],
     rectangle_end: [],
     selection_end: [],
-    saved_img: canvas.toDataURL("image/png")
+    saved_img: canvas.toDataURL("image/png"),
+
+    input: {
+        ctrl: false,
+        shift: false,
+        last_shortcut: null
+    }
 };
 
 for(i = 0; i < state.tools.length; i++){

@@ -24,8 +24,6 @@ function canvas_mouse_pos(){
     return [state.abs_mouse_pos[0] - state.canvas_wrapper.getBoundingClientRect().x, state.abs_mouse_pos[1] - state.canvas_wrapper.getBoundingClientRect().y];
 }
 
-// function(){}
-
 function pixel_pos(){
     x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.current_zoom));
     y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.current_zoom));
