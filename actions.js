@@ -20,7 +20,9 @@ window.addEventListener('mouseup', function(e) {
     mouse_up_functions.forEach(function(element){
         element();
     });
-    state.tool_handler.current_tool.mouseup_actions();
+    if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
+        state.tool_handler.current_tool.mouseup_actions();
+    }
     state.active_element = null;
 }, false);
 
@@ -159,9 +161,9 @@ document.addEventListener("keyup", function(event){
 
 state.canvas_area.addEventListener("wheel", function(e){
     if (e.deltaY > 0){
-        state.main_canvas.zoom("in");
+        state.main_canvas.zoom("out");
     } else {
-        state.main_canvas.zoom("out")
+        state.main_canvas.zoom("in");
     }
 })
 
@@ -170,10 +172,11 @@ state.canvas_area.onmousedown = function(){
 }
 
 state.canvas_wrapper.onmouseout = function(){
-    state.mouse_indicator.style.backgroundColor = "transparent";
+    state.mouse_indicator.style.display = "none";
 }
 
 state.canvas_wrapper.onmouseover = function(){
+    state.mouse_indicator.style.display = "block";
     if (state.tool_handler.current_tool.id != "eraser"){
         state.mouse_indicator.style.backgroundColor = state.color_picker.current_color;
     }
@@ -197,4 +200,12 @@ document.getElementById("secondary-color-rect").onmousedown = function(){
     state.color_picker.window.style.display = "grid"
     state.color_picker.selected_color = "secondary";
     state.color_picker.update_color("to-background");
+}
+
+state.undo.onclick = function(){
+    state.history_manager.undo_last();
+}
+
+state.redo.onclick = function(){
+    state.history_manager.redo_last();
 }

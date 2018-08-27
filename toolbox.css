@@ -22,6 +22,36 @@
     height: 100px;
 }
 
+#color-preview:hover #color-tool-tip{
+    display: block;
+}
+
+#color-tool-tip{
+    position: absolute;
+    display: none;
+    height: 30px;
+    width: 113px;
+    background-color: black;
+    border-radius: 5px;
+    z-index: 1000;
+    left: 110px;
+    top: 29px;
+    text-align: left;
+}
+
+#color-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#color-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
 .color-preview-square{
     position: absolute;
     width: 50px;
@@ -32,7 +62,8 @@
     top: 14px;
     left: 14px;
     z-index: 2;
-    box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);
 }
 
 #primary-color-rect:hover{
@@ -49,12 +80,15 @@
     top: 14px;
     left: 14px;
     z-index: 1;
+    border-radius: 4px;
 }
 
 #secondary-color-rect{
     right: 14px;
     bottom: 14px;
     z-index: 1;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);
 }
 
 #secondary-color-rect:hover{
@@ -68,15 +102,15 @@
 }
 
 @keyframes hover-anim{
-    from{box-shadow: 0px 0px 0px 0px rgba(0,0,0,0.75);}
+    from{box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);}
     to{box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.73);}
 }
-
 
 #secondary-alpha-img{
     right: 14px;
     bottom: 14px;
     z-index: 0;
+    border-radius: 4px;
 }
 
 #color-preview-buttons{
@@ -119,6 +153,36 @@
     border: none;
 }
 
+#switch-colors-button:hover #switch-colors-tool-tip{
+    display: block;
+}
+
+#switch-colors-tool-tip{
+    position: absolute;
+    display: none;
+    height: 30px;
+    width: 122px;
+    background-color: black;
+    border-radius: 5px;
+    z-index: 1000;
+    left: 35px;
+    top: -2px;
+    text-align: left;
+}
+
+#switch-colors-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#switch-colors-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
 #reset-colors-button{
     position: relative;
     width: 25px;
@@ -146,6 +210,36 @@
     width: 65%;
     height: 65%;
     user-select: none;
+}
+
+#reset-colors-button:hover #reset-colors-tool-tip{
+    display: block;
+}
+
+#reset-colors-tool-tip{
+    position: absolute;
+    display: none;
+    height: 30px;
+    width: 94px;
+    background-color: black;
+    border-radius: 5px;
+    z-index: 1000;
+    left: 35px;
+    top: -2px;
+    text-align: left;
+}
+
+#reset-colors-tool-tip span{
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+#reset-colors-tool-tip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
 }
 
 #reset-colors-button:hover #reset-colors{

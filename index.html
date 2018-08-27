@@ -26,6 +26,24 @@
                     <li id="save-as"><i class="far fa-save"></i></i>Save As</li>
                 </ul>
             </div>
+
+            <div id="undo">
+                <i class="fas fa-undo-alt" id="undo-icon"></i>
+                <span id="undo-span">Undo</span>
+                <div id="undo-tool-tip" class="tool-tip">
+                        <span>Undo (CTRL+Z)</span>
+                        <i class="fas fa-caret-up" style="color: black;"></i>
+                </div>
+            </div>
+
+            <div id="redo">
+                <i class="fas fa-redo-alt" id="redo-icon"></i>
+                <span id="redo-span">Redo</span>
+                <div id="redo-tool-tip" class="tool-tip">
+                        <span>Redo (CTRL+SHIFT+Z)</span>
+                        <i class="fas fa-caret-up" style="color: black;"></i>
+                </div>
+            </div>
         </div>
 
         <div id="new-document-panel">
@@ -56,15 +74,27 @@
                     <div id="secondary-color-rect" class="color-preview-square"></div>
                     <img src="images/Alhpa_Triangle.png" id="primary-alpha-img" class="color-preview-square">
                     <img src="images/Alhpa_Triangle.png" id="secondary-alpha-img" class="color-preview-square">
+                    <div id="color-tool-tip" class="tool-tip">
+                            <span>Color Picker (C)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
                 </div>
                 <div id="color-preview-buttons">
                     <div id="switch-colors-button">
                         <div id="switch-colors"></div>
                         <div id="switch-colors-icon"><i class="fas fa-arrows-alt-h" style="font-size: 14pt; line-height: 25px;"></i></div>
+                        <div id="switch-colors-tool-tip" class="tool-tip">
+                                <span>Switch Colors (X)</span>
+                                <i class="fas fa-caret-left" style="color: black;"></i>
+                        </div>
                     </div>
                     <div id="reset-colors-button">
                         <div id="reset-colors"></div>
                         <div id="reset-colors-icon"><img src="images/reset_colors_icon.png"></div>
+                        <div id="reset-colors-tool-tip" class="tool-tip">
+                                <span>Reset Colors</span>
+                                <i class="fas fa-caret-left" style="color: black;"></i>
+                        </div>
                     </div>
                 </div>
                 <div id="drawtool" class="tool">
@@ -122,6 +152,10 @@
                         <span>Hand Tool (Space)</span>
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
+                </div>
+
+                <div id="undo-redo">
+
                 </div>
             </div>
 

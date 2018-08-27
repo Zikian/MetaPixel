@@ -9,6 +9,8 @@ class History_Manager{
     }
 
     add_history(type){
+        if (this.prev_data.length == 0 && this.prev_selection == null){ return; }
+        this.redo_history = []
         if(type == "pen-stroke" || type == "erase" || type == "line" || type == "rectangle" || type == "fill" || type == "clear-selection"){
             if (this.prev_data.length != 0){
                 this.history.push(new Pen_Stroke(this.prev_data, this.new_data));
@@ -27,6 +29,7 @@ class History_Manager{
         if(this.history.length == 0) { return; }
         this.history[this.history.length - 1].undo();
         this.redo_history.push(this.history.pop());
+        this.prev_data = []
     }
 
     redo_last(){

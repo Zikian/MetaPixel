@@ -10,6 +10,8 @@ var state = {
     file_dropdown: document.getElementById("dropdown"),
     clear: document.getElementById("clear-button"),
     save_as: document.getElementById("save-as"),
+    undo: document.getElementById("undo"),
+    redo: document.getElementById("redo"),
 
     canvas_area: document.getElementById("canvas-area"),
     canvas_wrapper: document.getElementById("canvas-wrapper"),

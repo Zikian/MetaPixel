@@ -191,7 +191,7 @@ class Color_Picker{
             this.header_text.innerHTML = "Color Picker (Foreground)"
             this.primary_color = this.current_rgba;
         } else {
-            if(origin != "switch-colors"){
+            if(this.selected_color == "secondary"){
                 this.header_text.innerHTML = "Color Picker (Background)"
                 this.secondary_color = this.current_rgba;
             }
