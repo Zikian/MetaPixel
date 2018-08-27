@@ -54,11 +54,10 @@ class Draw_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        if(state.current_selection.contains_mouse()){
-            state.main_canvas.draw_pixel(state.color_picker.current_color, state.mouse_indicator.offsetLeft, state.mouse_indicator.offsetTop);
-            state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color = state.color_picker.current_color;
-            state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba = state.color_picker.current_rgba;
-        }
+        if(!state.current_selection.contains_mouse()){ return; }
+        state.main_canvas.draw_pixel(state.color_picker.current_color, state.mouse_indicator.offsetLeft, state.mouse_indicator.offsetTop);
+        state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color = state.color_picker.current_color;
+        state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba = state.color_picker.current_rgba;
     }
 
     mousemove_actions(){
@@ -108,13 +107,13 @@ class Line_Tool extends Tool{
     constructor(id){ super(id); }
     
     mousemove_actions(){
-        state.preview_canvas.clear();
+        state.main_canvas.clear_preview();
         state.line_end = state.pixel_pos;
-        state.preview_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1])
+        state.main_canvas.preview_line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
     }
 
     mouseup_actions(){
-        state.preview_canvas.clear();
+        state.main_canvas.clear_preview();
         state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
     }
 }
@@ -140,7 +139,9 @@ class Selection_Tool extends Tool{
         if(state.current_selection.forming){
             state.selection_end = state.pixel_pos;
             state.current_selection.draw();
-            handle_selection_size();
+            var w = calc_distance(state.mouse_start[0], state.selection_end[0]);
+            var h = calc_distance(state.mouse_start[1], state.selection_end[1]);
+            update_rect_size_preview(w, h)
         } 
         if (state.current_selection.exists && state.current_selection.contains_mouse() && !state.current_selection.forming || state.current_selection.being_dragged){
             state.current_selection.being_dragged = true;
@@ -188,19 +189,23 @@ class Rectangle_Tool extends Tool{
 
     mousedown_actions(){
         state.rectangle_end = state.mouse_start;
-        handle_selection_size();
+        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        update_rect_size_preview(w, h);
     }
     
     mousemove_actions(){
-        state.preview_canvas.clear();
+        state.main_canvas.clear_preview();
         state.rectangle_end = state.pixel_pos;
-        state.preview_canvas.draw_rectangle(...state.mouse_start, ...state.rectangle_end);
-        handle_selection_size();
+        state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        update_rect_size_preview(w, h);
     }
     
     mouseup_actions(){
-        state.preview_canvas.clear();
-        state.main_canvas.draw_rectangle(...state.mouse_start, ...state.rectangle_end);
+        state.main_canvas.clear_preview();
+        state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
         state.selection_size_element.style.display = "none";
     }
 }
@@ -215,7 +220,8 @@ class Hand_Tool extends Tool{
     
     mousemove_actions(){
         drag_element(state.canvas_wrapper, state.delta_mouse);
-        state.current_selection.move(state.delta_mouse);
+        console.log(state.delta_mouse)
+        state.current_selection.move(state.delta_mouse[0], state.delta_mouse[1]);
     }
 
     on_exit(){

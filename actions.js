@@ -1,8 +1,7 @@
 function setup(){
     state.main_canvas.clear();
-    state.preview_canvas = new Canvas(preview_canvas, state.main_canvas.w, state.main_canvas.h)
-    update_mouse_indicator();
-    update_canvas_wrapper();
+    resize_mouse_indicator();
+    resize_canvas_wrapper();
     state.canvas_wrapper.style.left = (state.canvas_area.offsetWidth - state.canvas_wrapper.clientWidth)/2 + "px";
     state.canvas_wrapper.style.top = (state.canvas_area.offsetHeight - state.canvas_wrapper.clientHeight)/2 + "px";
     if (!state.transparency){
@@ -28,7 +27,9 @@ window.addEventListener('mouseup', function(e) {
 window.addEventListener('mousedown', function(e) {
     e.stopPropagation();
     state.mouse_start = state.pixel_pos;
-    state.tool_handler.current_tool.mousedown_actions();
+    if(state.active_element == state.canvas_area){
+        state.tool_handler.current_tool.mousedown_actions();
+    }
 }, false);
 
 window.addEventListener("mousemove", function(e){
@@ -105,17 +106,9 @@ document.addEventListener("keydown", function(event){
             break;
         case 187: // +
             state.main_canvas.zoom("in");
-            state.preview_canvas.zoom("in");
-            state.current_selection.resize();
-            update_mouse_indicator();
-            update_canvas_wrapper();
             break;
         case 189: // -
             state.main_canvas.zoom("out");
-            state.preview_canvas.zoom("out");
-            state.current_selection.resize();
-            update_mouse_indicator();
-            update_canvas_wrapper();
             break;
         case 16:
             state.tool_handler.change_tool("line");
@@ -146,15 +139,9 @@ document.addEventListener("keyup", function(event){
 state.canvas_area.addEventListener("wheel", function(e){
     if (e.deltaY > 0){
         state.main_canvas.zoom("in");
-        state.preview_canvas.zoom("in");
-        state.current_selection.resize();
     } else {
         state.main_canvas.zoom("out")
-        state.preview_canvas.zoom("out")
-        state.current_selection.resize();
     }
-    update_mouse_indicator();
-    update_canvas_wrapper();
 })
 
 state.canvas_area.onmousedown = function(){

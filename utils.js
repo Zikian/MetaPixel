@@ -6,12 +6,12 @@ function pauseEvent(e){
     return false;
 }
 
-function update_mouse_indicator(){
+function resize_mouse_indicator(){
     state.mouse_indicator.style.width = state.main_canvas.current_zoom + "px";
     state.mouse_indicator.style.height = state.main_canvas.current_zoom + "px";
 }
 
-function update_canvas_wrapper(){
+function resize_canvas_wrapper(){
     state.canvas_wrapper.style.width = state.main_canvas.canvas.width + "px";
     state.canvas_wrapper.style.height = state.main_canvas.canvas.height + "px";
 }
@@ -23,6 +23,8 @@ function clamp(x, a, b) {
 function canvas_mouse_pos(){
     return [state.abs_mouse_pos[0] - state.canvas_wrapper.getBoundingClientRect().x, state.abs_mouse_pos[1] - state.canvas_wrapper.getBoundingClientRect().y];
 }
+
+// function(){}
 
 function pixel_pos(){
     x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.current_zoom));
@@ -42,11 +44,11 @@ function download_img(img){
     }
 }
 
-function handle_selection_size(){
+function update_rect_size_preview(w, h){
     state.selection_size_element.style.display = "block";
     state.selection_size_element.style.left = state.abs_mouse_pos[0] - state.selection_size_element.clientWidth / 2 + "px";
     state.selection_size_element.style.top = state.abs_mouse_pos[1] + 20 + "px";
-    document.getElementById("size-span").innerHTML = "W:" + state.current_selection.w + ", H:" + state.current_selection.h;
+    document.getElementById("size-span").innerHTML = "W:" + w + ", H:" + h;
 }
 
 function get_file_name(){
@@ -81,38 +83,12 @@ function is_hex(evt){
     return true;
 }
 
-function selection_from_rectangle(x1, y1, x2, y2){
-    var pixel_size = state.main_canvas.current_zoom;
-    x1 *= pixel_size;
-    y1 *= pixel_size;
-    x2 *= pixel_size;
-    y2 *= pixel_size;
-
-
-    if (x1 == x2 && y1 == y2){ 
-        calculate_size(x1, y1, x1 + pixel_size, y1 + pixel_size); 
+function calc_distance(x1, x2){
+    if(x1 < x2){
+        return x2 - x1 + 1
+    } else if (x2 < x1){
+        return x1 - x2 + 1
+    } else {
+        return 1
     }
-    else if (x1 < x2 && y1 == y2){
-        calculate_size(x1, y1, x2 + pixel_size, y1 + pixel_size);
-    }
-    else if (x1 <= x2 && y1 < y2){
-        calculate_size(x1, y1, x2 + pixel_size, y2 + pixel_size);
-    }
-    else if (x2 < x1 && y2 > y1){
-        calculate_size(x2, y1, x1 + pixel_size, y2 + pixel_size);
-    }
-    else if (x2 < x1 && y2 == y1){
-        calculate_size(x2, y2, x1 + pixel_size, y2 + pixel_size);
-    }
-    else if (x2 <= x1 && y2 < y1){
-        calculate_size(x2, y2, x1 + pixel_size, y1 + pixel_size);
-    }
-    else if (y2 < y1 && x1 < x2){
-        calculate_size(x1, y2, x2 + pixel_size, y1 + pixel_size);
-    }
-}
-
-function calculate_size(x1, y1, x2, y2){
-    var w = Math.abs(x2 - x1)/state.main_canvas.current_zoom;
-    var h = Math.abs(y2 - y1)/state.main_canvas.current_zoom;
 }

@@ -1,7 +1,6 @@
 var canvas_area = document.getElementById("canvas-area");
 var canvas_wrapper = document.getElementById("canvas-wrapper");
 var canvas = document.getElementById("main-canvas");
-var preview_canvas = document.getElementById("preview-canvas");
 
 var mouse_up_functions = [];
 var mouse_move_functions = [];
@@ -23,7 +22,6 @@ var state = {
     color_picker: new Color_Picker(),
     new_document_panel: new New_Document_Panel(),
     main_canvas: new Canvas(canvas,  40, 40),
-    preview_canvas: null,
     selection_canvas: null,
     tool_handler: new State_Machine("drawtool"),
     current_selection: null,
@@ -55,3 +53,5 @@ for(i = 0; i < state.tools.length; i++){
         state.tool_handler.change_tool(this.id);
     }
 }
+
+
