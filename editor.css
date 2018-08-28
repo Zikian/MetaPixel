@@ -1,6 +1,6 @@
 .editor{
     display: grid;
-    grid-template-columns: 100px 1fr 200px;
+    grid-template-columns: 100px 1fr 300px;
     grid-row: 2;
 }
 
@@ -19,7 +19,7 @@
     height: 100%;
     background-color: rgb(26, 27, 32);
     overflow: hidden;
-    z-index: 0;
+    z-index: 1;
 }
 
 #canvas-area #canvas-wrapper{
@@ -41,7 +41,7 @@
     image-rendering: pixelated;
 }
     
-#canvas-area #canvas-wrapper #preview-canvas{
+#canvas-area #canvas-wrapper #draw-preview-canvas{
     position: absolute;
     top: 0;
     left: 0;

@@ -3,6 +3,8 @@
     grid-template-columns: 100px 100px 100px;
     grid-column: 1;
     grid-row: 1;
+    background-color: rgb(59, 59, 65);
+    z-index: 10;
 }
 
 #file{
@@ -43,12 +45,12 @@
 
 #dropdown{
     display: none;
-    position: relative;
+    position: absolute;
     width: 250px;
     height: auto;
     background-color: rgb(59, 59, 65);
     border-radius: 0 5px 5px 5px;
-    z-index: 200;
+    top: 30px;
 }
 
 #dropdown ul{

@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="color_picker/color_picker.css">
         <link rel="stylesheet" href="widgets.css">
         <link rel="stylesheet" href="toolbox.css">
+        <link rel="stylesheet" href="layers-column.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
     <body>
@@ -166,7 +167,7 @@
                 <canvas id="selection-right" class="selection-canvas" width="1"></canvas>
 
                 <div id="canvas-wrapper">
-                    <canvas id="preview-canvas"></canvas>
+                    <canvas id="draw-preview-canvas"></canvas>
                     <canvas id="main-canvas"></canvas>
                     <div id="mouse-indicator"></div>
                 </div>
@@ -201,6 +202,52 @@
                     <div id="buttons">
                         <button id="color-picker-ok">OK</button>
                         <button id="color-picker-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="layers-column">
+                <div id="drawing-preview">
+                    <div id="header">
+                        <div id="current-preview-zoom">
+                            <span id="preview-zoom-span">(1x)</span>
+                        </div>
+                        <span>Preview</span>
+                        <div id="preview-zoom-buttons">
+                            <div id="preview-zoom-in">
+                                <i class="fas fa-search-plus"></i>
+                            </div>
+                            <div id="preview-zoom-out">
+                                <i class="fas fa-search-minus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="preview-canvas-area">
+                        <canvas id="preview-canvas"></canvas>
+                    </div>
+                </div>
+
+                <div id="layers">
+                    <div id="header">
+                        <span>Layers</span>
+                        <div id="add-layer">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div id="delete-layer">
+                            <i class="far fa-trash-alt"></i>
+                        </div>
+                    </div>
+                    <div id="layers-area">
+                    </div>
+                    <div id="layer-settings">
+                        <div id="layer-settings-header"><span>Layer Settings</span></div>
+                        <div id="settings">
+                            <input type="text" id="layer-name-setting">
+                            <div id="opacity-setting">
+                                <span>Opacity:</span>
+                            </div>
+                        </div>
+                        <div id="layer-settings-footer"></div>
                     </div>
                 </div>
             </div>

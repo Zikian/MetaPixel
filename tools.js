@@ -74,6 +74,7 @@ class Draw_Tool extends Tool{
     mouseup_actions(){
         state.history_manager.add_history("pen-stroke")
         state.main_canvas.draw_buffer = [];
+        state.preview_canvas.redraw();
     }
 }
 
@@ -101,6 +102,7 @@ class Eraser_Tool extends Tool{
     mouseup_actions(){
         state.history_manager.add_history("erase");
         state.main_canvas.draw_buffer = [];
+        state.preview_canvas.redraw();
     }
 
     on_exit(){
@@ -179,6 +181,7 @@ class Fill_Tool extends Tool{
         state.main_canvas.fill(state.pixel_pos[0], state.pixel_pos[1], state.color_picker.current_rgba, state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba);
         state.main_canvas.draw_data();
         state.history_manager.add_history("fill");
+        state.preview_canvas.redraw();
     }
 }
 
@@ -218,6 +221,7 @@ class Rectangle_Tool extends Tool{
         state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("rectangle");
+        state.preview_canvas.redraw();
     }
 }
 

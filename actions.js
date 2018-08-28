@@ -13,6 +13,7 @@ function setup(){
     state.tool_handler.change_tool("drawtool");
     state.color_picker.update_color();
     state.current_selection = new Selection();
+    state.preview_canvas = new Preview_Canvas()
 }
 setup();
 
@@ -208,4 +209,12 @@ state.undo.onclick = function(){
 
 state.redo.onclick = function(){
     state.history_manager.redo_last();
+}
+
+document.getElementById("add-layer").onclick = function(){
+    state.main_canvas.add_layer();
+}
+
+document.getElementById("delete-layer").onclick = function(){
+    state.main_canvas.delete_layer();
 }

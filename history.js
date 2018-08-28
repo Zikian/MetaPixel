@@ -30,12 +30,14 @@ class History_Manager{
         this.history[this.history.length - 1].undo();
         this.redo_history.push(this.history.pop());
         this.prev_data = []
+        state.preview_canvas.redraw();
     }
 
     redo_last(){
         if(this.redo_history.length == 0) { return; }
         this.redo_history[this.redo_history.length - 1].redo();
         this.history.push(this.redo_history.pop());
+        state.preview_canvas.redraw();
     }
 
     push_prev_data(data){
