@@ -157,8 +157,8 @@ class Color_Picker{
                 break;
             case "eyedropper":
                 if(!state.main_canvas.contains_mouse()){ return; }
-                this.current_color = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].color;
-                this.current_rgba = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba
+                var color = state.eyedropper_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data
+                this.current_rgba = Array.prototype.slice.call(color);
                 this.update_from_rgba(this.current_rgba);
                 break;
             case "switch-colors":

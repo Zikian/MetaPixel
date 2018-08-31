@@ -56,9 +56,8 @@ class Draw_Tool extends Tool{
     mousedown_actions(){
         if(!state.current_selection.contains_mouse()){ return; }
         state.main_canvas.draw_pixel(state.color_picker.current_color, ...state.pixel_pos);
-        var data = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]]
+        var data = state.main_canvas.get_data(...state.pixel_pos);
         state.history_manager.push_prev_data(data);
-        data.color = state.color_picker.current_color;
         data.rgba = state.color_picker.current_rgba; 
         state.history_manager.push_new_data(data);  
     }
@@ -178,7 +177,7 @@ class Fill_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.main_canvas.fill(state.pixel_pos[0], state.pixel_pos[1], state.color_picker.current_rgba, state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba);
+        state.main_canvas.fill(...state.pixel_pos, state.color_picker.current_rgba, state.main_canvas.get_data(...state.pixel_pos).rgba);
         state.history_manager.add_history("fill");
         state.preview_canvas.redraw();
     }
@@ -188,11 +187,18 @@ class Eyedropper_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
+        for(var i = state.main_canvas.layers.length - 1; i >= 0; i--){
+            state.eyedropper_ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0)
+        }
         state.color_picker.update_color("eyedropper");
     }
     
     mousemove_actions(){
         state.color_picker.update_color("eyedropper");
+    }
+
+    mouseup_actions(){
+        state.eyedropper_ctx.clearRect(0, 0, state.main_canvas.w, state.main_canvas.h);
     }
 }
 

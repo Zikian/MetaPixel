@@ -13,7 +13,7 @@ class History_Manager{
         this.redo_history = []
         if(type == "pen-stroke" || type == "erase" || type == "line" || type == "rectangle" || type == "fill" || type == "clear-selection"){
             if (this.prev_data.length != 0){
-                this.history.push(new Pen_Stroke(this.prev_data, this.new_data));
+                this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.main_canvas.current_layer.index));
                 this.prev_data = [];
                 this.new_data = [];
             }
@@ -50,26 +50,27 @@ class History_Manager{
 }
 
 class Pen_Stroke{
-    constructor(prev_data, new_data){
+    constructor(prev_data, new_data, layer){
         this.prev_data = prev_data;
         this.new_data = new_data;
+        this.layer = layer;
     }
 
     undo(){
         for(var i = 0; i < this.prev_data.length; i++){
             var pos = this.prev_data[i].pos;
-            var color = this.prev_data[i].color;
-            state.main_canvas.draw_pixel(color, ...pos);
-            state.main_canvas.data[pos[0]][pos[1]] = this.prev_data[i];
+            state.main_canvas.layers[this.layer].draw_pixel(rgba(this.prev_data[i].rgba), ...pos);
+            var data = state.main_canvas.layers[this.layer].data[pos[0]][pos[1]]
+            data = this.prev_data[i];
         }
     }
 
     redo(){
         for(var i = 0; i < this.new_data.length; i++){
             var pos = this.new_data[i].pos;
-            var color = this.new_data[i].color;
-            state.main_canvas.draw_pixel(color, pos[0], pos[1]);
-            state.main_canvas.data[pos[0]][pos[1]] = get_data_copy(this.new_data[i]);
+            state.main_canvas.layers[this.layer].draw_pixel(rgba(this.new_data[i].rgba), ...pos);
+            var data = state.main_canvas.layers[this.layer].data[pos[0]][pos[1]]
+            data = get_data_copy(this.new_data[i]);
         }
     }
 }
@@ -77,7 +78,6 @@ class Pen_Stroke{
 function get_data_copy(data){
     var copy = new Pixel_Data();
     copy.pos = data.pos;
-    copy.color = data.color;
     copy.rgba = data.rgba
     return copy;
 }
@@ -122,5 +122,17 @@ class Selection_History{
                                                this.new_selection.y - state.canvas_wrapper.offsetTop, 
                                                this.new_selection.x + this.new_selection.true_w - state.canvas_wrapper.offsetLeft, 
                                                this.new_selection.y + this.new_selection.true_h - state.canvas_wrapper.offsetTop)
+    }
+}
+
+class Layer_Change{
+    constructor(origin,){
+        this.origin = origin;
+    }
+
+
+    undo(){
+        if (this.origin == "add-layer"){
+        }
     }
 }

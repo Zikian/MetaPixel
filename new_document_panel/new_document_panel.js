@@ -73,11 +73,8 @@ class New_Document_Panel{
             if (owner.height_input.value == 0){
                 owner.height_input.value = 1;
             }
-
-            state.document_name = owner.name_input.value;
-            state.transparency = owner.transparency_input.checked;
-            state.main_canvas = new Canvas(canvas, owner.width_input.value, owner.height_input.value);
-            setup();
+            state.main_canvas.clear();
+            init(owner.width_input.value, owner.height_input.value, owner.transparency_input.checked, owner.name_input.value);
             
             owner.panel.style.display = "none";
         }

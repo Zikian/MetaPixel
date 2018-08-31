@@ -22,7 +22,13 @@
     z-index: 1;
 }
 
-.render-canvas{
+.layer-canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.render-canvas, #eyedropper-canvas{
     display: none;
     position: absolute;
     top: 0;
@@ -31,8 +37,6 @@
 
 #canvas-area #canvas-wrapper{
     position: absolute;
-    /* background-image: url(images/checkers.gif);
-    background-repeat: repeat; */
 
     background: repeating-linear-gradient(
     135deg,
@@ -43,8 +47,11 @@
     );
 }
 
-#canvas-area #canvas-wrapper #main-canvas{
-    position: relative;
+#save-canvas{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
 }
 
 #canvas-area #render-canvas{

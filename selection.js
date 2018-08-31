@@ -4,8 +4,8 @@ class Selection{
         this.y = state.canvas_wrapper.offsetTop;
         this.w = state.main_canvas.w;
         this.h = state.main_canvas.h;
-        this.true_w = state.main_canvas.canvas.width;
-        this.true_h = state.main_canvas.canvas.height;
+        this.true_w = this.w * state.zoom;
+        this.true_h = this.h * state.zoom;
 
         // If a selection exists, this is true
         this.exists = false;
@@ -41,7 +41,7 @@ class Selection{
     }
 
     draw(){
-        var pixel_size = state.main_canvas.current_zoom;
+        var pixel_size = state.zoom;
 
         var x1 = state.mouse_start[0] * pixel_size;
         var y1 = state.mouse_start[1] * pixel_size;
@@ -105,8 +105,8 @@ class Selection{
 
         this.x = x1;
         this.y = y1;
-        this.w = w/state.main_canvas.prev_zoom;
-        this.h = h/state.main_canvas.prev_zoom;
+        this.w = w/state.prev_zoom;
+        this.h = h/state.prev_zoom;
         this.true_w = w;
         this.true_h = h;
         this.exists = true;
@@ -127,10 +127,10 @@ class Selection{
     }
 
     clear(){
-        this.top_ctx.clearRect(0, 0, this.w * state.main_canvas.current_zoom, 1);
-        this.left_ctx.clearRect(0, 0, 1, this.h * state.main_canvas.current_zoom);
-        this.bottom_ctx.clearRect(0, 0, this.w * state.main_canvas.current_zoom, 1);
-        this.right_ctx.clearRect(0, 0, 1, this.h * state.main_canvas.current_zoom);
+        this.top_ctx.clearRect(0, 0, this.w * state.zoom, 1);
+        this.left_ctx.clearRect(0, 0, 1, this.h * state.zoom);
+        this.bottom_ctx.clearRect(0, 0, this.w * state.zoom, 1);
+        this.right_ctx.clearRect(0, 0, 1, this.h * state.zoom);
         this.exists = false;
         this.wrap_around_canvas();
     }
@@ -140,8 +140,8 @@ class Selection{
         this.y = state.canvas_wrapper.offsetTop;
         this.w = state.main_canvas.w
         this.h = state.main_canvas.h
-        this.true_w = state.main_canvas.canvas.width;
-        this.true_h = state.main_canvas.canvas.height;
+        this.true_w = this.w * state.zoom;
+        this.true_h = this.w * state.zoom;
     }
 
     contains_mouse(){
@@ -154,8 +154,8 @@ class Selection{
     }
 
     contains_pixel_pos(x, y){
-        x *= state.main_canvas.current_zoom;
-        y *= state.main_canvas.current_zoom;
+        x *= state.zoom;
+        y *= state.zoom;
         var pos_x = this.x - state.canvas_wrapper.offsetLeft;
         var pos_y = this.y - state.canvas_wrapper.offsetTop;
         return (x >= pos_x && y >= pos_y && x < pos_x + this.true_w && y < pos_y + this.true_h)
@@ -171,8 +171,8 @@ class Selection{
 
     drag(){
         if (!this.exists) { return; }
-        this.x += state.delta_pixel_pos[0] * state.main_canvas.current_zoom;
-        this.y += state.delta_pixel_pos[1] * state.main_canvas.current_zoom;
+        this.x += state.delta_pixel_pos[0] * state.zoom;
+        this.y += state.delta_pixel_pos[1] * state.zoom;
         this.draw_selection(this.x - state.canvas_wrapper.offsetLeft, this.y - state.canvas_wrapper.offsetTop, this.x + this.true_w - state.canvas_wrapper.offsetLeft, this.y + this.true_h - state.canvas_wrapper.offsetTop);
     }
 
@@ -182,16 +182,16 @@ class Selection{
             return;
         }
 
-        var old_zoom = state.main_canvas.prev_zoom;
-        var old_pixel_x = (this.x - state.canvas_wrapper.offsetLeft)/state.main_canvas.prev_zoom;
-        var old_pixel_y = (this.y - state.canvas_wrapper.offsetTop)/state.main_canvas.prev_zoom;
-        var new_zoom = state.main_canvas.current_zoom;
+        var old_zoom = state.prev_zoom;
+        var old_pixel_x = (this.x - state.canvas_wrapper.offsetLeft)/state.prev_zoom;
+        var old_pixel_y = (this.y - state.canvas_wrapper.offsetTop)/state.prev_zoom;
+        var new_zoom = state.zoom;
 
         var delta_x = old_pixel_x * new_zoom - old_pixel_x * old_zoom;
         var delta_y = old_pixel_y * new_zoom - old_pixel_y * old_zoom;
 
-        var new_x = this.x + delta_x - canvas_wrapper.offsetLeft;
-        var new_y = this.y + delta_y - canvas_wrapper.offsetTop;
+        var new_x = this.x + delta_x - state.canvas_wrapper.offsetLeft;
+        var new_y = this.y + delta_y - state.canvas_wrapper.offsetTop;
 
         var new_w = this.w * new_zoom;
         var new_h = this.h * new_zoom;

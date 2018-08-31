@@ -1,22 +1,3 @@
-function setup(){
-    state.main_canvas.clear();
-    resize_mouse_indicator();
-    resize_canvas_wrapper();
-    state.canvas_wrapper.style.left = (state.canvas_area.offsetWidth - state.canvas_wrapper.clientWidth)/2 + "px";
-    state.canvas_wrapper.style.top = (state.canvas_area.offsetHeight - state.canvas_wrapper.clientHeight)/2 + "px";
-    if (!state.transparency){
-        state.main_canvas.ctx.beginPath();
-        state.main_canvas.ctx.rect(0, 0, state.main_canvas.canvas.width, state.main_canvas.canvas.height);
-        state.main_canvas.ctx.fillStyle = "white";
-        state.main_canvas.ctx.fill();
-    }
-    state.tool_handler.change_tool("drawtool");
-    state.color_picker.update_color();
-    state.current_selection = new Selection();
-    state.preview_canvas = new Preview_Canvas()
-}
-setup();
-
 window.addEventListener('mouseup', function(e) {
     mouse_up_functions.forEach(function(element){
         element();
@@ -42,13 +23,13 @@ window.addEventListener("mousemove", function(e){
     state.abs_mouse_pos = [e.pageX, e.pageY];
     state.delta_mouse = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
     
-    var prev_pixel_pos = state.pixel_pos
+    prev_pixel_pos = state.pixel_pos;
     state.pixel_pos = pixel_pos();
     state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
 
     if (state.main_canvas.contains_mouse()){
-        state.mouse_indicator.style.left = state.pixel_pos[0] * state.main_canvas.current_zoom + "px";
-        state.mouse_indicator.style.top = state.pixel_pos[1] * state.main_canvas.current_zoom + "px";
+        state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
+        state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
     }
 
     switch(state.active_element){
@@ -216,7 +197,7 @@ document.getElementById("add-layer").onclick = function(){
 }
 
 document.getElementById("delete-layer").onclick = function(){
-    state.main_canvas.delete_layer();
+    state.main_canvas.delete_layer(state.main_canvas.current_layer.index);
 }
 
 document.getElementById("move-layer-up").onclick = function(){

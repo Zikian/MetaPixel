@@ -6,19 +6,19 @@ Array.prototype.swapItems = function(a, b){
 function pauseEvent(e){
     if(e.stopPropagation) e.stopPropagation();
     if(e.preventDefault) e.preventDefault();
-    e.cancelBubble=true;
-    e.returnValue=false;
+    e.cancelBubble = true;
+    e.returnValue = false;
     return false;
 }
 
 function resize_mouse_indicator(){
-    state.mouse_indicator.style.width = state.main_canvas.current_zoom + "px";
-    state.mouse_indicator.style.height = state.main_canvas.current_zoom + "px";
+    state.mouse_indicator.style.width = state.zoom + "px";
+    state.mouse_indicator.style.height = state.zoom + "px";
 }
 
 function resize_canvas_wrapper(){
-    state.canvas_wrapper.style.width = state.main_canvas.canvas.width + "px";
-    state.canvas_wrapper.style.height = state.main_canvas.canvas.height + "px";
+    state.canvas_wrapper.style.width = state.main_canvas.w * state.zoom + "px";
+    state.canvas_wrapper.style.height = state.main_canvas.h * state.zoom + "px";
 }
 
 function clamp(x, a, b) {
@@ -30,8 +30,8 @@ function canvas_mouse_pos(){
 }
 
 function pixel_pos(){
-    x = Math.floor(canvas_mouse_pos()[0] / (state.main_canvas.current_zoom));
-    y = Math.floor(canvas_mouse_pos()[1] / (state.main_canvas.current_zoom));
+    x = Math.floor(canvas_mouse_pos()[0] / (state.zoom));
+    y = Math.floor(canvas_mouse_pos()[1] / (state.zoom));
     return [x, y];
 }
 
