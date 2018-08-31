@@ -55,7 +55,7 @@ class Draw_Tool extends Tool{
 
     mousedown_actions(){
         if(!state.current_selection.contains_mouse()){ return; }
-        state.main_canvas.draw_pixel(state.color_picker.current_color, state.mouse_indicator.offsetLeft, state.mouse_indicator.offsetTop);
+        state.main_canvas.draw_pixel(state.color_picker.current_color, ...state.pixel_pos);
         var data = state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]]
         state.history_manager.push_prev_data(data);
         data.color = state.color_picker.current_color;
@@ -179,7 +179,6 @@ class Fill_Tool extends Tool{
 
     mousedown_actions(){
         state.main_canvas.fill(state.pixel_pos[0], state.pixel_pos[1], state.color_picker.current_rgba, state.main_canvas.data[state.pixel_pos[0]][state.pixel_pos[1]].rgba);
-        state.main_canvas.draw_data();
         state.history_manager.add_history("fill");
         state.preview_canvas.redraw();
     }

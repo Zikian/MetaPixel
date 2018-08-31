@@ -59,7 +59,7 @@ class Pen_Stroke{
         for(var i = 0; i < this.prev_data.length; i++){
             var pos = this.prev_data[i].pos;
             var color = this.prev_data[i].color;
-            state.main_canvas.draw_pixel(color, pos[0] * state.main_canvas.current_zoom, pos[1] * state.main_canvas.current_zoom);
+            state.main_canvas.draw_pixel(color, ...pos);
             state.main_canvas.data[pos[0]][pos[1]] = this.prev_data[i];
         }
     }
@@ -68,7 +68,7 @@ class Pen_Stroke{
         for(var i = 0; i < this.new_data.length; i++){
             var pos = this.new_data[i].pos;
             var color = this.new_data[i].color;
-            state.main_canvas.draw_pixel(color, pos[0] * state.main_canvas.current_zoom, pos[1] * state.main_canvas.current_zoom);
+            state.main_canvas.draw_pixel(color, pos[0], pos[1]);
             state.main_canvas.data[pos[0]][pos[1]] = get_data_copy(this.new_data[i]);
         }
     }

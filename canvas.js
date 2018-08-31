@@ -2,11 +2,15 @@ class Canvas{
     constructor(canvas, w, h){
         this.canvas = canvas;
         this.ctx = this.canvas.getContext("2d");
-        this.draw_preview_canvas = document.getElementById("draw-preview-canvas")
-        this.draw_preview_ctx = this.draw_preview_canvas.getContext("2d")
+        this.draw_preview_canvas = document.getElementById("draw-preview-canvas");
+        this.draw_preview_ctx = this.draw_preview_canvas.getContext("2d");
         this.data = [];
         this.w = w;
         this.h = h;
+
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.imageSmoothingEnabled = false;
         
         this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 90, 128]
         this.current_zoom = 8;
@@ -23,13 +27,13 @@ class Canvas{
         this.draw_preview_canvas.height = this.canvas.height;
 
         this.layers = [];
-        this.layers.push(new Layer(0));
+        this.layers.push(new Layer(0, this.w, this.h));
         this.current_layer = this.layers[0]
         this.current_layer.set_active();
     }
 
     add_layer(){
-        this.layers.splice(this.current_layer.index, 0, new Layer(this.layers.length));
+        this.layers.splice(this.current_layer.index, 0, new Layer(this.layers.length, this.w, this.h));
         this.update_layer_indices()
     }
 
@@ -37,10 +41,13 @@ class Canvas{
         if (this.layers.length == 1) { return; }
         this.current_layer.delete();
         this.layers.splice(this.current_layer.index, 1);
-        console.log(this.layers)
         this.current_layer = this.layers[0];
         this.current_layer.set_active();
         this.update_layer_indices();
+        this.clear();
+        this.redraw();
+        state.preview_canvas.clear();
+        state.preview_canvas.redraw();
     }
 
     update_layer_indices(){
@@ -54,6 +61,26 @@ class Canvas{
         this.current_layer.set_inactive();
         this.current_layer = this.layers[index]
         this.current_layer.set_active();
+    }
+
+    move_layer(direction){
+        if(direction == "up"){
+            if(this.current_layer.index >= 1){
+                var index = this.current_layer.index;
+                this.layers = this.layers.swapItems(index, index - 1);
+                this.update_layer_indices();
+            }
+        } else {
+            if(this.current_layer.index < this.layers.length - 1){
+                var index = this.current_layer.index;
+                this.layers = this.layers.swapItems(index, index + 1);
+                this.update_layer_indices();
+            }
+        }
+        this.clear();
+        this.redraw();
+        state.preview_canvas.clear();
+        state.preview_canvas.redraw();
     }
 
     zoom(direction){
@@ -77,15 +104,17 @@ class Canvas{
 
         drag_element(state.canvas_wrapper, [delta_x, delta_y]);
         
-        this.draw_data();
+        this.redraw();
         
-        this.resize_preview();
-        state.current_selection.move(delta_x, delta_y)
-        state.current_selection.resize();
+        this.draw_preview_canvas.width = this.canvas.width;
+        this.draw_preview_canvas.height = this.canvas.height;
         resize_mouse_indicator();
         resize_canvas_wrapper();
         state.mouse_indicator.style.left = state.pixel_pos[0] * this.current_zoom + "px";
         state.mouse_indicator.style.top = state.pixel_pos[1] * this.current_zoom + "px";
+
+        state.current_selection.move(delta_x, delta_y)
+        state.current_selection.resize();
     }
 
     init_data(){
@@ -106,6 +135,7 @@ class Canvas{
             state.history_manager.push_prev_data(node);
             node.rgba = new_color;
             node.color = rgba(new_color);
+            this.draw_pixel(node.color, x, y);
 
             if(y < this.h - 1){ this.fill(x, y + 1, new_color, old_color); }
             if(y > 0){ this.fill(x, y - 1, new_color, old_color); }
@@ -114,18 +144,13 @@ class Canvas{
         }
     }
 
-    draw_data(){
-        this.ctx.beginPath();
-        for(var x = 0; x < this.w; x++){
-            for(var y = 0; y < this.h; y++){
-                var data = this.data[x][y]
-                if(data.color == "hsla(0, 100%, 100%, 0)"){
-                    this.ctx.clearRect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
-                    return;
-                }
-                this.ctx.rect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
-                this.ctx.fillStyle = data.color;
-                this.ctx.fill();
+    redraw(){
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.imageSmoothingEnabled = false;
+        for(var i = this.layers.length - 1; i >= 0; i--){
+            if (this.layers[i].visible){
+                this.ctx.drawImage(this.layers[i].render_canvas, 0, 0, this.w * this.current_zoom, this.h * this.current_zoom);
             }
         }
     }
@@ -155,28 +180,31 @@ class Canvas{
 
     draw_pixel(color, x, y){
         if(color == "hsla(0, 100%, 100%, 0)"){
-            this.erase_pixel(x / state.main_canvas.current_zoom, y / state.main_canvas.current_zoom);
+            this.erase_pixel(x, y);
             return;
         }
+
         this.ctx.beginPath();
-        this.ctx.rect(x, y, this.current_zoom, this.current_zoom);
+        this.ctx.rect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
         this.ctx.fillStyle = color;
         this.ctx.fill();
+
+        this.current_layer.ctx.beginPath();
+        this.current_layer.ctx.rect(x, y, 1, 1);
+        this.current_layer.ctx.fillStyle = color;
+        this.current_layer.ctx.fill();
     }
 
     erase_pixel(x, y){
         var data = this.data[x][y];
         if (data.color == "hsla(0, 100%, 100%, 0)" || data.color == "hsla(0, 100%, 100%, 1)"){ return; }
         state.history_manager.push_prev_data(data);
-        if(state.transparency){
-            this.ctx.clearRect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
-            data.color = "hsla(0, 100%, 100%, 0)"
-            data.rgba = [255, 255, 255, 0];
-        } else {
-            this.draw_pixel("rgb(255, 255, 255)", x * this.current_zoom, y * this.current_zoom);
-            data.color = "hsla(0, 100%, 100%, 1)"
-            data.rgba = [255, 255, 255, 1];
-        }
+
+        this.ctx.clearRect(x * this.current_zoom, y * this.current_zoom, this.current_zoom, this.current_zoom);
+        this.current_layer.ctx.clearRect(x, y, 1, 1)
+        data.color = "hsla(0, 100%, 100%, 0)"
+        data.rgba = [255, 255, 255, 0];
+
         state.history_manager.push_new_data(data);
     }
 
@@ -193,7 +221,7 @@ class Canvas{
                 if(erase){
                     this.erase_pixel(x0, y0);
                 } else {
-                    this.draw_pixel(state.color_picker.current_color, x0 * this.current_zoom, y0 * this.current_zoom);
+                    this.draw_pixel(state.color_picker.current_color, x0, y0);
                     var data = this.data[x0][y0]
                     if (data.color != state.color_picker.current_color){
                         state.history_manager.push_prev_data(data);
@@ -258,11 +286,6 @@ class Canvas{
         this.canvas.height = h;
     }
 
-    resize_preview(){
-        this.draw_preview_canvas.width = this.canvas.width;
-        this.draw_preview_canvas.height = this.canvas.height;
-    }
-
     clear_selection(){
         if (!state.current_selection.exists) { return; }
         var x = state.current_selection.x - state.canvas_wrapper.offsetLeft;
@@ -279,6 +302,7 @@ class Canvas{
     }
 
     clear_rect(x1, y1, w, h){
+        this.render_ctx.clearRect(x1 / this.current_zoom, y1 / this.current_zoom, w, h);
         this.ctx.clearRect(x1, y1, w, h);
         w /= state.main_canvas.current_zoom;
         h /= state.main_canvas.current_zoom;
@@ -312,9 +336,6 @@ class Preview_Canvas{
 
         this.canvas.width = state.main_canvas.w;
         this.canvas.height = state.main_canvas.h;
-
-        this.w = state.main_canvas.w;
-        this.h = state.main_canvas.h;
         
         this.canvas.style.left = (300 - this.canvas.width) / 2 + "px"
         this.canvas.style.top = (170 - this.canvas.height) / 2 + "px"
@@ -323,24 +344,21 @@ class Preview_Canvas{
         this.current_zoom = 1;
         this.zoom_element = document.getElementById("preview-zoom-span");
 
-        document.getElementById("preview-zoom-in").onclick = this.zoom_in(this);
-        document.getElementById("preview-zoom-out").onclick = this.zoom_out(this);
+        document.getElementById("preview-zoom-in").onclick = this.button_zoom(this, "in");
+        document.getElementById("preview-zoom-out").onclick = this.button_zoom(this, "out");
     }
 
-    zoom_in(owner){
+    button_zoom(owner, direction){
         return function(){
-            owner.zoom("in", "button");
+            if(direction == "in"){
+                owner.zoom("in", "button");
+            } else {
+                owner.zoom("out", "button")
+            }
         }
     }
 
-    zoom_out(owner){
-        return function(){
-            owner.zoom("out", "button");
-        }
-    }
-
-    zoom(direction, origin){
-        var prev_zoom = this.current_zoom;
+    zoom(direction, origin = null){
         var zoom_stage_index = this.zoom_stages.indexOf(this.current_zoom);
         if (direction == "in" && zoom_stage_index < this.zoom_stages.length - 1){
             this.current_zoom = this.zoom_stages[zoom_stage_index + 1]; 
@@ -348,8 +366,8 @@ class Preview_Canvas{
             this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }   
 
-        this.canvas.width = this.w * this.current_zoom;
-        this.canvas.height = this.h * this.current_zoom;
+        this.canvas.width = state.main_canvas.w * this.current_zoom;
+        this.canvas.height = state.main_canvas.h * this.current_zoom;
 
         if(origin == "button"){
             this.canvas.style.left = (300 - this.canvas.width) / 2 + "px";
@@ -361,51 +379,54 @@ class Preview_Canvas{
     }
 
     redraw(){
-        var data = state.main_canvas.data;
-        for(var x = 0; x < state.main_canvas.w; x++){
-            for(var y = 0; y < state.main_canvas.h; y++){
-                this.draw_pixel(data[x][y]);
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.imageSmoothingEnabled = false;
+        for(var i = state.main_canvas.layers.length - 1; i >= 0; i--){
+            if (state.main_canvas.layers[i].visible){
+                this.ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0, state.main_canvas.w * this.current_zoom, state.main_canvas.h * this.current_zoom);
             }
         }
     }
-    
-    draw_pixel(data){
-        if(data.color == "hsla(0, 100%, 100%, 0)"){
-            this.ctx.clearRect(data.pos[0] * this.current_zoom, data.pos[1] * this.current_zoom, this.current_zoom, this.current_zoom);
-            return;
-        }
-        this.ctx.beginPath();
-        this.ctx.rect(data.pos[0] * this.current_zoom, data.pos[1] * this.current_zoom, this.current_zoom, this.current_zoom);
-        this.ctx.fillStyle = data.color;
-        this.ctx.fill();
+
+    clear(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 
 class Layer{
-    constructor(index){
+    constructor(index, w, h){
         this.visible = true;
         this.index = index;
         this.data = [];
 
+        this.render_canvas = document.createElement("canvas");
+        this.render_canvas.className = "render-canvas";
+        this.render_canvas.width = w;
+        this.render_canvas.height = h;
+        this.ctx = this.render_canvas.getContext("2d");
+        
         this.wrapper = document.createElement("div");
         this.name_elem = document.createElement("span");
         this.visibility_icon = document.createElement("i");
-
+        
         this.wrapper.className = "layer";
         this.wrapper.style.top = 35 * this.index + "px";
         this.name_elem.innerHTML = "Layer " + index;
         this.visibility_icon.className = "fas fa-circle";
-
+        
         this.wrapper.appendChild(this.name_elem);
         this.wrapper.appendChild(this.visibility_icon);
+        document.getElementById("layers-area").appendChild(this.render_canvas);
         document.getElementById("layers-area").appendChild(this.wrapper);
 
-        this.wrapper.onclick = this.change_layer(this);
-        this.visibility_icon.onclick = this.toggle_visibility(this)
+        this.wrapper.onmousedown = this.change_layer(this);
+        this.visibility_icon.onmousedown = this.toggle_visibility(this)
     }
 
     toggle_visibility(owner){
         return function(){
+            window.event.stopPropagation();
             if(owner.visible){
                 owner.visible = false;
                 owner.visibility_icon.className = "far fa-circle";
@@ -413,6 +434,10 @@ class Layer{
                 owner.visible = true;
                 owner.visibility_icon.className = "fas fa-circle";
             }
+            state.main_canvas.clear();
+            state.preview_canvas.clear();
+            state.main_canvas.redraw();
+            state.preview_canvas.redraw();
         }
     }
 
@@ -422,7 +447,6 @@ class Layer{
 
     change_layer(owner){
         return function(){
-            console.log(owner.index)
             state.main_canvas.change_layer(owner.index);
         }
     }
@@ -437,5 +461,6 @@ class Layer{
 
     delete(){
         document.getElementById("layers-area").removeChild(this.wrapper);
+        document.getElementById("layers-area").removeChild(this.render_canvas);
     }
 }

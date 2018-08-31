@@ -119,13 +119,12 @@
     font-size: 10pt;
 }
 
-#add-layer, #delete-layer{
+#add-layer, #delete-layer, #move-layer-up, #move-layer-down{
     position: absolute;
     height: 30px;
     width: 30px;
     text-align: center;
     top: 0;
-    left: 0;
     box-shadow: 0px 1px 0px 0px black inset;
 }
 
@@ -139,11 +138,31 @@
     font-size: 14pt;
 }
 
+#add-layer{
+    left: 0;
+}
+
 #delete-layer{
     left: 30px;
 }
 
+#move-layer-down{
+    right: 0;
+}
+
+#move-layer-up{
+    right: 30px;
+}
+
 #delete-layer:hover{
+    background-color: rgb(116, 116, 124);
+}
+
+#move-layer-up:hover{
+    background-color: rgb(116, 116, 124);
+}
+
+#move-layer-down:hover{
     background-color: rgb(116, 116, 124);
 }
 
@@ -227,10 +246,6 @@
 
 #layer-name-setting:focus{
     border-bottom: 2px solid rgb(64, 64, 202);
-}
-
-#opacity-setting{
-
 }
 
 #layer-settings-footer{

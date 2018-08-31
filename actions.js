@@ -218,3 +218,12 @@ document.getElementById("add-layer").onclick = function(){
 document.getElementById("delete-layer").onclick = function(){
     state.main_canvas.delete_layer();
 }
+
+document.getElementById("move-layer-up").onclick = function(){
+    state.main_canvas.move_layer("up");
+}
+
+document.getElementById("move-layer-down").onclick = function(){
+    state.main_canvas.move_layer("down");
+}
+
