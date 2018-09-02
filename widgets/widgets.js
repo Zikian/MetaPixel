@@ -11,7 +11,6 @@ class Slider{
         this.input_function = input_function;
         
         if(type == "vertical"){
-            console.log(this.wrapper);
             this.wrapper.style.height = size + "px";
             this.selector.style.top = "-10px";
             this.selector.style.left = "-5px";
