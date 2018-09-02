@@ -1,0 +1,101 @@
+#layers{
+    grid-row: 2;
+    display: grid;
+    grid-template-rows: 30px 170px;
+    background-color: rgb(59, 59, 65);
+    z-index: 1;
+    height: 100%;
+    position: relative;
+}
+
+#layers #header{
+    position: relative;
+    grid-row: 1;
+    box-shadow: 0px 1px 0px 0px black inset;
+    text-align: center;
+}
+
+#layers #header span{
+    color: white;
+    line-height: 30px;
+    font-size: 10pt;
+}
+
+#add-layer, #delete-layer, #move-layer-up, #move-layer-down{
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    top: 0;
+    box-shadow: 0px 1px 0px 0px black inset;
+}
+
+#layers #header i{
+    color: white;
+    line-height: 30px;
+    font-size: 14pt;
+}
+
+#add-layer{
+    left: 0;
+}
+
+#delete-layer{
+    left: 30px;
+}
+
+#move-layer-down{
+    right: 0;
+}
+
+#move-layer-up{
+    right: 30px;
+}
+
+#layers-area{
+    position: relative;
+    grid-row: 2;
+    background-color: rgb(102, 102, 108);
+    overflow: scroll;
+}
+
+.layer{
+    position: absolute;
+    height: 30px;
+    width: 100%;
+    background-color: rgb(59, 59, 65);
+    box-shadow: 0px 1px 0px 0px black inset;
+    text-align: center;
+}
+
+.layer i{
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: 30px;
+    margin-left: 8px;
+    margin-right: 8px;
+    font-size: 11pt;
+    color: white;
+}
+
+.layer span{
+    line-height: 30px;
+    font-size: 10pt;
+    color: white;
+}
+
+.layer-settings-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 30px;
+    width: 30px;
+}
+
+.layer-settings-button i{
+    line-height: 30px;
+    color: white;
+    font-size: 14pt;
+    margin-left: 6px;
+}

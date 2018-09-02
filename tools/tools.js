@@ -1,6 +1,5 @@
-class State_Machine{
-    constructor(initial_tool){
-
+class Tool_Handler{
+    constructor(){ 
         this.tools = {
             drawtool: new Draw_Tool("drawtool"),
             eraser: new Eraser_Tool("eraser"),
@@ -11,38 +10,47 @@ class State_Machine{
             rectangle: new Rectangle_Tool("rectangle"),
             hand: new Hand_Tool("hand")
         }
-
-        this.current_tool = this.tools[initial_tool];
-        this.set_active_styles(initial_tool);
-
+        
+        this.current_tool = this.tools.drawtool;
+        this.change_tool("drawtool")
     }   
 
     change_tool(tool_id){
         if(tool_id != this.current_tool.id){
             this.prev_tool = this.current_tool;
             this.prev_tool.on_exit();
-            this.set_inactive_styles(this.prev_tool.id)
+            this.set_inactive_styles(this.prev_tool)
         }
         this.current_tool = this.tools[tool_id];
         this.current_tool.on_enter();
-        this.set_active_styles(this.current_tool.id);
+        this.set_active_styles(this.current_tool);
     }
 
-    set_active_styles(id){
-        var tool_elem = document.getElementById(id);
-        tool_elem.style.boxShadow = "0px 0px 0px 3px yellow inset";
-        tool_elem.style.backgroundColor = "rgb(66, 66, 66)";
+    set_active_styles(tool){
+        tool.elem.style.boxShadow = "0px 0px 0px 3px yellow inset";
     }
 
-    set_inactive_styles(id){
-        var prev_tool_elem = document.getElementById(id);
-        prev_tool_elem.style.boxShadow = "none";
-        prev_tool_elem.style.backgroundColor = "transparent";
+    set_inactive_styles(tool){
+        tool.elem.style.boxShadow = "none";
     }
 }
 
 class Tool{
-    constructor(id){ this.id = id; }
+    constructor(id){ 
+        this.elem = document.getElementById(id); 
+        this.elem.onmouseover = function(){
+            if(state.tool_handler.current_tool.elem != this){
+                this.style.backgroundColor = "rgb(116, 116, 124)";
+            }
+        }
+        this.elem.onmouseout = function(){
+            this.style.backgroundColor = "transparent";
+        }
+        this.elem.onclick = function(){
+            state.tool_handler.change_tool(this.id);
+            this.style.backgroundColor = "transparent";
+        }
+    }
     on_enter(){}
     mousedown_actions(){}
     mousemove_actions(){}
@@ -55,10 +63,10 @@ class Draw_Tool extends Tool{
 
     mousedown_actions(){
         if(!state.current_selection.contains_mouse()){ return; }
-        state.main_canvas.draw_pixel(state.color_picker.current_color, ...state.pixel_pos);
+        state.main_canvas.draw_pixel(state.color_picker.color, ...state.pixel_pos);
         var data = state.main_canvas.get_data(...state.pixel_pos);
         state.history_manager.push_prev_data(data);
-        data.rgba = state.color_picker.current_rgba; 
+        data.rgba = state.color_picker.rgba; 
         state.history_manager.push_new_data(data);  
     }
 
@@ -105,7 +113,7 @@ class Eraser_Tool extends Tool{
     }
 
     on_exit(){
-        state.mouse_indicator.style.backgroundColor = state.color_picker.current_color;
+        state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }
 }
 
@@ -122,6 +130,7 @@ class Line_Tool extends Tool{
         state.main_canvas.clear_preview();
         state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
         state.history_manager.add_history("line");
+        state.preview_canvas.redraw();
     }
 }
 
@@ -169,7 +178,7 @@ class Selection_Tool extends Tool{
     on_exit(){
         document.body.style.cursor = "default";
         state.mouse_indicator.style.display = "block";
-        state.mouse_indicator.style.backgroundColor = state.color_picker.current_color;
+        state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }
 }
 
@@ -177,7 +186,7 @@ class Fill_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.main_canvas.fill(...state.pixel_pos, state.color_picker.current_rgba, state.main_canvas.get_data(...state.pixel_pos).rgba);
+        state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, state.main_canvas.get_data(...state.pixel_pos).rgba);
         state.history_manager.add_history("fill");
         state.preview_canvas.redraw();
     }

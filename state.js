@@ -1,6 +1,3 @@
-var mouse_up_functions = [];
-var mouse_move_functions = [];
-
 var state = {};
 
 function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
@@ -15,7 +12,6 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.canvas_wrapper = document.getElementById("canvas-wrapper");
     
     state.mouse_indicator = document.getElementById("mouse-indicator");
-    state.tools = document.getElementsByClassName("tool");
     state.selection_size_element = document.getElementById("selection-size");
     state.switch_colors_button = document.getElementById("switch-colors-button");
     state.reset_colors_button = document.getElementById("reset-colors-button");
@@ -29,7 +25,8 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.new_document_panel = new New_Document_Panel();
     state.main_canvas = new Canvas(w, w);
     state.history_manager = new History_Manager();
-    state.preview_canvas = new Preview_Canvas()
+    state.preview_canvas = new Preview_Canvas();
+    state.layer_settings = new Layer_Settings();
 
     state.eyedropper_ctx = document.getElementById("eyedropper-canvas").getContext("2d");
     document.getElementById("eyedropper-canvas").width = w;
@@ -48,10 +45,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
         state.preview_canvas.canvas.style.backgroundColor = "transparent"
     }
     
-    state.tool_handler = new State_Machine("drawtool");
-    state.current_tool = null;
-    state.tool_handler.change_tool("drawtool");
-    
+    state.tool_handler = new Tool_Handler("drawtool");
     
     state.document_name = name;
     state.saved_img = null;
@@ -83,16 +77,3 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
 }
 
 init();
-
-for(i = 0; i < state.tools.length; i++){
-    state.tools[i].onmouseover = function(){
-    }
-    state.tools[i].onmouseout = function(){
-        if(state.current_tool != this){
-            this.style.backgroundColor = "transparent";
-        }
-    }
-    state.tools[i].onclick = function(){
-        state.tool_handler.change_tool(this.id);
-    }
-}

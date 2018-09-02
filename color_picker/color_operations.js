@@ -45,7 +45,7 @@ function rgb_to_hsl(rgbArr){
     if(H<0){
         H += 360;
     }
-    var result = [H, S, L];
+    var result = [Math.round(H), Math.round(S), Math.round(L)];
     return result;
 }
 

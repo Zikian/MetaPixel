@@ -8,20 +8,34 @@ class History_Manager{
         this.new_selection = null;
     }
 
-    add_history(type){
-        if (this.prev_data.length == 0 && this.prev_selection == null){ return; }
+    add_history(type, args){
         this.redo_history = []
         if(type == "pen-stroke" || type == "erase" || type == "line" || type == "rectangle" || type == "fill" || type == "clear-selection"){
-            if (this.prev_data.length != 0){
-                this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.main_canvas.current_layer.index));
-                this.prev_data = [];
-                this.new_data = [];
-            }
+            if (this.prev_data.length == 0){ return; }
+            this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.main_canvas.current_layer.index));
+            this.prev_data = [];
+            this.new_data = [];
         }
         if(type == "selection"){
+            if (this.prev_selection == null){ return; }
             this.history.push(new Selection_History(this.prev_selection, this.new_selection));
             this.prev_selection = null;
             this.new_selection = null;
+        }
+        if(type == "add-layer"){
+            this.history.push(new Add_Layer(...args));
+        }
+
+        if(type == "delete-layer"){
+            this.history.push(new Delete_Layer(...args));
+        }
+
+        if(type == "layer-visibility"){
+            this.history.push(new Layer_Visibility(...args));
+        }
+
+        if(type == "swap-layers"){
+            this.history.push(new Swap_Layers(...args))
         }
     }
 
@@ -32,7 +46,7 @@ class History_Manager{
         this.prev_data = []
         state.preview_canvas.redraw();
     }
-
+    
     redo_last(){
         if(this.redo_history.length == 0) { return; }
         this.redo_history[this.redo_history.length - 1].redo();
@@ -125,14 +139,78 @@ class Selection_History{
     }
 }
 
-class Layer_Change{
-    constructor(origin,){
-        this.origin = origin;
+class Add_Layer{
+    constructor(index){
+        this.index = index;
     }
 
+    undo(){
+        state.main_canvas.change_layer(this.index + 1);
+        state.main_canvas.layers[this.index].delete();
+        state.main_canvas.layers.splice(this.index, 1);
+        state.main_canvas.update_layer_indices();
+        state.main_canvas.current_layer
+    }
+
+    redo(){
+        state.main_canvas.add_layer();
+    }
+}
+
+class Delete_Layer{
+    constructor(layer_state){
+        this.layer_state = layer_state;
+    }
 
     undo(){
-        if (this.origin == "add-layer"){
+        var new_layer = new Layer(this.layer_state.index, state.main_canvas.w, state.main_canvas.h);
+        new_layer.index = this.layer_state.index;
+        new_layer.name_elem.innerHTML = this.layer_state.name;
+        new_layer.data = this.layer_state.data;
+        
+        var img = new Image();
+        img.src = this.layer_state.dataURL;
+        
+        for(var x = 0; x < state.main_canvas.w; x++){
+            for(var y = 0; y < state.main_canvas.h; y++){
+                new_layer.render_ctx.fillStyle = rgba(new_layer.data[x][y].rgba);
+                new_layer.render_ctx.fillRect(x, y, 1, 1)
+            }
+        }
+        
+        state.main_canvas.layers.splice(new_layer.index, 0, new_layer);
+        state.main_canvas.update_layer_indices();
+        state.main_canvas.change_layer(new_layer.index);
+        state.main_canvas.redraw();
+
+        if(!this.layer_state.visible){
+            new_layer.visible = false;
+            new_layer.canvas.style.display = "none";
+            new_layer.visibility_icon.className = "far fa-circle";
+        }
+    }
+
+    redo(){
+        state.main_canvas.layers[this.layer_state.index].delete();
+        state.main_canvas.layers.splice(this.layer_state.index, 1);
+        state.main_canvas.update_layer_indices();
+        state.main_canvas.change_layer(0)
+        state.main_canvas.redraw();
+    }
+}
+
+class Layer_Visibility{
+    constructor(index){
+        this.undo = this.redo = function(){
+            state.main_canvas.layers[index].toggle_visibility(state.main_canvas.layers[index]).call();
+        }
+    }
+}
+
+class Swap_Layers{
+    constructor(index_a, index_b){
+        this.undo = this.redo = function(){
+            state.main_canvas.swap_layers(index_a, index_b);
         }
     }
 }

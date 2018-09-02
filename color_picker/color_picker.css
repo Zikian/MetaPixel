@@ -27,7 +27,6 @@
     font-size: 12pt;
     color: black; 
     width: 200px;
-    user-select: none;
 }
 
 #body{
@@ -81,8 +80,7 @@
     left: 0;
     width: 256px;
     height: 256px;
-    margin: 40px 0 0 15px;
-    user-select: none;     
+    margin: 40px 0 0 15px; 
 }
 
 #hue-slider{
@@ -146,6 +144,7 @@
     align-self: center;
     float: right;
     margin-top: 15px;
+    color: white;   
 }
 
 #values #old-color-span{
@@ -155,50 +154,52 @@
     justify-self: right;
     width: 36%;
     margin-top: 15px;
+    color: white;
 }
 
-#values .button-slider-wrapper{
+
+#values .input-slider{
     align-self: center;
     margin-right: 15px;
 }
 
-#values #hue{
+#values #hue-input{
     grid-column: 1;
     grid-row: 2;
 }
 
-#values #saturation{
+#values #saturation-input{
     grid-column: 1;
     grid-row: 3;
 }
 
-#values #alpha{
+#values #alpha-input{
     grid-column: 1;
     grid-row: 5;
 }
 
-#values #lightness{
+#values #lightness-input{
     grid-column: 1;
     grid-row: 4;
 }
 
-#values #red{
+#values #red-input{
     grid-column: 2;
     grid-row: 2;
 }
 
-#values #green{
+#values #green-input{
     grid-column: 2;
     grid-row: 3;
 }
 
-#values #blue{
+#values #blue-input{
     grid-column: 2;
     grid-row: 4;
 }
 
-#values #hex{
+#values #hex-input{
     grid-column: 1;
     grid-area: 6 / 1 / span 1 / span 2;
-    width: 120px;
+    align-self: center;
 }

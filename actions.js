@@ -1,7 +1,4 @@
 window.addEventListener('mouseup', function(e) {
-    mouse_up_functions.forEach(function(element){
-        element();
-    });
     if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
         state.tool_handler.current_tool.mouseup_actions();
     }
@@ -44,10 +41,6 @@ window.addEventListener("mousemove", function(e){
             state.tool_handler.current_tool.mousemove_actions();
             break;
     }
-
-    mouse_move_functions.forEach(function(element) {
-        element();
-    });
 });
 
 document.addEventListener("keydown", function(event){
@@ -68,10 +61,10 @@ document.addEventListener("keydown", function(event){
             state.tool_handler.change_tool("eyedropper");
             break;
         case 67: // C
-            state.color_picker.old_color = state.color_picker.current_rgb;
-            state.color_picker.old_alpha = state.color_picker.current_alpha;
+            state.color_picker.old_color = state.color_picker.rgb;
+            state.color_picker.old_alpha = state.color_picker.alpha;
             state.color_picker.toggle_display();
-            state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.current_color;
+            state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.color;
             break;
         case 68: // D
             state.tool_handler.change_tool("drawtool");
@@ -160,7 +153,7 @@ state.canvas_wrapper.onmouseout = function(){
 state.canvas_wrapper.onmouseover = function(){
     state.mouse_indicator.style.display = "block";
     if (state.tool_handler.current_tool.id != "eraser"){
-        state.mouse_indicator.style.backgroundColor = state.color_picker.current_color;
+        state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }
 }
 
@@ -194,17 +187,26 @@ state.redo.onclick = function(){
 
 document.getElementById("add-layer").onclick = function(){
     state.main_canvas.add_layer();
+    state.history_manager.add_history("add-layer", [state.main_canvas.current_layer.index]);
 }
 
 document.getElementById("delete-layer").onclick = function(){
-    state.main_canvas.delete_layer(state.main_canvas.current_layer.index);
+    state.main_canvas.delete_layer();
 }
 
 document.getElementById("move-layer-up").onclick = function(){
-    state.main_canvas.move_layer("up");
+    var index = state.main_canvas.current_layer.index;
+    if(index > 0){
+        state.main_canvas.swap_layers(index, index - 1);
+        state.history_manager.add_history("swap-layers", [index, index - 1]);
+    }
 }
 
 document.getElementById("move-layer-down").onclick = function(){
-    state.main_canvas.move_layer("down");
+    var index = state.main_canvas.current_layer.index;
+    if(index < state.main_canvas.layers.length - 1){
+        state.main_canvas.swap_layers(index, index + 1);
+        state.history_manager.add_history("swap-layers", [index,  + 1]);
+    }
 }
 

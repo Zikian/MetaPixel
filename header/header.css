@@ -21,10 +21,6 @@
     pointer-events: none;
 }
 
-#file:hover{
-    background-color: rgb(116, 116, 124);
-}
-
 #file #file-icon{
     grid-column: 1;
     font-size: 14pt;
@@ -67,17 +63,9 @@
     padding-left: 20px;
 }
 
-#dropdown li:hover{
-    background-color: rgb(116, 116, 124);
-}
-
 #dropdown li i{
     font-size: 14pt;
     margin-right: 5px;
-}
-
-#dropdown #newfile:hover{
-    background-color: rgb(50, 50, 50);
 }
 
 #undo{
@@ -89,32 +77,17 @@
     grid-template-columns: 45px 1fr;
 }
 
-#undo:hover #undo-tool-tip{
+#undo:hover #undo-tooltip{
     display: block;
 }
 
-#undo-tool-tip{
-    position: absolute;
+#undo-tooltip{
     width: 112px;
-    height: 30px;
-    display: none;
-    background-color: black;
-    border-radius: 5px;
-    z-index: 1000;
     left: -6px;
     top: 40px;
-    text-align: left;
 }
 
-#undo-tool-tip span{
-    font-size: 10pt;
-    margin-left: 6px;
-    margin-right: 5px;
-    line-height: 30px;
-}
-
-#undo-tool-tip i{
-    position: absolute;
+#undo-tooltip i{
     font-size: 20pt;
     left: 47px;
     top: -15px;
@@ -136,10 +109,6 @@
     color: white;
     font-family: Montserrat-Regular;
     line-height: 30px;
-}
-
-#undo:hover{
-    background-color: rgb(116, 116, 124);
 }
 
 #redo{
@@ -169,36 +138,17 @@
     line-height: 30px;
 }
 
-#redo:hover{
-    background-color: rgb(116, 116, 124);
-}
-
-#redo:hover #redo-tool-tip{
+#redo:hover #redo-tooltip{
     display: block;
 }
 
-#redo-tool-tip{
-    position: absolute;
+#redo-tooltip{
     width: 156px;
-    height: 30px;
-    display: none;
-    background-color: black;
-    border-radius: 5px;
-    z-index: 1000;
     left: -25px;
     top: 40px;
-    text-align: left;
 }
 
-#redo-tool-tip span{
-    font-size: 10pt;
-    margin-left: 6px;
-    margin-right: 5px;
-    line-height: 30px;
-}
-
-#redo-tool-tip i{
-    position: absolute;
+#redo-tooltip i{
     font-size: 20pt;
     left: 67px;
     top: -15px;

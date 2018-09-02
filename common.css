@@ -23,7 +23,6 @@ body{
 
 span, input{
     font-family: Montserrat-Regular;
-    color: white;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -35,6 +34,19 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 canvas{
     image-rendering: pixelated;
+}
+
+span, img{
+    user-select: none;
+}
+
+.button:hover{
+    background-color: rgb(116, 116, 124);
 }

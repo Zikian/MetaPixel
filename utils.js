@@ -69,22 +69,7 @@ function drag_element(elem, delta_pos){
     elem.style.top = elem.offsetTop + delta_pos[1] + "px";
 }
 
-function is_number(evt){
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if (charCode > 31 && (charCode < 48 || charCode > 57))
-        return false;
-    return true;
-}
 
-function is_hex(evt){
-    var charCode = (evt.which) ? evt.which : event.keyCode
-    if(charCode >= 97 && charCode <= 102){
-        return true;
-    }
-    if (charCode > 31 && (charCode < 48 || charCode > 57))
-        return false;
-    return true;
-}
 
 function calc_distance(x1, x2){
     if(x1 < x2){

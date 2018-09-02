@@ -9,38 +9,40 @@
         <link rel="stylesheet" href="new_document_panel/new_document_panel.css">
         <link rel="stylesheet" href="editor.css">
         <link rel="stylesheet" href="color_picker/color_picker.css">
-        <link rel="stylesheet" href="widgets.css">
-        <link rel="stylesheet" href="toolbox.css">
-        <link rel="stylesheet" href="layers-column.css">
+        <link rel="stylesheet" href="tools/tools.css">
+        <link rel="stylesheet" href="layers/layers.css">
+        <link rel="stylesheet" href="layers/layer_settings.css">
+        <link rel="stylesheet" href="preview/preview.css">
+        <link rel="stylesheet" href="widgets/widgets.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
     <body>
         <div id="toolbar">
-            <div id="file">
+            <div id="file" class="button">
                 <i class="far fa-file-image" id="file-icon"></i>
                 <span>File</span>
             </div>
-            <div id="dropdown">
+            <div id="dropdown" class="button">
                 <ul>
-                    <li id="new-button"><i class="far fa-file"></i>New</li>
-                    <li id="clear-button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="save-as"><i class="far fa-save"></i></i>Save As</li>
+                    <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
+                    <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
+                    <li id="save-as" class="button"><i class="far fa-save"></i></i>Save As</li>
                 </ul>
             </div>
 
-            <div id="undo">
+            <div id="undo" class="button">
                 <i class="fas fa-undo-alt" id="undo-icon"></i>
                 <span id="undo-span">Undo</span>
-                <div id="undo-tool-tip" class="tool-tip">
+                <div id="undo-tooltip" class="tooltip">
                         <span>Undo (CTRL+Z)</span>
                         <i class="fas fa-caret-up" style="color: black;"></i>
                 </div>
             </div>
 
-            <div id="redo">
+            <div id="redo" class="button">
                 <i class="fas fa-redo-alt" id="redo-icon"></i>
                 <span id="redo-span">Redo</span>
-                <div id="redo-tool-tip" class="tool-tip">
+                <div id="redo-tooltip" class="tooltip">
                         <span>Redo (CTRL+SHIFT+Z)</span>
                         <i class="fas fa-caret-up" style="color: black;"></i>
                 </div>
@@ -69,30 +71,27 @@
         </div>
 
         <div class="editor">
-            <div id="toolbox">
+            <div id="sidebar-left">
                 <div id="color-preview">
                     <div id="primary-color-rect" class="color-preview-square"></div>
                     <div id="secondary-color-rect" class="color-preview-square"></div>
                     <img src="images/Alhpa_Triangle.png" id="primary-alpha-img" class="color-preview-square">
                     <img src="images/Alhpa_Triangle.png" id="secondary-alpha-img" class="color-preview-square">
-                    <div id="color-tool-tip" class="tool-tip">
+                    <div id="color-tooltip" class="tooltip">
                             <span>Color Picker (C)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="color-preview-buttons">
-                    <div id="switch-colors-button">
-                        <div id="switch-colors"></div>
-                        <div id="switch-colors-icon"><i class="fas fa-arrows-alt-h" style="font-size: 14pt; line-height: 25px;"></i></div>
-                        <div id="switch-colors-tool-tip" class="tool-tip">
+                    <div id="switch-colors-button" class="button">
+                        <i class="fas fa-arrows-alt-h" style="font-size: 14pt; line-height: 25px;"></i>
+                        <div id="switch-colors-tooltip" class="tooltip">
                                 <span>Switch Colors (X)</span>
                                 <i class="fas fa-caret-left" style="color: black;"></i>
                         </div>
                     </div>
-                    <div id="reset-colors-button">
-                        <div id="reset-colors"></div>
-                        <div id="reset-colors-icon"><img src="images/reset_colors_icon.png"></div>
-                        <div id="reset-colors-tool-tip" class="tool-tip">
+                    <div id="reset-colors-button" class="button">
+                        <div id="reset-colors-tooltip" class="tooltip">
                                 <span>Reset Colors</span>
                                 <i class="fas fa-caret-left" style="color: black;"></i>
                         </div>
@@ -100,64 +99,61 @@
                 </div>
                 <div id="drawtool" class="tool">
                     <i class="fas fa-pencil-alt"></i>
-                    <div id="draw-tool-tip" class="tool-tip">
+                    <div id="draw-tooltip" class="tooltip">
                         <span>Draw Tool (P)</span>
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="eraser" class="tool">
                     <i class="fas fa-eraser"></i>
-                    <div id="eraser-tool-tip" class="tool-tip">
+                    <div id="eraser-tooltip" class="tooltip">
                             <span>Eraser Tool (E)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="line" class="tool">
-                    <div id="line-tool-tip" class="tool-tip">
+                    <div id="line-tooltip" class="tooltip">
                         <span>Line Tool (SHIFT)</span>
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="select" class="tool">
-                    <div id="select-tool-tip" class="tool-tip">
+                    <div id="select-tooltip" class="tooltip">
                             <span>Select Tool (S)</span>
                             <span>Drag to move selection</span>
-                            <span>DEL to erase selection</span>
+                            <span>DEL to erase contents</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="fill" class="tool">
                     <i class="fas fa-fill-drip"></i>
-                    <div id="fill-tool-tip" class="tool-tip">
+                    <div id="fill-tooltip" class="tooltip">
                             <span>Fill Tool (F)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="rectangle" class="tool">
                     <i class="fas fa-vector-square"></i>
-                    <div id="rectangle-tool-tip" class="tool-tip">
+                    <div id="rectangle-tooltip" class="tooltip">
                             <span>Rectangle Tool (R)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="eyedropper" class="tool">
                     <i class="fas fa-eye-dropper"></i>
-                    <div id="eyedropper-tool-tip" class="tool-tip">
+                    <div id="eyedropper-tooltip" class="tooltip">
                             <span>Eyedropper Tool (Alt)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
                 <div id="hand" class="tool">
                     <i class="fas fa-hand-paper"></i>
-                    <div id="hand-tool-tip" class="tool-tip">
+                    <div id="hand-tooltip" class="tooltip">
                         <span>Hand Tool (Space)</span>
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
-
-                <div id="undo-redo">
-
-                </div>
+                <div id="toolbox-footer"></div>
             </div>
 
             <div id="canvas-area">
@@ -181,9 +177,13 @@
             <div id="color-picker">
                 <header id="color-picker-header"><span id="color-picker-header-text">Color Picker</span></header>
                 <div id="body">
-                    <canvas id="color-square"></canvas>
-                    <div id="color-slider"></div>
-                    <div id="hue-slider"></div>
+                    <canvas id="color-square" width="256" height="256"></canvas>
+                    <div id="color-slider">
+                        <div class="slider-selector"></div>
+                    </div>
+                    <div id="hue-slider">
+                        <div class="slider-selector"></div>
+                    </div>
                     <div id="values">
                         <img src="images/Alhpa_Triangle.png" id="new-color-alpha-img">
                         <img src="images/Alhpa_Triangle.png" id="old-color-alpha-img">
@@ -191,14 +191,80 @@
                         <div id="old-color-rect"></div>
                         <span id="new-color-span">NEW</span>
                         <span id="old-color-span">OLD</span>
-                        <div id="hue" class="button-slider-wrapper"></div>
-                        <div id="saturation" class="button-slider-wrapper"></div>
-                        <div id="lightness" class="button-slider-wrapper"></div>
-                        <div id="alpha" class="button-slider-wrapper"></div>
-                        <div id="red" class="button-slider-wrapper"></div>
-                        <div id="green" class="button-slider-wrapper"></div>
-                        <div id="blue" class="button-slider-wrapper"></div>
-                        <div id="hex" class="button-slider-wrapper"></div>
+                        <div class="input-slider" id="hue-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="saturation-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="lightness-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="alpha-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="red-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="green-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-slider" id="blue-input">
+                            <span class="input-slider-name"></span>
+                            <div class="input-slider-wrapper">
+                                <input type="number">
+                                <i class="fas fa-caret-down"></i>
+                                <div class="input-slider-slider">
+                                  <div class="input-slider-selector"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="hex-input" class="input">
+                            <span class="input-name"></span>
+                            <input type="text">
+                        </div>
                     </div>
                     <div id="buttons">
                         <button id="color-picker-ok">OK</button>
@@ -207,22 +273,22 @@
                 </div>
             </div>
 
-            <div id="layers-column">
-                <div id="drawing-preview">
-                    <div id="header">
-                        <div id="current-preview-zoom">
+            <div id="sidebar-right">
+                <div id="preview">
+                    <header>
+                        <div id="preview-zoom">
                             <span id="preview-zoom-span">(1x)</span>
                         </div>
                         <span>Preview</span>
                         <div id="preview-zoom-buttons">
-                            <div id="preview-zoom-in">
+                            <div id="preview-zoom-in" class="button">
                                 <i class="fas fa-search-plus"></i>
                             </div>
-                            <div id="preview-zoom-out">
+                            <div id="preview-zoom-out" class="button">
                                 <i class="fas fa-search-minus"></i>
                             </div>
                         </div>
-                    </div>
+                    </header>
                     <div id="preview-canvas-area">
                         <canvas id="preview-canvas"></canvas>
                     </div>
@@ -231,27 +297,41 @@
                 <div id="layers">
                     <div id="header">
                         <span>Layers</span>
-                        <div id="add-layer">
+                        <div id="add-layer" class="button">
                             <i class="fas fa-plus"></i>
                         </div>
-                        <div id="delete-layer">
+                        <div id="delete-layer" class="button">
                             <i class="far fa-trash-alt"></i>
                         </div>
-                        <div id="move-layer-up">
+                        <div id="move-layer-up" class="button">
                             <i class="fas fa-arrow-up"></i>
                         </div>
-                        <div id="move-layer-down">
+                        <div id="move-layer-down" class="button">
                             <i class="fas fa-arrow-down"></i>
                         </div>
                     </div>
                     <div id="layers-area">
                     </div>
                     <div id="layer-settings">
-                        <div id="layer-settings-header"><span>Layer Settings</span></div>
+                        <div id="layer-settings-header">
+                            <span>Layer Settings</span>
+                            <i id="layer-settings-cross" class="fas fa-times"></i>
+                        </div>
                         <div id="settings">
                             <input type="text" id="layer-name-setting">
-                            <div id="opacity-setting">
-                                <span>Opacity:</span>
+                            <div class="input-slider" id="opacity-setting">
+                                <span class="input-slider-name"></span>
+                                <div class="input-slider-wrapper">
+                                    <input type="number">
+                                    <i class="fas fa-caret-down"></i>
+                                    <div class="input-slider-slider">
+                                      <div class="input-slider-selector"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="buttons">
+                                <button id="layer-settings-ok">OK</button>
+                                <button id="layer-settings-cancel">Cancel</button>
                             </div>
                         </div>
                         <div id="layer-settings-footer"></div>
@@ -261,15 +341,17 @@
         </div>
 
         <script src="utils.js"></script>
-        <script src="types.js"></script>
+        <script src="widgets/widgets.js"></script>
         <script src="canvas.js"></script>
-        <script src="layers.js"></script>
+        <script src="preview/preview.js"></script>
+        <script src="layers/layers.js"></script>
+        <script src="layers/layer_settings.js"></script>
         <script src="selection.js"></script>
         <script src="history.js"></script>
         <script src="color_picker/color_operations.js"></script>
         <script src="color_picker/color_picker.js"></script>
         <script src="new_document_panel/new_document_panel.js"></script>
-        <script src="tools.js"></script>
+        <script src="tools/tools.js"></script>
         <script src="state.js"></script>
         <script src="actions.js"></script>
         <script src="header/header.js"></script>

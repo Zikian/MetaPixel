@@ -1,0 +1,104 @@
+#layer-settings{
+    display: none;
+    position: absolute;
+    width: 200px;
+    height: auto;
+    left: -220px;
+    top: 30px;
+    background-color: white;
+    border-radius: 4px;
+}
+
+#layer-settings #layer-settings-header{
+    height: 25px;
+    background-color: rgb(64, 64, 202);
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+}
+
+#layer-settings #layer-settings-header i{
+    color: white;
+    float: right;
+    line-height: 25px;
+    font-size: 10pt;
+    margin-right: 7px;
+}
+
+#layer-settings #layer-settings-header i:hover{
+    color: rgb(176, 176, 176);
+}
+
+#layer-settings #layer-settings-header span{
+    color: white;
+    font-size: 10pt;
+    line-height: 25px;
+    margin-left: 7px;
+}
+
+#layer-settings #settings{
+    height: 115px;
+    width: 100%;
+}
+
+#layer-name-setting{
+    border: 1px solid gray;
+    width: 90%;
+    height: 30px;
+    border-radius: 4px;
+    outline: none;
+    color: black;
+    font-size: 10pt;
+    padding-left: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    margin-left: 5%;
+    margin-top: 6px;
+}
+
+#layer-name-setting:focus{
+    border-bottom: 2px solid rgb(64, 64, 202);
+}
+
+#layer-settings #opacity-setting{
+    position: absolute;
+    height: 25px;
+    width: 130px;
+    padding-left: 5%;
+    margin: 0 auto 0 auto;
+}
+
+#layer-settings-footer{
+    height: 15px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: rgb(64, 64, 202);
+}
+
+#layer-settings #settings #opacity-setting span{
+    color: black !important;
+    font-size: 10pt;
+}
+
+#layer-settings #buttons{
+    display: block;
+    width: 164px;
+    margin: 33px auto 0 auto;
+}
+
+#layer-settings button{
+    height: 28px;
+    width: 80px;
+    border-radius: 14px;
+    outline: none;
+    color: black;
+    font-family: Montserrat-Regular;
+    border: 1px solid black;
+    font-size: 10pt;
+    background-color: transparent;
+}
+
+#layer-settings button:active{
+    border: 1px solid rgb(64, 64, 202);
+    background-color: rgb(64, 64, 202);
+    color: white;
+}

@@ -1,0 +1,236 @@
+#color-preview{
+    position: relative;
+    width: 100%;
+    height: 90px;
+}
+
+#color-preview:hover #color-tooltip{
+    display: block;
+}
+
+.color-preview-square{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+#primary-color-rect{
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);
+}
+
+#primary-color-rect:hover{
+    cursor: pointer;
+    animation: hover-anim 0.3s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+#primary-alpha-img{
+    top: 14px;
+    left: 14px;
+    z-index: 1;
+    border-radius: 4px;
+}
+
+#secondary-color-rect{
+    right: 14px;
+    bottom: 4px;
+    z-index: 1;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);
+}
+
+#secondary-color-rect:hover{
+    cursor: pointer;
+    animation: hover-anim 0.3s;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+
+@keyframes hover-anim{
+    from{box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.73);}
+    to{box-shadow: 0px 0px 14px 0px rgba(0,0,0,0.73);}
+}
+
+#secondary-alpha-img{
+    right: 14px;
+    bottom: 4px;
+    border-radius: 4px;
+}
+
+#color-preview-buttons{
+    width: 100%;
+    height: 30px;
+    border-bottom: 1px solid black;
+    margin-bottom: 10px;
+}
+
+#switch-colors-button{
+    width: 30px;
+    height: 30px;
+    float:left;
+    margin-left: 18px;
+    text-align: center;
+}
+
+#switch-colors-button i{
+    line-height: 30px !important;
+}
+
+#switch-colors-tooltip{
+    width: 122px;
+    left: 35px;
+    top: -2px;
+}
+
+#reset-colors-button{
+    width: 30px;
+    height: 30px;
+    float: right;
+    margin-right: 18px;
+    background-image: url(../images/reset_colors_icon.png);
+    background-size: 60%;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+#reset-colors-tooltip{
+    width: 94px;
+    left: 35px;
+    top: -2px;
+}
+
+#toolbox-footer{
+    border-top: 1px solid black;
+    margin-top: 10px;
+    width: 100%;
+    float: left;
+}
+
+/* TOOL TIPS AND TOOLS */
+
+.tool{
+    position: relative;
+    width: 50px;
+    height: 50px;
+    float: left;
+    text-align: center;
+}
+
+.tooltip{
+    position: absolute;
+    display: none;
+    height: auto;
+    background-color: black;
+    border-radius: 5px;
+    left: 60px;
+    top: 10px;
+    text-align: left;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.tooltip span{
+    display: block;
+    color: white !important;
+    font-size: 10pt;
+    margin-left: 6px;
+    margin-right: 5px;
+    line-height: 30px;
+}
+
+.tooltip i{
+    position: absolute;
+    left: -8px;
+    top: -10px;
+}
+
+.tool:hover .tooltip{
+    display: block;
+}
+
+/* COLORS */
+
+#color-tooltip{
+    width: 113px;
+    left: 110px;
+    top: 29px;
+}
+
+/* DRAW TOOL */
+
+#draw-tooltip{
+    width: 100px;
+}
+
+/* ERASER TOOL */
+
+#eraser-tooltip{
+    width: 106px;
+}
+
+
+/* LINE TOOL */
+
+#line{
+    background-image: url(../images/line_tool.gif);
+    background-size: 56%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#line-tooltip{
+    width: 122px;
+}
+
+/* FILL TOOL */
+
+#fill-tooltip{
+    width: 82px;
+}
+
+/* RECTANGLE TOOL */
+
+#rectangle-tooltip{
+    width: 132px;
+}
+
+/* EYEDROPPER TOOL */
+
+#eyedropper-tooltip{
+    width: 151px;
+}
+
+/* SELECT TOOL */
+
+#select{
+    background-image: url(../images/select_tool.png);
+    background-size: 66%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#select-tooltip{
+    top: -21px;
+    width: 166px;
+}
+
+#select-tooltip i{
+    top: 21px;
+}
+
+/* HAND TOOL */
+
+#hand-tooltip{
+    width: 132px;
+}

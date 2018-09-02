@@ -19,17 +19,23 @@ class Canvas{
     }
     
     add_layer(){
-        this.layers.splice(this.current_layer.index, 0, new Layer(this.layers.length, this.w, this.h));
-        this.update_layer_indices()
+        var new_layer = new Layer(this.layers.length, this.w, this.h)
+        this.layers.splice(this.current_layer.index, 0, new_layer);
+        this.update_layer_indices();
+        this.change_layer(new_layer.index);
     }
 
     delete_layer(){
         if (this.layers.length == 1) { return; }
-        this.current_layer.delete();
+
+        var layer_state = this.current_layer.get_state();
+        state.history_manager.add_history("delete-layer", [layer_state]);
+
         this.layers.splice(this.current_layer.index, 1);
-        this.current_layer = this.layers[0];
-        this.current_layer.set_active();
+        this.current_layer.delete();
         this.update_layer_indices();
+        this.change_layer(0)
+
         this.redraw();
         state.preview_canvas.redraw();
     }
@@ -43,24 +49,13 @@ class Canvas{
 
     change_layer(index){
         this.current_layer.set_inactive();
-        this.current_layer = this.layers[index]
+        this.current_layer = this.layers[index];
         this.current_layer.set_active();
     }
 
-    move_layer(direction){
-        if(direction == "up"){
-            if(this.current_layer.index >= 1){
-                var index = this.current_layer.index;
-                this.layers.swapItems(index, index - 1);
-                this.update_layer_indices();
-            }
-        } else {
-            if(this.current_layer.index < this.layers.length - 1){
-                var index = this.current_layer.index;
-                this.layers.swapItems(index, index + 1);
-                this.update_layer_indices();
-            }
-        }
+    swap_layers(index_a, index_b){
+        this.layers.swapItems(index_a, index_b);
+        this.update_layer_indices();
         state.preview_canvas.redraw();
     }
 
@@ -157,7 +152,7 @@ class Canvas{
         while(true){
             if(state.current_selection.contains_pixel_pos(x0, y0)){
                 this.draw_preview_ctx.rect(x0 * state.zoom, y0 * state.zoom, state.zoom, state.zoom);
-                this.draw_preview_ctx.fillStyle = state.color_picker.current_color;
+                this.draw_preview_ctx.fillStyle = state.color_picker.color;
                 this.draw_preview_ctx.fill();
             }
     
@@ -207,73 +202,7 @@ class Canvas{
 }
 
 function Pixel_Data(){
-    this.pos = [0, 0]
     this.rgba = [255, 255, 255, 0];
-    this.layer = null;
+    this.pos = null;
 }
 
-class Preview_Canvas{
-    constructor(){
-        this.canvas = document.getElementById("preview-canvas");
-        this.ctx = this.canvas.getContext("2d");
-
-        this.canvas.width = state.main_canvas.w;
-        this.canvas.height = state.main_canvas.h;
-        
-        this.canvas.style.left = (300 - this.canvas.width) / 2 + "px"
-        this.canvas.style.top = (170 - this.canvas.height) / 2 + "px"
-
-        this.zoom_stages = this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18];
-        this.current_zoom = 1;
-        this.zoom_element = document.getElementById("preview-zoom-span");
-
-        document.getElementById("preview-zoom-in").onclick = this.button_zoom(this, "in");
-        document.getElementById("preview-zoom-out").onclick = this.button_zoom(this, "out");
-    }
-
-    button_zoom(owner, direction){
-        return function(){
-            if(direction == "in"){
-                owner.zoom("in", "button");
-            } else {
-                owner.zoom("out", "button")
-            }
-        }
-    }
-
-    zoom(direction, origin = null){
-        var zoom_stage_index = this.zoom_stages.indexOf(this.current_zoom);
-        if (direction == "in" && zoom_stage_index < this.zoom_stages.length - 1){
-            this.current_zoom = this.zoom_stages[zoom_stage_index + 1]; 
-        } else if (direction == "out" && zoom_stage_index > 0) {
-            this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
-        }   
-
-        this.canvas.width = state.main_canvas.w * this.current_zoom;
-        this.canvas.height = state.main_canvas.h * this.current_zoom;
-
-        if(origin == "button"){
-            this.canvas.style.left = (300 - this.canvas.width) / 2 + "px";
-            this.canvas.style.top = (170 - this.canvas.height) / 2 + "px";
-        }
-
-        this.zoom_element.innerHTML = "(" + this.current_zoom + "x)";
-        this.redraw();
-    }
-
-    redraw(){
-        this.clear();
-        this.ctx.mozImageSmoothingEnabled = false;
-        this.ctx.webkitImageSmoothingEnabled = false;
-        this.ctx.imageSmoothingEnabled = false;
-        for(var i = state.main_canvas.layers.length - 1; i >= 0; i--){
-            if (state.main_canvas.layers[i].visible){
-                this.ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0, state.main_canvas.w * this.current_zoom, state.main_canvas.h * this.current_zoom);
-            }
-        }
-    }
-
-    clear(){
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-}

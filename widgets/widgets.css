@@ -1,0 +1,115 @@
+/* INPUT */
+
+.input{
+  height: 25px;
+}
+
+.input-name{
+  color: white;
+  font-size: 12pt;
+  line-height: 25px;
+  float: left;
+}
+
+.input input{
+  margin-left: 10px;
+  height: 25px;
+  background-color: rgb(23, 23, 23);
+  border-radius: 4px;
+  border: 0;
+  color: white;
+  font-size: 12pt;
+  padding:0 0 0 5px;
+  outline: none;
+}
+
+/* SLIDER */
+
+.vertical-slider{
+  position: relative;
+  width: 10px;
+  border-radius: 5px;
+}
+
+.square-slider{
+  position: relative;
+}
+
+.slider-selector{
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px white inset;
+}
+
+/* INPUT SLIDER */
+
+.input-slider{
+  height: 25px;
+  width: 65;
+  background-color: transparent;
+}
+
+.input-slider-name{
+  user-select: none;
+  font-family: Montserrat-Regular;
+  color: white;
+  font-size: 12pt;
+  line-height: 25px;
+  float: left;
+  margin-right: 5px;
+}
+
+.input-slider-wrapper{
+  position: relative;
+  height: 25px;
+  width: 60px;
+  float: right;
+}
+
+.input-slider input{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: inherit;
+  width: inherit;
+  background-color: rgb(23, 23, 23);
+  border-radius: 4px;
+  border: 0;
+  color: white;
+  font-size: 12pt;
+  padding:0 0 0 5px;
+  outline: none;
+  float: left;
+}
+
+.input-slider i{
+  position: absolute;
+  line-height: 25px;
+  color: white;
+  right: 0;
+  font-size: 15pt;
+}
+
+.input-slider-slider{
+  z-index: 100;
+  position: absolute;
+  display: none;
+  height: 100px;
+  width: 6px;
+  border-radius: 3px;
+  background-color: rgb(40, 40, 40);
+  right: 3px;
+  box-shadow: 4px 4px 13px 0px rgba(0, 0, 0, 0.56);
+}
+
+.input-slider-selector{
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: gray;
+  border-radius: 5px;
+  box-shadow: 0px 0px 0px 2px white inset;
+  left: -2px;
+}
