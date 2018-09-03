@@ -2,8 +2,14 @@ class Layer{
     constructor(index, w, h){
         this.visible = true;
         this.index = index;
-        this.opacity = 255;
+        this.opacity = 1;
         this.data = [];
+        this.prev_pixel = {
+            color: null,
+            x: null,
+            y: null
+        };
+        this.render_img = new Image();
 
         this.w = w;
         this.h = h;
@@ -33,6 +39,7 @@ class Layer{
         this.wrapper.style.top = 30 * this.index + "px";
         this.name_elem.innerHTML = "Layer " + index;
         this.visibility_icon.className = "fas fa-circle";
+        this.visibility_icon.id = "visibility-icon";
         
         this.settings_button.appendChild(settings_icon);
         this.wrapper.appendChild(this.name_elem);
@@ -76,10 +83,13 @@ class Layer{
     }
 
     redraw(){
+        this.clear();
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.imageSmoothingEnabled = false;
-        this.ctx.drawImage(this.render_canvas, 0, 0, this.w * state.zoom, this.h * state.zoom);
+        this.ctx.globalAlpha = this.opacity;
+        this.render_img.src = this.render_canvas.toDataURL();
+        this.ctx.drawImage(this.render_img, 0, 0, this.w * state.zoom, this.h * state.zoom);
     }
 
     resize(){
@@ -88,6 +98,7 @@ class Layer{
     }
 
     draw_pixel(color, x, y){
+        if(this.prev_pixel.color == color && this.prev_pixel.x == x && this.prev_pixel.y ==y){ return; }
         if(color == rgba([255, 255, 255, 0])){
             this.erase_pixel(x, y);
             return;
@@ -102,6 +113,12 @@ class Layer{
         this.render_ctx.rect(x, y, 1, 1);
         this.render_ctx.fillStyle = color;
         this.render_ctx.fill();
+
+        this.prev_pixel = {
+            color: color,
+            x: x,
+            y: y
+        };
     }
 
     erase_pixel(x, y){
@@ -192,7 +209,7 @@ class Layer{
     }
 
     clear(){
-        this.clear_rect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas.width = this.canvas.width;
     }
 
     toggle_visibility(owner, origin){
@@ -227,10 +244,12 @@ class Layer{
 
     set_active(){
         this.wrapper.style.backgroundColor = "rgb(38, 38, 43)";
+        this.settings_button.style.backgroundColor = "rgb(38, 38, 43)";
     }
     
     set_inactive(){
         this.wrapper.style.backgroundColor = "rgb(59, 59, 65)";
+        this.settings_button.style.backgroundColor = "rgb(59, 59, 65)";
     }
 
     delete(){

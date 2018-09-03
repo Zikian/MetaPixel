@@ -40,6 +40,9 @@ window.addEventListener("mousemove", function(e){
         case state.canvas_area:
             state.tool_handler.current_tool.mousemove_actions();
             break;
+        case state.layer_settings.header:
+            drag_element(state.layer_settings.wrapper, state.delta_mouse);
+            break;
     }
 });
 
@@ -113,24 +116,23 @@ document.addEventListener("keyup", function(event){
     switch (event.keyCode){
         case 32: // SPACE
             if(state.tool_handler.prev_tool.id != "select"){
-                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
             }
             break;
         case 18: // ALT
             if(state.tool_handler.prev_tool.id != "select"){
-                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
             }
             break;
         case 16: // SHIFT
             state.input.shift = false;
             if(state.input.last_shortcut != "ctrl-shift" && state.tool_handler.prev_tool.id != "select"){
-                state.tool_handler.change_tool(state.tool_handler.prev_tool.id);
+                state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
             }
             state.input.last_shortcut = null;
             break;
         case 17: // CTRL
             state.input.ctrl = false;
-        
     }
 })
 
@@ -197,16 +199,20 @@ document.getElementById("delete-layer").onclick = function(){
 document.getElementById("move-layer-up").onclick = function(){
     var index = state.main_canvas.current_layer.index;
     if(index > 0){
-        state.main_canvas.swap_layers(index, index - 1);
-        state.history_manager.add_history("swap-layers", [index, index - 1]);
+        var layer_a = state.main_canvas.current_layer;
+        var layer_b = state.main_canvas.layers[layer_a.index - 1];
+        state.main_canvas.swap_layers(layer_a, layer_b);
+        state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
     }
 }
 
 document.getElementById("move-layer-down").onclick = function(){
     var index = state.main_canvas.current_layer.index;
     if(index < state.main_canvas.layers.length - 1){
-        state.main_canvas.swap_layers(index, index + 1);
-        state.history_manager.add_history("swap-layers", [index,  + 1]);
+        var layer_a = state.main_canvas.current_layer;
+        var layer_b = state.main_canvas.layers[layer_a.index + 1];
+        state.main_canvas.swap_layers(layer_a, layer_b);
+        state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
     }
 }
 

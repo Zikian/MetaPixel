@@ -53,8 +53,8 @@ class Canvas{
         this.current_layer.set_active();
     }
 
-    swap_layers(index_a, index_b){
-        this.layers.swapItems(index_a, index_b);
+    swap_layers(layer_a, layer_b){
+        this.layers.swapItems(layer_a.index, layer_b.index);
         this.update_layer_indices();
         state.preview_canvas.redraw();
     }

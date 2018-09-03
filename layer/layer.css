@@ -64,17 +64,16 @@
     height: 30px;
     width: 100%;
     background-color: rgb(59, 59, 65);
-    box-shadow: 0px 1px 0px 0px black inset;
     text-align: center;
 }
 
-.layer i{
+.layer #visibility-icon{
     position: absolute;
     left: 0;
     top: 0;
     line-height: 30px;
-    margin-left: 8px;
-    margin-right: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
     font-size: 11pt;
     color: white;
 }
@@ -91,11 +90,12 @@
     right: 0;
     height: 30px;
     width: 30px;
+    text-align: center;
+    background-color: rgb(59, 59, 65);
 }
 
 .layer-settings-button i{
     line-height: 30px;
     color: white;
     font-size: 14pt;
-    margin-left: 6px;
 }

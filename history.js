@@ -37,6 +37,10 @@ class History_Manager{
         if(type == "swap-layers"){
             this.history.push(new Swap_Layers(...args))
         }
+
+        if(type == "layer-settings"){
+            this.history.push(new Layer_Settings_History(...args))
+        }
     }
 
     undo_last(){
@@ -208,9 +212,27 @@ class Layer_Visibility{
 }
 
 class Swap_Layers{
-    constructor(index_a, index_b){
+    constructor(layer_a, layer_b){
         this.undo = this.redo = function(){
-            state.main_canvas.swap_layers(index_a, index_b);
+            state.main_canvas.swap_layers(layer_a, layer_b);
         }
+    }
+}
+
+class Layer_Settings_History{
+    constructor(prev_settings, new_settings, layer){
+        this.prev_settings = prev_settings;
+        this.new_settings = new_settings;
+        this.layer = layer;
+    }
+
+    undo(){
+        this.layer.opacity = this.prev_settings.opacity;
+        this.layer.name_elem.innerHTML = this.prev_settings.name;
+    }
+    
+    redo(){
+        this.layer.opacity = this.new_settings.opacity;
+        this.layer.name_elem.innerHTML = this.new_settings.name;
     }
 }
