@@ -23,9 +23,10 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.color_picker.update_color();
     
     state.new_document_panel = new New_Document_Panel();
-    state.main_canvas = new Canvas(w, w);
+    state.main_canvas = new Main_Canvas(w, w);
     state.history_manager = new History_Manager();
     state.preview_canvas = new Preview_Canvas();
+    state.layer_manager = new Layer_Manager(w, h);
     state.layer_settings = new Layer_Settings();
 
     state.eyedropper_ctx = document.getElementById("eyedropper-canvas").getContext("2d");

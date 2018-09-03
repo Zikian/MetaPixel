@@ -107,7 +107,7 @@ class Eraser_Tool extends Tool{
     }
 
     mouseup_actions(){
-        state.history_manager.add_history("erase");
+        state.history_manager.add_history("pen-stroke");
         state.main_canvas.draw_buffer = [];
         state.preview_canvas.redraw();
     }
@@ -129,7 +129,7 @@ class Line_Tool extends Tool{
     mouseup_actions(){
         state.main_canvas.clear_preview();
         state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
-        state.history_manager.add_history("line");
+        state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
     }
 }
@@ -187,7 +187,7 @@ class Fill_Tool extends Tool{
 
     mousedown_actions(){
         state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, state.main_canvas.get_data(...state.pixel_pos).rgba);
-        state.history_manager.add_history("fill");
+        state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
     }
 }
@@ -196,8 +196,8 @@ class Eyedropper_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        for(var i = state.main_canvas.layers.length - 1; i >= 0; i--){
-            state.eyedropper_ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0)
+        for(var i = state.layer_manager.layers.length - 1; i >= 0; i--){
+            state.eyedropper_ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0)
         }
         state.color_picker.update_color("eyedropper");
     }
@@ -234,7 +234,7 @@ class Rectangle_Tool extends Tool{
         state.main_canvas.clear_preview();
         state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
         state.selection_size_element.style.display = "none";
-        state.history_manager.add_history("rectangle");
+        state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
     }
 }

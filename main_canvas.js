@@ -1,9 +1,24 @@
-class Canvas{
+class Main_Canvas{
     constructor(w, h){
         this.draw_preview_canvas = document.getElementById("draw-preview-canvas");
         this.draw_preview_ctx = this.draw_preview_canvas.getContext("2d");
         this.draw_preview_canvas.width = w * state.zoom;
         this.draw_preview_canvas.height = h * state.zoom;
+
+        this.background_canvas = document.getElementById("background-canvas");
+        this.background_ctx = this.background_canvas.getContext("2d");
+        this.background_canvas.width = w * state.zoom;
+        this.background_canvas.height = h * state.zoom;
+
+        this.draw_canvas = document.getElementById("draw-canvas");
+        this.draw_ctx = this.draw_canvas.getContext("2d");
+        this.draw_canvas.width = w * state.zoom;
+        this.draw_canvas.height = h * state.zoom;
+
+        this.foreground_canvas = document.getElementById("foreground-canvas")
+        this.foreground_ctx = this.foreground_canvas.getContext("2d")
+        this.foreground_canvas.width = w * state.zoom;
+        this.foreground_canvas.height = h * state.zoom;
 
         this.w = w;
         this.h = h;
@@ -11,52 +26,6 @@ class Canvas{
         this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70]
         
         this.draw_buffer = []
-
-        this.layers = [];
-        this.layers.push(new Layer(0, this.w, this.h));
-        this.current_layer = this.layers[0]
-        this.current_layer.set_active();
-    }
-    
-    add_layer(){
-        var new_layer = new Layer(this.layers.length, this.w, this.h)
-        this.layers.splice(this.current_layer.index, 0, new_layer);
-        this.update_layer_indices();
-        this.change_layer(new_layer.index);
-    }
-
-    delete_layer(){
-        if (this.layers.length == 1) { return; }
-
-        var layer_state = this.current_layer.get_state();
-        state.history_manager.add_history("delete-layer", [layer_state]);
-
-        this.layers.splice(this.current_layer.index, 1);
-        this.current_layer.delete();
-        this.update_layer_indices();
-        this.change_layer(0)
-
-        this.redraw();
-        state.preview_canvas.redraw();
-    }
-
-    update_layer_indices(){
-        for(var i = 0; i < this.layers.length; i++){
-            this.layers[i].index = i;
-            this.layers[i].reposition();
-        }
-    }
-
-    change_layer(index){
-        this.current_layer.set_inactive();
-        this.current_layer = this.layers[index];
-        this.current_layer.set_active();
-    }
-
-    swap_layers(layer_a, layer_b){
-        this.layers.swapItems(layer_a.index, layer_b.index);
-        this.update_layer_indices();
-        state.preview_canvas.redraw();
     }
 
     zoom(direction){
@@ -76,10 +45,8 @@ class Canvas{
         var delta_x = old_x * old_zoom - old_x * new_zoom;
         var delta_y = old_y * old_zoom - old_y * new_zoom;
 
-        for(var i = 0; i < this.layers.length; i++){
-            this.layers[i].resize();
-        }
-        this.redraw();
+        state.layer_manager.resize_layers();
+        state.layer_manager.redraw_layers();
 
         drag_element(state.canvas_wrapper, [delta_x, delta_y]);
         
@@ -95,15 +62,7 @@ class Canvas{
     }
 
     fill(x, y, new_color, old_color){
-        this.current_layer.fill(x, y, new_color, old_color);
-    }
-
-    redraw(){
-        for(var i = this.layers.length - 1; i >= 0; i--){
-            if (this.layers[i].visible){
-                this.layers[i].redraw();
-            }
-        }
+        state.layer_manager.current_layer.fill(x, y, new_color, old_color);
     }
 
     contains_mouse(){
@@ -130,15 +89,15 @@ class Canvas{
     }
 
     draw_pixel(color, x, y){
-        this.current_layer.draw_pixel(color, x, y);
+        state.layer_manager.current_layer.draw_pixel(color, x, y);
     }
 
     erase_pixel(x, y){
-        this.current_layer.erase_pixel(x, y);
+        state.layer_manager.current_layer.erase_pixel(x, y);
     }
 
     line(x0, y0, x1, y1, erase = false){
-        this.current_layer.line(x0, y0, x1, y1, erase);
+        state.layer_manager.current_layer.line(x0, y0, x1, y1, erase);
     }
 
     preview_line(x0, y0, x1, y1){
@@ -182,14 +141,8 @@ class Canvas{
         state.preview_canvas.redraw();
     }
 
-    clear(){
-        for(var i = 0; i < this.layers.length; i++){
-            this.layers[i].clear();
-        }
-    }
-
     clear_rect(x1, y1, w, h){
-        this.current_layer.clear_rect(x1, y1, w, h);
+        state.layer_manager.current_layer.clear_rect(x1, y1, w, h);
     }
 
     clear_preview(){
@@ -197,7 +150,7 @@ class Canvas{
     }
 
     get_data(x, y){
-        return this.current_layer.data[x][y];
+        return state.layer_manager.current_layer.data[x][y];
     }
 }
 

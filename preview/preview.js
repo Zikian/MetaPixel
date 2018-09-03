@@ -52,9 +52,9 @@ class Preview_Canvas{
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.imageSmoothingEnabled = false;
-        for(var i = state.main_canvas.layers.length - 1; i >= 0; i--){
-            if (state.main_canvas.layers[i].visible){
-                this.ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0, state.main_canvas.w * this.current_zoom, state.main_canvas.h * this.current_zoom);
+        for(var i = state.layer_manager.layers.length - 1; i >= 0; i--){
+            if (state.layer_manager.layers[i].visible){
+                this.ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0, state.main_canvas.w * this.current_zoom, state.main_canvas.h * this.current_zoom);
             }
         }
     }

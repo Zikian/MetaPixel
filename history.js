@@ -10,9 +10,9 @@ class History_Manager{
 
     add_history(type, args){
         this.redo_history = []
-        if(type == "pen-stroke" || type == "erase" || type == "line" || type == "rectangle" || type == "fill" || type == "clear-selection"){
+        if(type == "pen-stroke"){
             if (this.prev_data.length == 0){ return; }
-            this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.main_canvas.current_layer.index));
+            this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.layer_manager.current_layer.index));
             this.prev_data = [];
             this.new_data = [];
         }
@@ -67,6 +67,13 @@ class History_Manager{
     }
 }
 
+function get_data_copy(data){
+    var copy = new Pixel_Data();
+    copy.pos = data.pos;
+    copy.rgba = data.rgba
+    return copy;
+}
+
 class Pen_Stroke{
     constructor(prev_data, new_data, layer){
         this.prev_data = prev_data;
@@ -77,27 +84,19 @@ class Pen_Stroke{
     undo(){
         for(var i = 0; i < this.prev_data.length; i++){
             var pos = this.prev_data[i].pos;
-            state.main_canvas.layers[this.layer].draw_pixel(rgba(this.prev_data[i].rgba), ...pos);
-            var data = state.main_canvas.layers[this.layer].data[pos[0]][pos[1]]
-            data = this.prev_data[i];
+            state.layer_manager.layers[this.layer].draw_pixel(rgba(this.prev_data[i].rgba), ...pos);
+            state.layer_manager.layers[this.layer].data[pos[0]][pos[1]] = get_data_copy(this.prev_data[i]);
         }
     }
 
     redo(){
         for(var i = 0; i < this.new_data.length; i++){
             var pos = this.new_data[i].pos;
-            state.main_canvas.layers[this.layer].draw_pixel(rgba(this.new_data[i].rgba), ...pos);
-            var data = state.main_canvas.layers[this.layer].data[pos[0]][pos[1]]
-            data = get_data_copy(this.new_data[i]);
+            state.layer_manager.layers[this.layer].draw_pixel(rgba(this.new_data[i].rgba), ...pos);
+            state.layer_manager.layers[this.layer].data[pos[0]][pos[1]] = get_data_copy(this.new_data[i]);
         }
+        
     }
-}
-
-function get_data_copy(data){
-    var copy = new Pixel_Data();
-    copy.pos = data.pos;
-    copy.rgba = data.rgba
-    return copy;
 }
 
 class Selection_History{
@@ -149,15 +148,15 @@ class Add_Layer{
     }
 
     undo(){
-        state.main_canvas.change_layer(this.index + 1);
-        state.main_canvas.layers[this.index].delete();
-        state.main_canvas.layers.splice(this.index, 1);
-        state.main_canvas.update_layer_indices();
-        state.main_canvas.current_layer
+        state.layer_manager.change_layer(this.index + 1);
+        state.layer_manager.layers[this.index].delete();
+        state.layer_manager.layers.splice(this.index, 1);
+        state.layer_manager.update_layer_indices();
+        state.layer_manager.current_layer
     }
 
     redo(){
-        state.main_canvas.add_layer();
+        state.layer_manager.add_layer();
     }
 }
 
@@ -172,20 +171,17 @@ class Delete_Layer{
         new_layer.name_elem.innerHTML = this.layer_state.name;
         new_layer.data = this.layer_state.data;
         
-        var img = new Image();
-        img.src = this.layer_state.dataURL;
-        
-        for(var x = 0; x < state.main_canvas.w; x++){
-            for(var y = 0; y < state.main_canvas.h; y++){
+        for(var x = 0; x < state.layer_manager.w; x++){
+            for(var y = 0; y < state.layer_manager.h; y++){
                 new_layer.render_ctx.fillStyle = rgba(new_layer.data[x][y].rgba);
                 new_layer.render_ctx.fillRect(x, y, 1, 1)
             }
         }
         
-        state.main_canvas.layers.splice(new_layer.index, 0, new_layer);
-        state.main_canvas.update_layer_indices();
-        state.main_canvas.change_layer(new_layer.index);
-        state.main_canvas.redraw();
+        state.layer_manager.layers.splice(new_layer.index, 0, new_layer);
+        state.layer_manager.update_layer_indices();
+        state.layer_manager.change_layer(new_layer.index);
+        new_layer.redraw();
 
         if(!this.layer_state.visible){
             new_layer.visible = false;
@@ -195,18 +191,17 @@ class Delete_Layer{
     }
 
     redo(){
-        state.main_canvas.layers[this.layer_state.index].delete();
-        state.main_canvas.layers.splice(this.layer_state.index, 1);
-        state.main_canvas.update_layer_indices();
-        state.main_canvas.change_layer(0)
-        state.main_canvas.redraw();
+        state.layer_manager.layers[this.layer_state.index].delete();
+        state.layer_manager.layers.splice(this.layer_state.index, 1);
+        state.layer_manager.update_layer_indices();
+        state.layer_manager.change_layer(0)
     }
 }
 
 class Layer_Visibility{
     constructor(index){
         this.undo = this.redo = function(){
-            state.main_canvas.layers[index].toggle_visibility(state.main_canvas.layers[index]).call();
+            state.layer_manager.layers[index].toggle_visibility(state.layer_manager.layers[index]).call();
         }
     }
 }
@@ -214,7 +209,7 @@ class Layer_Visibility{
 class Swap_Layers{
     constructor(layer_a, layer_b){
         this.undo = this.redo = function(){
-            state.main_canvas.swap_layers(layer_a, layer_b);
+            state.layer_manager.swap_layers(layer_a, layer_b);
         }
     }
 }

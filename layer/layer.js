@@ -9,17 +9,16 @@ class Layer{
             x: null,
             y: null
         };
-        this.render_img = new Image();
-
+        
         this.w = w;
         this.h = h;
-
+        
         this.render_canvas = document.createElement("canvas");
         this.render_canvas.className = "render-canvas";
         this.render_canvas.width = w;
         this.render_canvas.height = h;
         this.render_ctx = this.render_canvas.getContext("2d");
-
+        
         this.canvas = document.createElement("canvas");
         this.canvas.className = "layer-canvas";
         this.canvas.width = this.w * state.zoom;
@@ -48,12 +47,21 @@ class Layer{
         document.getElementById("layers-area").appendChild(this.render_canvas);
         document.getElementById("layers-area").appendChild(this.wrapper);
         document.getElementById("canvas-wrapper").appendChild(this.canvas);
-
+        
         this.wrapper.onclick = this.change_layer(this);
         this.visibility_icon.onclick = this.toggle_visibility(this, "button")
         this.settings_button.onclick = this.show_settings(this);
-
+        
         this.init_data();
+        this.render_img = new Image();
+        this.render_img.onload = this.set_render_img(this);
+        this.render_img.src = this.render_canvas.toDataURL();
+    }
+
+    set_render_img(owner){
+        return function(){
+            owner.redraw();
+        }
     }
 
     show_settings(owner){
@@ -76,17 +84,18 @@ class Layer{
         return {
             data: this.data.slice(0),
             index: this.index,
-            dataURL: this.canvas.toDataURL(),
             name: this.name_elem.innerHTML,
-            visible: this.visible,
+            visible: this.visible
         }
     }
 
     redraw(){
         this.clear();
-        this.ctx.mozImageSmoothingEnabled = false;
-        this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.imageSmoothingEnabled = false;
+        this.ctx.webkitImageSmoothingEnabled = false;
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.mozImageSmoothingEnabled = false;
+        this.ctx.oImageSmoothingEnabled = false;
         this.ctx.globalAlpha = this.opacity;
         this.render_img.src = this.render_canvas.toDataURL();
         this.ctx.drawImage(this.render_img, 0, 0, this.w * state.zoom, this.h * state.zoom);
@@ -98,7 +107,7 @@ class Layer{
     }
 
     draw_pixel(color, x, y){
-        if(this.prev_pixel.color == color && this.prev_pixel.x == x && this.prev_pixel.y ==y){ return; }
+        if(this.prev_pixel.color == color && this.prev_pixel.x == x && this.prev_pixel.y == y){ return; }
         if(color == rgba([255, 255, 255, 0])){
             this.erase_pixel(x, y);
             return;
@@ -123,7 +132,7 @@ class Layer{
 
     erase_pixel(x, y){
         var data = this.data[x][y];
-        if (rgba(data.rgba) == "rgba(255, 255, 255, 0)"){ return; }
+        if (rgba(data.rgba) == rgba([255, 255, 255, 0])){ return; }
         state.history_manager.push_prev_data(data);
 
         this.ctx.clearRect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
@@ -204,7 +213,7 @@ class Layer{
                 state.history_manager.push_new_data(data);
             }
         }
-        state.history_manager.add_history("clear-selection")
+        state.history_manager.add_history("pen-stroke")
         state.preview_canvas.redraw();
     }
 
@@ -233,12 +242,12 @@ class Layer{
 
     reposition(){
         this.wrapper.style.top = 30 * this.index + "px";
-        this.canvas.style.zIndex = state.main_canvas.layers.length - this.index + 5;
+        this.canvas.style.zIndex = state.layer_manager.layers.length - this.index + 5;
     }
 
     change_layer(owner){
         return function(){
-            state.main_canvas.change_layer(owner.index);
+            state.layer_manager.change_layer(owner.index);
         }
     }
 

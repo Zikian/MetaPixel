@@ -70,12 +70,25 @@
     top: 0;
     left: 0;
 }
-    
+
+#background-canvas{
+    z-index: 1;
+}
+ 
+#draw-canvas{
+    z-index: 2;
+}
+
+#foreground-canvas{
+    z-index: 3;
+}
+
 #canvas-area #canvas-wrapper #draw-preview-canvas{
     position: absolute;
     top: 0;
     left: 0;
     image-rendering: pixelated;
+    z-index: 4;
 }
 
 #canvas-area #mouse-indicator{
@@ -99,6 +112,7 @@
     background-color: rgba(26, 27, 32, 0.7);
     border: 1px solid white;
     border-radius: 5px;
+    z-index: 10;
 }
 
 #selection-size #size-span{
@@ -106,4 +120,5 @@
     margin-right: 4px;
     line-height: 30px;
     font-size: 10pt;
+    color: white;
 }

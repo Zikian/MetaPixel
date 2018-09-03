@@ -22,7 +22,7 @@
                 <i class="far fa-file-image" id="file-icon"></i>
                 <span>File</span>
             </div>
-            <div id="dropdown" class="button">
+            <div id="dropdown">
                 <ul>
                     <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
@@ -163,7 +163,11 @@
                 <canvas id="selection-right" class="selection-canvas" width="1"></canvas>
 
                 <div id="canvas-wrapper">
+                    <canvas id="background-canvas"></canvas>
+                    <canvas id="draw-canvas"></canvas>
+                    <canvas id="foreground-canvas"></canvas>
                     <canvas id="draw-preview-canvas"></canvas>
+
                     <canvas id="save-canvas"></canvas>
                     <canvas id="eyedropper-canvas"></canvas>
                     <div id="mouse-indicator"></div>
@@ -341,8 +345,9 @@
 
         <script src="utils.js"></script>
         <script src="widgets/widgets.js"></script>
-        <script src="canvas.js"></script>
+        <script src="main_canvas.js"></script>
         <script src="preview/preview.js"></script>
+        <script src="layer/layer_manager.js"></script>
         <script src="layer/layer.js"></script>
         <script src="layer/layer_settings.js"></script>
         <script src="selection.js"></script>

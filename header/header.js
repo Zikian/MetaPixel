@@ -5,6 +5,7 @@ state.file.onclick = function(){
 
 state.file.onmouseout = function () {
     state.file_dropdown.style.display = "none";
+    state.file.style.backgroundColor = "transparent";
 }
 
 state.file_dropdown.onmouseover = function () {
@@ -29,8 +30,8 @@ state.save_as.onclick = function(){
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, state.main_canvas.w * state.zoom, state.main_canvas.h * state.zoom);
     }
-    for(var i = 0; i < state.main_canvas.layers.length; i++){
-        ctx.drawImage(state.main_canvas.layers[i].render_canvas, 0, 0, state.main_canvas.w * state.zoom, state.main_canvas.h * state.zoom)
+    for(var i = 0; i < state.layer_manager.layers.length; i++){
+        ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0, state.main_canvas.w * state.zoom, state.main_canvas.h * state.zoom)
     }
     var saved_img = canvas.toDataURL();
     download_img(saved_img);
@@ -51,6 +52,6 @@ function download_img(img){
 state.clear.addEventListener("mousedown", function(){
     let clear = confirm("Are you sure?")
     if(clear){
-        state.main_canvas.clear();
+        state.layer_manager.clear_layers();
     }
 });

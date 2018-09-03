@@ -73,7 +73,7 @@ class New_Document_Panel{
             if (owner.height_input.value == 0){
                 owner.height_input.value = 1;
             }
-            state.main_canvas.clear();
+            state.layer_manager.clear_layers();
             init(owner.width_input.value, owner.height_input.value, owner.transparency_input.checked, owner.name_input.value);
             
             owner.panel.style.display = "none";

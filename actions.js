@@ -188,30 +188,30 @@ state.redo.onclick = function(){
 }
 
 document.getElementById("add-layer").onclick = function(){
-    state.main_canvas.add_layer();
-    state.history_manager.add_history("add-layer", [state.main_canvas.current_layer.index]);
+    state.layer_manager.add_layer();
+    state.history_manager.add_history("add-layer", [state.layer_manager.current_layer.index]);
 }
 
 document.getElementById("delete-layer").onclick = function(){
-    state.main_canvas.delete_layer();
+    state.layer_manager.delete_layer();
 }
 
 document.getElementById("move-layer-up").onclick = function(){
-    var index = state.main_canvas.current_layer.index;
+    var index = state.layer_manager.current_layer.index;
     if(index > 0){
-        var layer_a = state.main_canvas.current_layer;
-        var layer_b = state.main_canvas.layers[layer_a.index - 1];
-        state.main_canvas.swap_layers(layer_a, layer_b);
+        var layer_a = state.layer_manager.current_layer;
+        var layer_b = state.layer_manager.layers[layer_a.index - 1];
+        state.layer_manager.swap_layers(layer_a, layer_b);
         state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
     }
 }
 
 document.getElementById("move-layer-down").onclick = function(){
-    var index = state.main_canvas.current_layer.index;
-    if(index < state.main_canvas.layers.length - 1){
-        var layer_a = state.main_canvas.current_layer;
-        var layer_b = state.main_canvas.layers[layer_a.index + 1];
-        state.main_canvas.swap_layers(layer_a, layer_b);
+    var index = state.layer_manager.current_layer.index;
+    if(index < state.layer_manager.layers.length - 1){
+        var layer_a = state.layer_manager.current_layer;
+        var layer_b = state.layer_manager.layers[layer_a.index + 1];
+        state.layer_manager.swap_layers(layer_a, layer_b);
         state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
     }
 }
