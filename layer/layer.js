@@ -60,7 +60,7 @@ class Layer{
 
     set_render_img(owner){
         return function(){
-            owner.redraw();
+            owner.ctx.drawImage(this, 0, 0, owner.w * state.zoom, owner.h * state.zoom);
         }
     }
 

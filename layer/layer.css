@@ -55,8 +55,9 @@
 #layers-area{
     position: relative;
     grid-row: 2;
-    background-color: rgb(102, 102, 108);
+    background-color: rgb(85, 85, 92);
     overflow: scroll;
+    overflow-x: hidden;
 }
 
 .layer{

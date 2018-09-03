@@ -55,6 +55,8 @@ document.addEventListener("keydown", function(event){
             state.main_canvas.clear_selection();
             break;
         case 32: // SPACE
+            if(state.input.space) { return; }
+            state.input.space = true;
             state.tool_handler.change_tool("hand");
             break;
         case 17: // CTRL
@@ -115,6 +117,7 @@ document.addEventListener("keydown", function(event){
 document.addEventListener("keyup", function(event){
     switch (event.keyCode){
         case 32: // SPACE
+            state.input.space = false;
             if(state.tool_handler.prev_tool.id != "select"){
                 state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
             }

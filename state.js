@@ -65,7 +65,8 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.input = {
         ctrl: false,
         shift: false,
-        last_shortcut: null
+        last_shortcut: null,
+        space: false
     };
     
     resize_canvas_wrapper();

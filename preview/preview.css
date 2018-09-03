@@ -3,7 +3,7 @@
     display: grid;
     grid-template-rows: 30px 1fr;
     grid-row: 1;
-    background-color: rgb(102, 102, 108);
+    background-color: rgb(85, 85, 92);
     height: 200px;
 }
 
