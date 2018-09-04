@@ -1,0 +1,38 @@
+#palette{
+    grid-row: 3;
+    display: grid;
+    grid-template-rows: 30px 170px;
+    background-color: rgb(59, 59, 65);
+    height: 100%;
+    position: relative;
+}
+
+#palette #header{
+    position: relative;
+    grid-row: 1;
+    box-shadow: 0px 1px 0px 0px black inset;
+    text-align: center;
+}
+
+#palette #header span{
+    color: white;
+    line-height: 30px;
+    font-size: 10pt;
+}
+
+#add-color{
+
+    width: 30px;
+    height: auto;
+    text-align: center;
+}
+
+#add-color i{
+    color: white;
+    line-height: 30px;
+
+}
+
+#palette-body{
+    background-color: rgb(85, 85, 92);
+}
