@@ -170,27 +170,19 @@
 /* DRAW TOOL */
 
 #draw-tooltip{
-    width: 100px;
+    width: 107px;
+    top: -4px;
 }
+
+#draw-tooltip i{
+    top: 4px;
+}
+
 
 /* ERASER TOOL */
 
 #eraser-tooltip{
     width: 106px;
-}
-
-
-/* LINE TOOL */
-
-#line{
-    background-image: url(../images/line_tool.gif);
-    background-size: 56%;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-
-#line-tooltip{
-    width: 122px;
 }
 
 /* FILL TOOL */
@@ -203,6 +195,11 @@
 
 #rectangle-tooltip{
     width: 132px;
+    top: -4px;
+}
+
+#rectangle-tooltip i{
+    top: 4px;
 }
 
 /* ELLIPSE TOOL */
@@ -215,7 +212,12 @@
 }
 
 #ellipse-tooltip{
-    width: 109px;
+    width: 118px;
+    top: -4px;
+}
+
+#ellipse-tooltip i{
+    top: 4px;
 }
 
 /* EYEDROPPER TOOL */

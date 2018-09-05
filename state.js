@@ -60,7 +60,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.mouse_start = null;
     state.line_end = null;
     state.rectangle_end = null;
-    state.selection_end = null;
+    state.rectangle_end = null;
     
     state.input = {
         ctrl: false,

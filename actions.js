@@ -111,9 +111,7 @@ document.addEventListener("keydown", function(event){
             break;
         case 16: // SHIFT
             state.input.shift = true;
-            if (!state.input.ctrl){
-                state.tool_handler.change_tool("line");
-            } else {
+            if (state.input.ctrl){
                 state.input.last_shortcut = "ctrl-shift";
             }
             break;
@@ -135,9 +133,6 @@ document.addEventListener("keyup", function(event){
             break;
         case 16: // SHIFT
             state.input.shift = false;
-            if(state.input.last_shortcut != "ctrl-shift" && state.tool_handler.prev_tool.id != "select"){
-                state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
-            }
             state.input.last_shortcut = null;
             break;
         case 17: // CTRL

@@ -3,7 +3,6 @@ class Tool_Handler{
         this.tools = {
             drawtool: new Draw_Tool("drawtool"),
             eraser: new Eraser_Tool("eraser"),
-            line: new Line_Tool("line"),
             select: new Selection_Tool("select"),
             fill: new Fill_Tool("fill"),
             eyedropper: new Eyedropper_Tool("eyedropper"),
@@ -61,25 +60,44 @@ class Tool{
 }
 
 class Draw_Tool extends Tool{
-    constructor(id){ super(id); }
+    constructor(id){ 
+        super(id); 
+        this.draw_type = "draw"; // free draw or line
+    }
 
     mousedown_actions(){
+        if(state.input.shift) { this.draw_type = "line" }
+        else { this.draw_type = "draw"; }
         if(!state.current_selection.contains_mouse()){ return; }
         state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
     }
 
     mousemove_actions(){
-        state.main_canvas.draw_buffer.push(state.pixel_pos);
-        if (state.main_canvas.draw_buffer.length == 2){
-            state.main_canvas.line(...state.main_canvas.draw_buffer[0], ...state.main_canvas.draw_buffer[1])
-            state.main_canvas.draw_buffer.shift()
+        if (this.draw_type == "draw"){
+            state.main_canvas.draw_buffer.push(state.pixel_pos);
+            if (state.main_canvas.draw_buffer.length == 2){
+                state.main_canvas.line(...state.main_canvas.draw_buffer[0], ...state.main_canvas.draw_buffer[1])
+                state.main_canvas.draw_buffer.shift()
+            }
+        } else {
+            state.main_canvas.clear_preview();
+            state.line_end = state.pixel_pos;
+            state.main_canvas.preview_line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
         }
     }
 
     mouseup_actions(){
-        state.history_manager.add_history("pen-stroke")
-        state.main_canvas.draw_buffer = [];
-        state.preview_canvas.redraw();
+        if(this.draw_type == "draw") {
+            state.history_manager.add_history("pen-stroke")
+            state.main_canvas.draw_buffer = [];
+            state.preview_canvas.redraw();
+        } else {
+            state.main_canvas.clear_preview();
+            state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
+            state.history_manager.add_history("pen-stroke");
+            state.preview_canvas.redraw();
+        }
+        if(!state.input.shift) { this.draw_type = "draw"; }
     }
 }
 
@@ -113,23 +131,6 @@ class Eraser_Tool extends Tool{
     }
 }
 
-class Line_Tool extends Tool{
-    constructor(id){ super(id); }
-    
-    mousemove_actions(){
-        state.main_canvas.clear_preview();
-        state.line_end = state.pixel_pos;
-        state.main_canvas.preview_line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
-    }
-
-    mouseup_actions(){
-        state.main_canvas.clear_preview();
-        state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
-        state.history_manager.add_history("pen-stroke");
-        state.preview_canvas.redraw();
-    }
-}
-
 class Selection_Tool extends Tool{
     constructor(id){ super(id); }
 
@@ -150,10 +151,10 @@ class Selection_Tool extends Tool{
     
     mousemove_actions(){
         if(state.current_selection.forming){
-            state.selection_end = state.pixel_pos;
+            state.rectangle_end = state.pixel_pos;
             state.current_selection.draw();
-            var w = calc_distance(state.mouse_start[0], state.selection_end[0]);
-            var h = calc_distance(state.mouse_start[1], state.selection_end[1]);
+            var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
+            var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
             update_rect_size_preview(w, h)
         } 
         if (state.current_selection.exists && state.current_selection.contains_mouse() && !state.current_selection.forming || state.current_selection.being_dragged){
@@ -220,7 +221,12 @@ class Rectangle_Tool extends Tool{
     mousemove_actions(){
         state.main_canvas.clear_preview();
         state.rectangle_end = state.pixel_pos;
-        state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+        if(state.input.shift) { 
+            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end)
+            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+        } else { 
+            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+        }
         var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
         var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
         update_rect_size_preview(w, h);
@@ -236,7 +242,9 @@ class Rectangle_Tool extends Tool{
 }
 
 class Ellipse_Tool extends Tool{
-    constructor(id){ super(id); }
+    constructor(id){ 
+        super(id); 
+    }
 
     mousedown_actions(){
         state.rectangle_end = state.mouse_start;
@@ -248,7 +256,12 @@ class Ellipse_Tool extends Tool{
     mousemove_actions(){
         state.main_canvas.clear_preview();
         state.rectangle_end = state.pixel_pos;
-        state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+        if(state.input.shift) { 
+            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end)
+            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+        } else { 
+            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+        }
         var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
         var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
         update_rect_size_preview(w, h);
@@ -260,6 +273,7 @@ class Ellipse_Tool extends Tool{
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
+        if(!state.input.shift) { this.draw_type = "ellipse"}
     }
 }
 

@@ -69,8 +69,6 @@ function drag_element(elem, delta_pos){
     elem.style.top = elem.offsetTop + delta_pos[1] + "px";
 }
 
-
-
 function calc_distance(x1, x2){
     if(x1 < x2){
         return x2 - x1 + 1
@@ -79,4 +77,18 @@ function calc_distance(x1, x2){
     } else {
         return 1
     }
+}
+
+function rect_to_square(x1, y1, x2, y2){
+    var dx = x2 - x1;   
+    var dy = y2 - y1;
+
+    if(dx > 0 && dy > 0){
+        return [x1 + dx, y1 + dx];
+    } else if (dx > 0 && dy < 0){
+        return [x1 + dx, y1 - dx];
+    } else if (dx < 0 && dy < 0){
+        return [x1 + dx, y1 + dx];
+    }
+    return [x1 + dx, y1 - dx];
 }

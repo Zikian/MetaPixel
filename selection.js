@@ -43,10 +43,14 @@ class Selection{
     draw(){
         var pixel_size = state.zoom;
 
+        if(state.input.shift){
+            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end);
+        }
+
         var x1 = state.mouse_start[0] * pixel_size;
         var y1 = state.mouse_start[1] * pixel_size;
-        var x2 = state.selection_end[0] * pixel_size;
-        var y2 = state.selection_end[1] * pixel_size;
+        var x2 = state.rectangle_end[0] * pixel_size;
+        var y2 = state.rectangle_end[1] * pixel_size;
 
         if (x1 == x2 && y1 == y2){ 
             this.draw_selection(x1, y1, x1 + pixel_size, y1 + pixel_size); 
