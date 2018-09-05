@@ -3,6 +3,10 @@ function hsl(h, s, l){
     return "hsl(" + h + "," + s + "%," + l + "%)";
 }
 
+function rgb(rgbArr){
+    return "rgb(" + rgbArr[0] + "," + rgbArr[1] + "," + rgbArr[2] + ")";
+}
+
 function hsla(h, s, l, a){
     return "hsla(" + h + "," + s + "%," + l + "%," + a + ")";
 }

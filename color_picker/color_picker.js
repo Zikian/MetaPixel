@@ -154,6 +154,9 @@ class Color_Picker{
             case "to-foreground":
                 this.update_from_rgba(this.primary_color)
                 break;
+            case "palette":
+                this.update_from_rgb(...state.palette.current_color.color);
+                break;
             }
             
         this.color = hsla(this.hue, this.saturation, this.lightness, this.alpha);

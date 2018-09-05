@@ -29,20 +29,23 @@ window.addEventListener("mousemove", function(e){
         state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
     }
 
-    switch(state.active_element){
-        case state.color_picker.header:
-            drag_element(state.color_picker.window,  state.delta_mouse);
-            state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
-            break;
-        case state.new_document_panel.header:
-            drag_element(state.new_document_panel.panel, state.delta_mouse);
-            break;
-        case state.canvas_area:
-            state.tool_handler.current_tool.mousemove_actions();
-            break;
-        case state.layer_settings.header:
-            drag_element(state.layer_settings.wrapper, state.delta_mouse);
-            break;
+    
+    if(state.active_element != null){
+        switch(state.active_element){
+            case state.color_picker.header:
+                drag_element(state.color_picker.window,  state.delta_mouse);
+                state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
+                break;
+            case state.new_document_panel.header:
+                drag_element(state.new_document_panel.panel, state.delta_mouse);
+                break;
+            case state.canvas_area:
+                state.tool_handler.current_tool.mousemove_actions();
+                break;
+            case state.layer_settings.header:
+                drag_element(state.layer_settings.wrapper, state.delta_mouse);
+                break;
+        }
     }
 });
 
@@ -79,6 +82,9 @@ document.addEventListener("keydown", function(event){
             break;
         case 70: // F
             state.tool_handler.change_tool("fill");
+            break;
+        case 81: // Q
+            state.tool_handler.change_tool("ellipse")
             break;
         case 82: // R
             state.tool_handler.change_tool("rectangle")
@@ -156,7 +162,9 @@ state.canvas_wrapper.onmouseout = function(){
 }
 
 state.canvas_wrapper.onmouseover = function(){
-    state.mouse_indicator.style.display = "block";
+    if (state.tool_handler.current_tool.id != "select" && state.tool_handler.current_tool.id != "hand"){
+        state.mouse_indicator.style.display = "block";
+    }
     if (state.tool_handler.current_tool.id != "eraser"){
         state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }

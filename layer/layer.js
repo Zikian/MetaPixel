@@ -75,9 +75,16 @@ class Layer{
             this.data.push([]);
             for(var y = 0; y < this.h; y++){
                 this.data[x].push(new Pixel_Data());
-                this.data[x][y].pos = [x, y]
+                this.data_at(x, y).pos = [x, y]
             }
         }
+    }
+
+    data_at(x, y){
+        if(state.current_selection.contains_pixel_pos(x, y)){
+            return this.data[x][y]
+        }
+        return null;
     }
 
     get_state(){
@@ -107,39 +114,39 @@ class Layer{
     }
 
     draw_pixel(color, x, y){
-        if(this.prev_pixel.color == color && this.prev_pixel.x == x && this.prev_pixel.y == y){ return; }
-        if(color == rgba([255, 255, 255, 0])){
-            this.erase_pixel(x, y);
-            return;
+        var data = this.data_at(x, y);
+        if(data == null) { return; }
+        if(this.prev_pixel.color == rgba(color) && this.prev_pixel.x == x && this.prev_pixel.y == y){ return; }
+        if(rgba(color) == rgba([255, 255, 255, 0])){
+            this.ctx.clearRect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
+            this.render_ctx.clearRect(x, y, 1, 1)
+        } else {
+            this.ctx.beginPath();
+            this.ctx.rect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
+            this.ctx.fillStyle = rgba(color);
+            this.ctx.fill();
+            
+            this.render_ctx.beginPath();
+            this.render_ctx.rect(x, y, 1, 1);
+            this.render_ctx.fillStyle = rgba(color);
+            this.render_ctx.fill();
+            
         }
-
-        this.ctx.beginPath();
-        this.ctx.rect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
-        this.ctx.fillStyle = color;
-        this.ctx.fill();
-
-        this.render_ctx.beginPath();
-        this.render_ctx.rect(x, y, 1, 1);
-        this.render_ctx.fillStyle = color;
-        this.render_ctx.fill();
-
         this.prev_pixel = {
-            color: color,
+            color: rgba(color),
             x: x,
             y: y
         };
+        state.history_manager.push_prev_data(data);
+        data.rgba = state.color_picker.rgba;
+        state.history_manager.push_new_data(data);
     }
 
     erase_pixel(x, y){
-        var data = this.data[x][y];
-        if (rgba(data.rgba) == rgba([255, 255, 255, 0])){ return; }
-        state.history_manager.push_prev_data(data);
-
-        this.ctx.clearRect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
-        this.render_ctx.clearRect(x, y, 1, 1)
-        data.rgba = [255, 255, 255, 0];
-
-        state.history_manager.push_new_data(data);
+        var data = this.data_at(x, y);
+        if(data == null) { return; }
+        if(rgba(data.rgba) == rgba([255, 255, 255, 0])){ return; }
+        this.draw_pixel([255, 255, 255, 0], x, y);
     }
 
     line(x0, y0, x1, y1, erase){
@@ -151,19 +158,10 @@ class Layer{
         
         this.ctx.beginPath();
         while(true){
-
-            if(state.current_selection.contains_pixel_pos(x0, y0)){
-                if(erase){
-                    this.erase_pixel(x0, y0);
-                } else {
-                    var data = this.data[x0][y0];
-                    this.draw_pixel(state.color_picker.color, x0, y0);
-                    if (rgba(data.rgba) != rgba(state.color_picker.rgba)){
-                        state.history_manager.push_prev_data(data);
-                        data.rgba = state.color_picker.rgba;
-                        state.history_manager.push_new_data(data);
-                    }
-                }
+            if(erase){
+                this.erase_pixel(x0, y0);
+            } else {
+                this.draw_pixel(state.color_picker.rgba, x0, y0);
             }
     
             if ((x0==x1) && (y0==y1)) { break; }
@@ -181,16 +179,42 @@ class Layer{
             }
         }
     }
+    
+    ellipse(x0, y0, x1, y1){
+        var a = Math.abs(x1-x0), b = Math.abs(y1-y0), b1 = b&1;        /* diameter */
+        var dx = 4*(1.0-a)*b*b, dy = 4*(b1+1)*a*a;              /* error increment */
+        var err = dx+dy+b1*a*a, e2;                             /* error of 1.step */
+
+        if (x0 > x1) { x0 = x1; x1 += a; }        /* if called with swapped points */
+        if (y0 > y1) y0 = y1;                                  /* .. exchange them */
+        y0 += (b+1)>>1; y1 = y0-b1;                              /* starting pixel */
+        a = 8*a*a; b1 = 8*b*b;                               
+                       
+        var color = state.color_picker.rgba;    
+        do {   
+            this.draw_pixel(color, x1, y0);                                      /*   I. Quadrant */
+            this.draw_pixel(color, x0, y0);                                      /*  II. Quadrant */
+            this.draw_pixel(color, x0, y1);                                      /* III. Quadrant */
+            this.draw_pixel(color, x1, y1);                                      /*  IV. Quadrant */
+            e2 = 2*err;
+            if (e2 <= dy) { y0++; y1--; err += dy += a; }                 /* y step */
+            if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; }       /* x */
+        } while (x0 <= x1);
+
+        while (y0-y1 <= b) {
+            this.draw_pixel(color, x0-1, y0);
+            this.draw_pixel(color, x1+1, y0++);
+            this.draw_pixel(color, x0-1, y1);
+            this.draw_pixel(color, x1+1, y1--);
+        }
+    }
 
     fill(x, y, new_color, old_color){
-        var node = this.data[x][y];
-        if(!state.current_selection.contains_pixel_pos(x, y)) { return; }
-        if(rgba(node.rgba) == rgba(new_color)){ return; }
-        if(rgba(node.rgba) == rgba(old_color)){
-            state.history_manager.push_prev_data(node);
-            node.rgba = new_color;
-            this.draw_pixel(rgba(node.rgba), x, y);
-
+        var data = this.data_at(x, y);
+        if (data == null) { return; }
+        if(rgba(data.rgba) == rgba(new_color)){ return; }
+        if(rgba(data.rgba) == rgba(old_color)){
+            this.draw_pixel(new_color, x, y);
             if(y < this.h - 1){ this.fill(x, y + 1, new_color, old_color); }
             if(y > 0){ this.fill(x, y - 1, new_color, old_color); }
             if(x < this.w - 1){ this.fill(x + 1, y, new_color, old_color); }
@@ -207,10 +231,7 @@ class Layer{
         this.render_ctx.clearRect(x1, y1, w, h);
         for(var x = x1; x < x1 + w; x++){
             for(var y = y1; y < y1 + h; y++){
-                var data = this.data[x][y];
-                state.history_manager.push_prev_data(data);
-                data.rgba = [255, 255, 255 ,0];
-                state.history_manager.push_new_data(data);
+                this.erase_pixel(x, y);
             }
         }
         state.history_manager.add_history("pen-stroke")

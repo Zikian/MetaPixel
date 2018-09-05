@@ -8,6 +8,7 @@ class Tool_Handler{
             fill: new Fill_Tool("fill"),
             eyedropper: new Eyedropper_Tool("eyedropper"),
             rectangle: new Rectangle_Tool("rectangle"),
+            ellipse: new Ellipse_Tool("ellipse"),
             hand: new Hand_Tool("hand")
         }
         
@@ -37,6 +38,7 @@ class Tool_Handler{
 
 class Tool{
     constructor(id){ 
+        this.id = id;
         this.elem = document.getElementById(id); 
         this.elem.onmouseover = function(){
             if(state.tool_handler.current_tool.elem != this){
@@ -63,11 +65,7 @@ class Draw_Tool extends Tool{
 
     mousedown_actions(){
         if(!state.current_selection.contains_mouse()){ return; }
-        state.main_canvas.draw_pixel(state.color_picker.color, ...state.pixel_pos);
-        var data = state.main_canvas.get_data(...state.pixel_pos);
-        state.history_manager.push_prev_data(data);
-        data.rgba = state.color_picker.rgba; 
-        state.history_manager.push_new_data(data);  
+        state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
     }
 
     mousemove_actions(){
@@ -89,12 +87,11 @@ class Eraser_Tool extends Tool{
     constructor(id){ super(id); }
 
     on_enter(){
-        state.mouse_indicator.style.backgroundColor = "white";
+        state.mouse_indicator.style.backgroundColor = rgba([255, 255, 255, 0.5]);
     }
 
     mousedown_actions(){
         state.main_canvas.erase_pixel(...state.pixel_pos)
-        state.mouse_indicator.style.backgroundColor = "white";
     }
 
     mousemove_actions(){
@@ -103,7 +100,6 @@ class Eraser_Tool extends Tool{
             state.main_canvas.line(...state.main_canvas.draw_buffer[0], ...state.main_canvas.draw_buffer[1], true)
             state.main_canvas.draw_buffer.shift()
         }
-        state.mouse_indicator.style.backgroundColor = "white";
     }
 
     mouseup_actions(){
@@ -186,7 +182,7 @@ class Fill_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, state.main_canvas.get_data(...state.pixel_pos).rgba);
+        state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, state.main_canvas.data_at(...state.pixel_pos).rgba);
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
     }
@@ -233,6 +229,34 @@ class Rectangle_Tool extends Tool{
     mouseup_actions(){
         state.main_canvas.clear_preview();
         state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
+        state.selection_size_element.style.display = "none";
+        state.history_manager.add_history("pen-stroke");
+        state.preview_canvas.redraw();
+    }
+}
+
+class Ellipse_Tool extends Tool{
+    constructor(id){ super(id); }
+
+    mousedown_actions(){
+        state.rectangle_end = state.mouse_start;
+        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        update_rect_size_preview(w, h);
+    }
+
+    mousemove_actions(){
+        state.main_canvas.clear_preview();
+        state.rectangle_end = state.pixel_pos;
+        state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        update_rect_size_preview(w, h);
+    }
+
+    mouseup_actions(){
+        state.main_canvas.clear_preview();
+        state.main_canvas.ellipse(...state.mouse_start, ...state.rectangle_end);
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();

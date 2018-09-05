@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="layer/layer.css">
         <link rel="stylesheet" href="layer/layer_settings.css">
         <link rel="stylesheet" href="palette/palette.css">
+        <link rel="stylesheet" href="palette/palette_settings.css">
         <link rel="stylesheet" href="preview/preview.css">
         <link rel="stylesheet" href="widgets/widgets.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -137,6 +138,12 @@
                     <i class="fas fa-vector-square"></i>
                     <div id="rectangle-tooltip" class="tooltip">
                             <span>Rectangle Tool (R)</span>
+                            <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                <div id="ellipse" class="tool">
+                    <div id="ellipse-tooltip" class="tooltip">
+                            <span>Ellipse Tool (Q)</span>
                             <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
@@ -345,11 +352,30 @@
                 <div id="palette">
                     <div id="header">
                         <span>Palette</span>
-                        <div id="add-color" class="button">
-                            <i class="fas fa-plus"></i>
-                        </div>
+                        <div id="add-color" class="button"><i class="fas fa-plus"></i></div>
+                        <div id="remove-color" class="button"><i class="far fa-trash-alt"></i></div>
+                        <div id="palette-settings-button" class="button"><i class="fas fa-cog"></i></div>
                     </div>
-                    <div id="palette-body"></div>
+                    <div id="palette-body">
+                        <div id="palette-wrapper"></div>
+                    </div>
+                    <div id="palette-settings">
+                        <div id="palette-settings-header">
+                            <span>Palette Size</span>
+                            <i id="palette-settings-cross" class="fas fa-times"></i>
+                        </div>
+                        <div id="palette-settings-body">
+                            <span>Width:</span>
+                            <input type="number" id="palette-width-setting">
+                            <span>Height:</span>
+                            <input type="number" id="palette-height-setting">
+                            <div id="palette-settings-buttons">
+                                <button id="palette-settings-ok">OK</button>
+                                <button id="palette-settings-cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div id="palette-settings-footer"></div>
+                    </div>
                 </div>
             </div>
         </div>

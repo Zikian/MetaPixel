@@ -88,6 +88,40 @@ class Main_Canvas{
         this.preview_line(x2, y1, x2, y2);
     }
 
+    preview_ellipse(x0, y0, x1, y1){
+        var a = Math.abs(x1-x0), b = Math.abs(y1-y0), b1 = b&1;        /* diameter */
+        var dx = 4*(1.0-a)*b*b, dy = 4*(b1+1)*a*a;              /* error increment */
+        var err = dx+dy+b1*a*a, e2;                             /* error of 1.step */
+
+        if (x0 > x1) { x0 = x1; x1 += a; }        /* if called with swapped points */
+        if (y0 > y1) y0 = y1;                                  /* .. exchange them */
+        y0 += (b+1)>>1; y1 = y0-b1;                              /* starting pixel */
+        a = 8*a*a; b1 = 8*b*b;                               
+                                                                
+        do {                                                 
+            this.preview_pixel(x1, y0);                                      /*   I. Quadrant */
+            this.preview_pixel(x0, y0);                                      /*  II. Quadrant */
+            this.preview_pixel(x0, y1);                                      /* III. Quadrant */
+            this.preview_pixel(x1, y1);                                      /*  IV. Quadrant */
+            e2 = 2*err;
+            if (e2 <= dy) { y0++; y1--; err += dy += a; }                 /* y step */
+            if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; }       /* x */
+        } while (x0 <= x1);
+
+        while (y0-y1 <= b) {                /* too early stop of flat ellipses a=1 */
+            this.preview_pixel(x0-1, y0);                         /* -> finish tip of ellipse */
+            this.preview_pixel(x1+1, y0++);
+            this.preview_pixel(x0-1, y1);
+            this.preview_pixel(x1+1, y1--);
+        }
+    }
+
+    preview_pixel(x, y){
+        this.draw_preview_ctx.rect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
+        this.draw_preview_ctx.fillStyle = state.color_picker.color;
+        this.draw_preview_ctx.fill();
+    }
+
     draw_pixel(color, x, y){
         state.layer_manager.current_layer.draw_pixel(color, x, y);
     }
@@ -100,6 +134,10 @@ class Main_Canvas{
         state.layer_manager.current_layer.line(x0, y0, x1, y1, erase);
     }
 
+    ellipse(x1, y1, x2, y2){
+        state.layer_manager.current_layer.ellipse(x1, y1, x2, y2);
+    }
+
     preview_line(x0, y0, x1, y1){
         var dx = Math.abs(x1-x0);
         var dy = Math.abs(y1-y0);
@@ -110,9 +148,7 @@ class Main_Canvas{
         this.draw_preview_ctx.beginPath();
         while(true){
             if(state.current_selection.contains_pixel_pos(x0, y0)){
-                this.draw_preview_ctx.rect(x0 * state.zoom, y0 * state.zoom, state.zoom, state.zoom);
-                this.draw_preview_ctx.fillStyle = state.color_picker.color;
-                this.draw_preview_ctx.fill();
+                this.preview_pixel(x0, y0)
             }
     
             if ((x0==x1) && (y0==y1)) {
@@ -146,11 +182,11 @@ class Main_Canvas{
     }
 
     clear_preview(){
-        this.draw_preview_ctx.clearRect(0, 0, this.w * state.zoom, this.h * state.zoom);
+        this.draw_preview_canvas.width = this.draw_preview_canvas.width;
     }
 
-    get_data(x, y){
-        return state.layer_manager.current_layer.data[x][y];
+    data_at(x, y){
+        return state.layer_manager.current_layer.data_at(x, y);
     }
 }
 

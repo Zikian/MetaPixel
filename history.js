@@ -10,36 +10,40 @@ class History_Manager{
 
     add_history(type, args){
         this.redo_history = []
-        if(type == "pen-stroke"){
-            if (this.prev_data.length == 0){ return; }
-            this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.layer_manager.current_layer.index));
-            this.prev_data = [];
-            this.new_data = [];
-        }
-        if(type == "selection"){
-            if (this.prev_selection == null){ return; }
-            this.history.push(new Selection_History(this.prev_selection, this.new_selection));
-            this.prev_selection = null;
-            this.new_selection = null;
-        }
-        if(type == "add-layer"){
-            this.history.push(new Add_Layer(...args));
-        }
-
-        if(type == "delete-layer"){
-            this.history.push(new Delete_Layer(...args));
-        }
-
-        if(type == "layer-visibility"){
-            this.history.push(new Layer_Visibility(...args));
-        }
-
-        if(type == "swap-layers"){
-            this.history.push(new Swap_Layers(...args))
-        }
-
-        if(type == "layer-settings"){
-            this.history.push(new Layer_Settings_History(...args))
+        switch(type){
+            case "pen-stroke":
+                if (this.prev_data.length == 0){ return; }
+                this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.layer_manager.current_layer.index));
+                this.prev_data = [];
+                this.new_data = [];
+                break;
+            case "selection":
+                if (this.prev_selection == null){ return; }
+                this.history.push(new Selection_History(this.prev_selection, this.new_selection));
+                this.prev_selection = null;
+                this.new_selection = null;
+                break;
+            case "add-layer":
+                this.history.push(new Add_Layer(...args))
+                break;
+            case "delete-layer":
+                this.history.push(new Delete_Layer(...args))
+                break;
+            case "layer-visibility":
+                this.history.push(new Layer_Visibility(...args));
+                break;
+            case "swap-layers":
+                this.history.push(new Swap_Layers(...args));
+                break;
+            case "layer-settings":
+                this.history.push(new Layer_Settings_History(...args));
+                break;
+            case "add-palette-color":
+                this.history.push(new Add_Palette_Color(...args));
+                break;
+            case "delete-palette-color":
+                this.history.push(new Delete_Palette_Color(...args));
+                break;
         }
     }
 
@@ -82,9 +86,12 @@ class Pen_Stroke{
     }
 
     undo(){
+        var positions = []
         for(var i = 0; i < this.prev_data.length; i++){
             var pos = this.prev_data[i].pos;
-            state.layer_manager.layers[this.layer].draw_pixel(rgba(this.prev_data[i].rgba), ...pos);
+            if(positions.includes(pos)){ continue; }
+            positions.push(pos);
+            state.layer_manager.layers[this.layer].draw_pixel(this.prev_data[i].rgba, ...pos);
             state.layer_manager.layers[this.layer].data[pos[0]][pos[1]] = get_data_copy(this.prev_data[i]);
         }
     }
@@ -92,10 +99,9 @@ class Pen_Stroke{
     redo(){
         for(var i = 0; i < this.new_data.length; i++){
             var pos = this.new_data[i].pos;
-            state.layer_manager.layers[this.layer].draw_pixel(rgba(this.new_data[i].rgba), ...pos);
+            state.layer_manager.layers[this.layer].draw_pixel(this.new_data[i].rgba, ...pos);
             state.layer_manager.layers[this.layer].data[pos[0]][pos[1]] = get_data_copy(this.new_data[i]);
         }
-        
     }
 }
 
@@ -229,5 +235,37 @@ class Layer_Settings_History{
     redo(){
         this.layer.opacity = this.new_settings.opacity;
         this.layer.name_elem.innerHTML = this.new_settings.name;
+    }
+}
+
+class Add_Palette_Color{
+    constructor(elem){
+        this.elem = elem;
+    }
+
+    undo(){
+        state.palette.remove_color(this.elem);
+    }
+
+    redo(){
+        state.palette.colors.splice(this.elem.index, 0, this.elem);
+        state.palette.wrapper.appendChild(this.elem);
+        state.palette.reposition_colors();
+    }
+}
+
+class Delete_Palette_Color{
+    constructor(elem){
+        this.elem = elem;
+    }
+
+    undo(){
+        state.palette.colors.splice(this.elem.index, 0, this.elem);
+        state.palette.wrapper.appendChild(this.elem);
+        state.palette.reposition_colors();
+    }
+
+    redo(){
+        state.palette.remove_color(this.elem);
     }
 }

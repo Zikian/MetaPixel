@@ -122,7 +122,7 @@
 .tool{
     position: relative;
     width: 50px;
-    height: 50px;
+    height: 50px;   
     float: left;
     text-align: center;
 }
@@ -203,6 +203,19 @@
 
 #rectangle-tooltip{
     width: 132px;
+}
+
+/* ELLIPSE TOOL */
+
+#ellipse{
+    background-image: url(../images/circle_tool.png);
+    background-size: 66%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#ellipse-tooltip{
+    width: 109px;
 }
 
 /* EYEDROPPER TOOL */

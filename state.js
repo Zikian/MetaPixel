@@ -12,6 +12,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.canvas_wrapper = document.getElementById("canvas-wrapper");
     
     state.mouse_indicator = document.getElementById("mouse-indicator");
+    state.mouse_indicator.style.display = "none";
     state.selection_size_element = document.getElementById("selection-size");
     state.switch_colors_button = document.getElementById("switch-colors-button");
     state.reset_colors_button = document.getElementById("reset-colors-button");
@@ -26,8 +27,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.main_canvas = new Main_Canvas(w, w);
     state.history_manager = new History_Manager();
     state.preview_canvas = new Preview_Canvas();
-    state.layer_manager = new Layer_Manager(w, h);
-    state.layer_settings = new Layer_Settings();
+    state.palette = new Palette();
 
     state.eyedropper_ctx = document.getElementById("eyedropper-canvas").getContext("2d");
     document.getElementById("eyedropper-canvas").width = w;
@@ -76,6 +76,8 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     
     state.current_selection = new Selection();
     state.selection_canvas = null;
+    state.layer_manager = new Layer_Manager(w, h);
+    state.layer_settings = new Layer_Settings();
 }
 
 init();
