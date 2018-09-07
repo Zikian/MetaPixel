@@ -92,3 +92,13 @@ function rect_to_square(x1, y1, x2, y2){
     }
     return [x1 + dx, y1 - dx];
 }
+
+function resize_sidebar_window(owner){
+    return function(){
+        document.body.style.cursor = "ns-resize";
+        owner.body.style.height = event.clientY - owner.body.getBoundingClientRect().y + "px";
+        if(event.clientY - owner.body.getBoundingClientRect().y < 0){
+            owner.body.style.height = 0 + "px";
+        }
+    }
+}

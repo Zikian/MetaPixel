@@ -1,6 +1,6 @@
 .editor{
     display: grid;
-    grid-template-columns: 100px 1fr 300px;
+    grid-template-columns: 100px 1fr auto;
     grid-row: 2;
 }
 
@@ -21,6 +21,53 @@
     display: grid;
     grid-column: 3;
     grid-template-rows: 200px 200px 200px;
+    grid-template-columns: 10px 1fr;
+}
+
+#sidebar-windows{
+    width: 300px;
+}
+
+#sidebar-resizer{
+    position: relative;
+    grid-column: 1;
+    grid-row-start: 1;
+    grid-row-end: 5;
+    background-color: rgb(108, 107, 114);
+    border-radius: 3px;
+    display: grid;
+}
+
+#sidebar-resizer i{
+    top: 49%;
+    left: -1px;
+    z-index: 10;
+    position: absolute;
+    display: inline-block;
+    font-size: 9pt;
+    font-stretch: expanded;
+    color: white;
+    transform: rotate(90deg) scaleX(1.5);
+}
+
+.window-resizer{
+    position: relative;
+    grid-row: 3;
+    background-color: rgb(108, 107, 114);
+    z-index: 10;
+}
+
+.window-resizer i{
+    transform: scaleX(1.5);
+    font-size: 8pt;
+    color:white;
+    position: absolute;
+    left: 48%;
+    top: -1px;
+}
+
+.window-resizer:hover{
+    cursor: ns-resize;
 }
 
 #canvas-area{
@@ -87,7 +134,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    image-rendering: pixelated;
     z-index: 1000;
 }
 

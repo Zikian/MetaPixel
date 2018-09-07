@@ -1,16 +1,13 @@
 #palette{
-    grid-row: 3;
-    display: grid;
-    grid-template-rows: 30px 170px;
-    background-color: rgb(59, 59, 65);
-    height: 100%;
     position: relative;
+    display: grid;
+    grid-template-rows: 30px auto 8px;
+    background-color: rgb(59, 59, 65);
 }
 
 #palette #header{
     position: relative;
     grid-row: 1;
-    box-shadow: 0px 1px 0px 0px black inset;
     text-align: center;
 }
 
@@ -53,6 +50,7 @@
 #palette-body{
     background-color: rgb(85, 85, 92);
     overflow: scroll;
+    height: 170px;
 }
 
 #remove-color{

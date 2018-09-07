@@ -1,4 +1,7 @@
 window.addEventListener('mouseup', function(e) {
+    if(state.active_element.className.includes("resizer")){
+        document.body.style.cursor = "default"
+    }
     if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
         state.tool_handler.current_tool.mouseup_actions();
     }
@@ -28,7 +31,6 @@ window.addEventListener("mousemove", function(e){
         state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
         state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
     }
-
     
     if(state.active_element != null){
         switch(state.active_element){
@@ -45,6 +47,10 @@ window.addEventListener("mousemove", function(e){
             case state.layer_settings.header:
                 drag_element(state.layer_settings.wrapper, state.delta_mouse);
                 break;
+        }
+
+        if(state.active_element.className.includes("resizer")){
+            state.active_element.function();
         }
     }
 });
@@ -220,5 +226,11 @@ document.getElementById("move-layer-down").onclick = function(){
         state.layer_manager.swap_layers(layer_a, layer_b);
         state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
     }
+}
+
+document.getElementById("sidebar-resizer").onmousedown = function(){ state.active_element = this; }
+document.getElementById("sidebar-resizer").function = function(){
+    var w = document.body.offsetWidth - event.clientX - 4;
+    document.getElementById("sidebar-windows").style.width = clamp(w, 200, 500) + "px";
 }
 

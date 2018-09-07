@@ -5,9 +5,6 @@ class Preview_Canvas{
 
         this.canvas.width = state.main_canvas.w;
         this.canvas.height = state.main_canvas.h;
-        
-        this.canvas.style.left = (300 - this.canvas.width) / 2 + "px"
-        this.canvas.style.top = (170 - this.canvas.height) / 2 + "px"
 
         this.zoom_stages = this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18];
         this.current_zoom = 1;
@@ -15,6 +12,11 @@ class Preview_Canvas{
 
         document.getElementById("preview-zoom-in").onclick = this.button_zoom(this, "in");
         document.getElementById("preview-zoom-out").onclick = this.button_zoom(this, "out");
+
+        this.body = document.getElementById("preview-canvas-area");
+        this.resizer = document.getElementById("preview-resizer");
+        this.resizer.onmousedown = function(){ state.active_element = this; }
+        this.resizer.function = resize_sidebar_window(this);
     }
 
     button_zoom(owner, direction){
@@ -39,7 +41,7 @@ class Preview_Canvas{
         this.canvas.height = state.main_canvas.h * this.current_zoom;
 
         if(origin == "button"){
-            this.canvas.style.left = (300 - this.canvas.width) / 2 + "px";
+            this.canvas.style.left = (250 - this.canvas.width) / 2 + "px";
             this.canvas.style.top = (170 - this.canvas.height) / 2 + "px";
         }
 
@@ -60,6 +62,6 @@ class Preview_Canvas{
     }
 
     clear(){
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas.width = this.canvas.width;  
     }
 }

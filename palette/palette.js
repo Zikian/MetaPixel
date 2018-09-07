@@ -23,7 +23,7 @@ class Palette{
             state.palette.validate_settings();
         }
         document.getElementById("palette-settings-cancel").onclick = function(){
-            document.getElementById("palette-settings").style.display = "none";
+            
         }
         this.width_input = document.getElementById("palette-width-setting");
         this.height_input = document.getElementById("palette-height-setting");
@@ -65,6 +65,11 @@ class Palette{
         
         this.add_color([0, 0, 0]);
         this.add_color([255, 255, 255]);
+
+        this.body = document.getElementById("palette-body");
+        this.resizer = document.getElementById("palette-resizer");
+        this.resizer.onmousedown = function(){ state.active_element = this; }
+        this.resizer.function = resize_sidebar_window(this);
     }
 
     validate_settings(){
@@ -75,6 +80,7 @@ class Palette{
         this.wrapper.style.width = this.width * 28 + "px";
         this.wrapper.style.height = this.height * 28 + "px";
         this.reposition_colors();
+        document.getElementById("palette-settings").style.display = "none";
     }
 
     add_color(color){

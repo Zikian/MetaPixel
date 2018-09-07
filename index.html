@@ -283,95 +283,101 @@
             </div>
 
             <div id="sidebar-right">
-                <div id="preview">
-                    <header>
-                        <div id="preview-zoom">
-                            <span id="preview-zoom-span">(1x)</span>
-                        </div>
-                        <span>Preview</span>
-                        <div id="preview-zoom-buttons">
-                            <div id="preview-zoom-in" class="button">
-                                <i class="fas fa-search-plus"></i>
+                <div id="sidebar-resizer" class="resizer"><i class="fas fa-bars"></i></div>
+                <div id="sidebar-windows">
+                    <div id="preview">
+                        <header>
+                            <div id="preview-zoom">
+                                <span id="preview-zoom-span">(1x)</span>
                             </div>
-                            <div id="preview-zoom-out" class="button">
-                                <i class="fas fa-search-minus"></i>
-                            </div>
-                        </div>
-                    </header>
-                    <div id="preview-canvas-area">
-                        <canvas id="preview-canvas"></canvas>
-                    </div>
-                </div>
-
-                <div id="layers">
-                    <div id="header">
-                        <span>Layers</span>
-                        <div id="add-layer" class="button">
-                            <i class="fas fa-plus"></i>
-                        </div>
-                        <div id="delete-layer" class="button">
-                            <i class="far fa-trash-alt"></i>
-                        </div>
-                        <div id="move-layer-up" class="button">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div id="move-layer-down" class="button">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                    </div>
-                    <div id="layers-area"></div>
-                </div>
-                <div id="layer-settings">
-                    <div id="layer-settings-header">
-                        <span>Layer Settings</span>
-                        <i id="layer-settings-cross" class="fas fa-times"></i>
-                    </div>
-                    <div id="settings">
-                        <input type="text" id="layer-name-setting">
-                        <div class="input-slider" id="opacity-setting">
-                            <span class="input-slider-name"></span>
-                            <div class="input-slider-wrapper">
-                                <input type="number">
-                                <i class="fas fa-caret-down"></i>
-                                <div class="input-slider-slider">
-                                    <div class="input-slider-selector"></div>
+                            <span>Preview</span>
+                            <div id="preview-zoom-buttons">
+                                <div id="preview-zoom-in" class="button">
+                                    <i class="fas fa-search-plus" id="preview-icon"></i>
+                                </div>
+                                <div id="preview-zoom-out" class="button">
+                                    <i class="fas fa-search-minus" id="preview-icon"></i>
                                 </div>
                             </div>
+                        </header>
+                        <div id="preview-canvas-area">
+                            <canvas id="preview-canvas"></canvas>
                         </div>
-                        <div id="buttons">
-                            <button id="layer-settings-ok">OK</button>
-                            <button id="layer-settings-cancel">Cancel</button>
-                        </div>
+                        <div class="window-resizer resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
                     </div>
-                    <div id="layer-settings-footer"></div>
-                </div>
 
-                <div id="palette">
-                    <div id="header">
-                        <span>Palette</span>
-                        <div id="add-color" class="button"><i class="fas fa-plus"></i></div>
-                        <div id="remove-color" class="button"><i class="far fa-trash-alt"></i></div>
-                        <div id="palette-settings-button" class="button"><i class="fas fa-cog"></i></div>
-                    </div>
-                    <div id="palette-body">
-                        <div id="palette-wrapper"></div>
-                    </div>
-                    <div id="palette-settings">
-                        <div id="palette-settings-header">
-                            <span>Palette Size</span>
-                            <i id="palette-settings-cross" class="fas fa-times"></i>
-                        </div>
-                        <div id="palette-settings-body">
-                            <span>Width:</span>
-                            <input type="number" id="palette-width-setting">
-                            <span>Height:</span>
-                            <input type="number" id="palette-height-setting">
-                            <div id="palette-settings-buttons">
-                                <button id="palette-settings-ok">OK</button>
-                                <button id="palette-settings-cancel">Cancel</button>
+                    <div id="layers">
+                        <div id="header">
+                            <span>Layers</span>
+                            <div id="add-layer" class="button">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <div id="delete-layer" class="button">
+                                <i class="far fa-trash-alt"></i>
+                            </div>
+                            <div id="move-layer-up" class="button">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div id="move-layer-down" class="button">
+                                <i class="fas fa-arrow-down"></i>
                             </div>
                         </div>
-                        <div id="palette-settings-footer"></div>
+                        <div id="layers-area"></div>
+                        <div class="window-resizer resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+                    <div id="layer-settings">
+                        <div id="layer-settings-header">
+                            <span>Layer Settings</span>
+                            <i id="layer-settings-cross" class="fas fa-times"></i>
+                        </div>
+                        <div id="settings">
+                            <input type="text" id="layer-name-setting">
+                            <div class="input-slider" id="opacity-setting">
+                                <span class="input-slider-name"></span>
+                                <div class="input-slider-wrapper">
+                                    <input type="number">
+                                    <i class="fas fa-caret-down"></i>
+                                    <div class="input-slider-slider">
+                                        <div class="input-slider-selector"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="buttons">
+                                <button id="layer-settings-ok">OK</button>
+                                <button id="layer-settings-cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div id="layer-settings-footer"></div>
+                    </div>
+
+                    <div id="palette">
+                        <div id="header">
+                            <span>Palette</span>
+                            <div id="add-color" class="button"><i class="fas fa-plus"></i></div>
+                            <div id="remove-color" class="button"><i class="far fa-trash-alt"></i></div>
+                            <div id="palette-settings-button" class="button"><i class="fas fa-cog"></i></div>
+                        </div>
+                        <div id="palette-body">
+                            <div id="palette-wrapper"></div>
+                        </div>
+                        <div id="palette-settings">
+                            <div id="palette-settings-header">
+                                <span>Palette Size</span>
+                                <i id="palette-settings-cross" class="fas fa-times"></i>
+                            </div>
+                            <div id="palette-settings-body">
+                                <span>Width:</span>
+                                <input type="number" id="palette-width-setting">
+                                <span>Height:</span>
+                                <input type="number" id="palette-height-setting">
+                                <div id="palette-settings-buttons">
+                                    <button id="palette-settings-ok">OK</button>
+                                    <button id="palette-settings-cancel">Cancel</button>
+                                </div>
+                            </div>
+                            <div id="palette-settings-footer"></div>
+                        </div>
+                        <div class="window-resizer resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
                     </div>
                 </div>
             </div>

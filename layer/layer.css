@@ -1,17 +1,14 @@
 #layers{
-    grid-row: 2;
+    position: relative;
     display: grid;
-    grid-template-rows: 30px 170px;
+    grid-template-rows: 30px auto 8px;
     background-color: rgb(59, 59, 65);
     z-index: 1;
-    height: 100%;
-    position: relative;
 }
 
 #layers #header{
     position: relative;
     grid-row: 1;
-    box-shadow: 0px 1px 0px 0px black inset;
     text-align: center;
 }
 
@@ -27,7 +24,6 @@
     width: 30px;
     text-align: center;
     top: 0;
-    box-shadow: 0px 1px 0px 0px black inset;
 }
 
 #layers #header i{
@@ -53,6 +49,7 @@
 }
 
 #layers-area{
+    height: 170px;
     position: relative;
     grid-row: 2;
     background-color: rgb(85, 85, 92);
