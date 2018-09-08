@@ -36,18 +36,18 @@ class Main_Canvas{
         } else if (direction == "out" && zoom_stage_index > 0) {
             state.zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }
-
+        
         var old_zoom = state.prev_zoom;
         var old_x = state.pixel_pos[0];
         var old_y = state.pixel_pos[1];
         var new_zoom = state.zoom;
-
+        
         var delta_x = old_x * old_zoom - old_x * new_zoom;
         var delta_y = old_y * old_zoom - old_y * new_zoom;
-
+        
         state.layer_manager.resize_layers();
         state.layer_manager.redraw_layers();
-
+        
         drag_element(state.canvas_wrapper, [delta_x, delta_y]);
         
         this.draw_preview_canvas.width = this.h * state.zoom;
@@ -56,7 +56,7 @@ class Main_Canvas{
         resize_canvas_wrapper();
         state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
         state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
-
+        
         state.current_selection.move(delta_x, delta_y)
         state.current_selection.resize();
     }
@@ -66,8 +66,8 @@ class Main_Canvas{
     }
 
     contains_mouse(){
-        var x = state.abs_mouse_pos[0];
-        var y = state.abs_mouse_pos[1];
+        var x = event.clientX;
+        var y = event.clientY;
         return (x >= state.canvas_wrapper.getBoundingClientRect().x &&
                 x <= state.canvas_wrapper.getBoundingClientRect().x + state.canvas_wrapper.clientWidth &&
                 y >= state.canvas_wrapper.getBoundingClientRect().y &&
@@ -171,9 +171,9 @@ class Main_Canvas{
 
     clear_selection(){
         if (!state.current_selection.exists) { return; }
-        var x = state.current_selection.x - state.canvas_wrapper.offsetLeft;
-        var y = state.current_selection.y - state.canvas_wrapper.offsetTop;
-        this.clear_rect(x, y, state.current_selection.true_w, state.current_selection.true_h);
+        var x = state.current_selection.x - canvas_x();
+        var y = state.current_selection.y - canvas_y();
+        this.clear_rect(x, y, state.current_selection.width(), state.current_selection.height());
         state.preview_canvas.redraw();
     }
 

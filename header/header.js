@@ -1,20 +1,20 @@
 state.file.onclick = function(){
     state.file_dropdown.style.display = "block";
-    state.file.style.backgroundColor = "rgb(116, 116, 124)";
+    this.style.backgroundColor = "rgb(116, 116, 124)";
 };
 
 state.file.onmouseout = function () {
     state.file_dropdown.style.display = "none";
-    state.file.style.backgroundColor = "transparent";
+    this.style.backgroundColor = "transparent";
 }
 
 state.file_dropdown.onmouseover = function () {
-    state.file_dropdown.style.display = "block";
+    this.style.display = "block";
     state.file.style.backgroundColor = "rgb(116, 116, 124)";
 }
 
 state.file_dropdown.onmouseout = function () {
-    state.file_dropdown.style.display = "none";
+    this.style.display = "none";
     state.file.style.backgroundColor = "transparent";
 }
             
@@ -55,3 +55,6 @@ state.clear.addEventListener("mousedown", function(){
         state.layer_manager.clear_layers();
     }
 });
+
+state.undo.onclick = function() { state.history_manager.undo_last(); }
+state.redo.onclick = function(){ state.history_manager.redo_last(); }

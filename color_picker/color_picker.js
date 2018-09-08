@@ -3,7 +3,11 @@ class Color_Picker{
         this.window = document.getElementById("color-picker");
         
         this.header = document.getElementById("color-picker-header");
-        this.header.onmousedown = function(){ state.active_element = state.color_picker.header; }
+        this.header.onmousedown = set_active_element;
+        this.header.active_func = function(){
+            drag_element(state.color_picker.window,  state.delta_mouse);
+            state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
+        }
         this.header_text = document.getElementById("color-picker-header-text");
         
         document.getElementById("color-picker-cancel").onclick = this.cancel(this);

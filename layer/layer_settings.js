@@ -18,9 +18,8 @@ class Layer_Settings{
 
         this.ok_button.onclick = this.validate(this);
         this.cancel_button.onclick = this.cancel(this);
-        this.header.onmousedown = function(){
-            state.active_element = this;
-        }
+        this.header.onmousedown = set_active_element;
+        this.header.active_func  = function(){ drag_element(state.layer_settings.wrapper, state.delta_mouse); }
     }
 
     open(target){

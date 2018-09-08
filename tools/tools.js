@@ -81,7 +81,6 @@ class Draw_Tool extends Tool{
             }
         } else {
             state.main_canvas.clear_preview();
-            state.line_end = state.pixel_pos;
             state.main_canvas.preview_line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
         }
     }
@@ -135,7 +134,7 @@ class Selection_Tool extends Tool{
     constructor(id){ super(id); }
 
     on_enter(){
-        state.mouse_indicator.style.display = "none"
+        hide_mouse_indicator();
         document.body.style.cursor = "crosshair";
     }
 
@@ -151,10 +150,10 @@ class Selection_Tool extends Tool{
     
     mousemove_actions(){
         if(state.current_selection.forming){
-            state.rectangle_end = state.pixel_pos;
+            state.mouse_end = state.pixel_pos;
             state.current_selection.draw();
-            var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
-            var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+            var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
+            var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
             update_rect_size_preview(w, h)
         } 
         if (state.current_selection.exists && state.current_selection.contains_mouse() && !state.current_selection.forming || state.current_selection.being_dragged){
@@ -212,29 +211,29 @@ class Rectangle_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.rectangle_end = state.mouse_start;
-        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        state.mouse_end = state.mouse_start;
+        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
     }
     
     mousemove_actions(){
         state.main_canvas.clear_preview();
-        state.rectangle_end = state.pixel_pos;
+        state.mouse_end = state.pixel_pos;
         if(state.input.shift) { 
-            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end)
-            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+            state.mouse_end = rect_to_square(...state.mouse_start, ...state.mouse_end)
+            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.mouse_end);
         } else { 
-            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.rectangle_end);
+            state.main_canvas.preview_rectangle(...state.mouse_start, ...state.mouse_end);
         }
-        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
     }
     
     mouseup_actions(){
         state.main_canvas.clear_preview();
-        state.main_canvas.rectangle(...state.mouse_start, ...state.rectangle_end);
+        state.main_canvas.rectangle(...state.mouse_start, ...state.mouse_end);
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
@@ -247,29 +246,29 @@ class Ellipse_Tool extends Tool{
     }
 
     mousedown_actions(){
-        state.rectangle_end = state.mouse_start;
-        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        state.mouse_end = state.mouse_start;
+        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
     }
 
     mousemove_actions(){
         state.main_canvas.clear_preview();
-        state.rectangle_end = state.pixel_pos;
+        state.mouse_end = state.pixel_pos;
         if(state.input.shift) { 
-            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end)
-            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+            state.mouse_end = rect_to_square(...state.mouse_start, ...state.mouse_end)
+            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.mouse_end);
         } else { 
-            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.rectangle_end);
+            state.main_canvas.preview_ellipse(...state.mouse_start, ...state.mouse_end);
         }
-        var w = calc_distance(state.mouse_start[0], state.rectangle_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.rectangle_end[1]);
+        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
+        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
     }
 
     mouseup_actions(){
         state.main_canvas.clear_preview();
-        state.main_canvas.ellipse(...state.mouse_start, ...state.rectangle_end);
+        state.main_canvas.ellipse(...state.mouse_start, ...state.mouse_end);
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
@@ -282,7 +281,7 @@ class Hand_Tool extends Tool{
 
     on_enter(){
         document.body.style.cursor = "grab";
-        state.mouse_indicator.style.display = "none";
+        hide_mouse_indicator();
     }
     
     mousemove_actions(){

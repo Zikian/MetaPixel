@@ -120,13 +120,14 @@ class Selection_History{
         state.current_selection.y = this.prev_selection.y;
         state.current_selection.w = this.prev_selection.w;
         state.current_selection.h = this.prev_selection.h;
-        state.current_selection.true_w = this.prev_selection.true_w;
-        state.current_selection.true_h = this.prev_selection.true_h;
+        state.current_selection.selection_rect.style.width = this.prev_selection.width + "px";
+        state.current_selection.selection_rect.style.height = this.prev_selection.height + "px";
         state.current_selection.exists = this.prev_selection.exists;
-        state.current_selection.draw_selection(this.prev_selection.x - state.canvas_wrapper.offsetLeft,
-                                               this.prev_selection.y - state.canvas_wrapper.offsetTop, 
-                                               this.prev_selection.x + this.prev_selection.true_w - state.canvas_wrapper.offsetLeft, 
-                                               this.prev_selection.y + this.prev_selection.true_h - state.canvas_wrapper.offsetTop)
+        state.current_selection.selection_rect.style.display = "block";
+        state.current_selection.draw_selection((this.prev_selection.x - canvas_x()) / state.zoom,
+                                              (this.prev_selection.y - canvas_y()) / state.zoom, 
+                                              (this.prev_selection.x + this.prev_selection.width - canvas_x()) / state.zoom, 
+                                              (this.prev_selection.y + this.prev_selection.height - canvas_y()) / state.zoom)
     }
 
     redo(){
@@ -138,13 +139,14 @@ class Selection_History{
         state.current_selection.y = this.new_selection.y;
         state.current_selection.w = this.new_selection.w;
         state.current_selection.h = this.new_selection.h;
-        state.current_selection.true_w = this.new_selection.true_w;
-        state.current_selection.true_h = this.new_selection.true_h;
+        state.current_selection.selection_rect.style.width = this.new_selection.width + "px";
+        state.current_selection.selection_rect.style.height = this.new_selection.height + "px";
         state.current_selection.exists = this.new_selection.exists;
-        state.current_selection.draw_selection(this.new_selection.x - state.canvas_wrapper.offsetLeft,
-                                               this.new_selection.y - state.canvas_wrapper.offsetTop, 
-                                               this.new_selection.x + this.new_selection.true_w - state.canvas_wrapper.offsetLeft, 
-                                               this.new_selection.y + this.new_selection.true_h - state.canvas_wrapper.offsetTop)
+        state.current_selection.selection_rect.style.display = "block";
+        state.current_selection.draw_selection((this.new_selection.x - canvas_x()) / state.zoom,
+                                               (this.new_selection.y - canvas_y()) / state.zoom, 
+                                               (this.new_selection.x + this.new_selection.width - canvas_x()) / state.zoom, 
+                                               (this.new_selection.y + this.new_selection.height - canvas_y()) / state.zoom)
     }
 }
 

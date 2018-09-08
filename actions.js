@@ -1,10 +1,9 @@
 window.addEventListener('mouseup', function(e) {
+    if(state.active_element == null) { return }
     if(state.active_element.className.includes("resizer")){
         document.body.style.cursor = "default"
     }
-    if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
-        state.tool_handler.current_tool.mouseup_actions();
-    }
+    state.tool_handler.current_tool.mouseup_actions();
     state.active_element = null;
 }, false);
 
@@ -19,46 +18,24 @@ window.addEventListener('mousedown', function(e) {
 window.addEventListener("mousemove", function(e){
     pauseEvent(e);
 
-    var prev_abs_mouse_pos = state.abs_mouse_pos.slice();
-    state.abs_mouse_pos = [e.pageX, e.pageY];
-    state.delta_mouse = [state.abs_mouse_pos[0] - prev_abs_mouse_pos[0], state.abs_mouse_pos[1] - prev_abs_mouse_pos[1]]
+    var prev_mouse = state.mouse_pos.slice();
+    state.mouse_pos = [e.clientX, e.clientY];
+    state.delta_mouse = [e.clientX - prev_mouse[0], e.clientY - prev_mouse[1]]
     
-    prev_pixel_pos = state.pixel_pos;
+    var prev_pixel_pos = state.pixel_pos;
     state.pixel_pos = pixel_pos();
     state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
 
-    if (state.main_canvas.contains_mouse()){
-        state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
-        state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
-    }
+    state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
+    state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
     
     if(state.active_element != null){
-        switch(state.active_element){
-            case state.color_picker.header:
-                drag_element(state.color_picker.window,  state.delta_mouse);
-                state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
-                break;
-            case state.new_document_panel.header:
-                drag_element(state.new_document_panel.panel, state.delta_mouse);
-                break;
-            case state.canvas_area:
-                state.tool_handler.current_tool.mousemove_actions();
-                break;
-            case state.layer_settings.header:
-                drag_element(state.layer_settings.wrapper, state.delta_mouse);
-                break;
-        }
-
-        if(state.active_element.className.includes("resizer")){
-            state.active_element.function();
-        }
+        state.active_element.active_func();
     }
 });
 
 document.addEventListener("keydown", function(event){
-    if(document.activeElement.tagName == "INPUT"){
-        return;
-    }   
+    if(document.activeElement.tagName == "INPUT"){ return; }   
     switch(event.keyCode){
         case 8: // BACKSPACE
             state.main_canvas.clear_selection();
@@ -147,29 +124,22 @@ document.addEventListener("keyup", function(event){
 })
 
 state.canvas_area.addEventListener("wheel", function(e){
-    if (e.deltaY > 0){
-        state.main_canvas.zoom("out");
-    } else {
-        state.main_canvas.zoom("in");
-    }
+    if (e.deltaY > 0){ state.main_canvas.zoom("out"); } 
+    else { state.main_canvas.zoom("in"); }
 })
 
-state.canvas_area.onmousedown = function(){
-    state.active_element = state.canvas_area;
-}
+state.canvas_area.onmousedown = set_active_element;
+state.canvas_area.active_func = function(){ state.tool_handler.current_tool.mousemove_actions(); }
+state.canvas_wrapper.onmouseout = hide_mouse_indicator;
 
-state.canvas_wrapper.onmouseout = function(){
-    state.mouse_indicator.style.display = "none";
-}
-
-state.canvas_wrapper.onmouseover = function(){
+state.canvas_wrapper.addEventListener("mouseover", function(){
     if (state.tool_handler.current_tool.id != "select" && state.tool_handler.current_tool.id != "hand"){
         state.mouse_indicator.style.display = "block";
     }
     if (state.tool_handler.current_tool.id != "eraser"){
         state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }
-}
+});
 
 state.switch_colors_button.onclick = function(){
     state.color_picker.update_color("switch-colors");
@@ -191,45 +161,9 @@ document.getElementById("secondary-color-rect").onmousedown = function(){
     state.color_picker.update_color("to-background");
 }
 
-state.undo.onclick = function(){
-    state.history_manager.undo_last();
-}
-
-state.redo.onclick = function(){
-    state.history_manager.redo_last();
-}
-
-document.getElementById("add-layer").onclick = function(){
-    state.layer_manager.add_layer();
-    state.history_manager.add_history("add-layer", [state.layer_manager.current_layer.index]);
-}
-
-document.getElementById("delete-layer").onclick = function(){
-    state.layer_manager.delete_layer();
-}
-
-document.getElementById("move-layer-up").onclick = function(){
-    var index = state.layer_manager.current_layer.index;
-    if(index > 0){
-        var layer_a = state.layer_manager.current_layer;
-        var layer_b = state.layer_manager.layers[layer_a.index - 1];
-        state.layer_manager.swap_layers(layer_a, layer_b);
-        state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
-    }
-}
-
-document.getElementById("move-layer-down").onclick = function(){
-    var index = state.layer_manager.current_layer.index;
-    if(index < state.layer_manager.layers.length - 1){
-        var layer_a = state.layer_manager.current_layer;
-        var layer_b = state.layer_manager.layers[layer_a.index + 1];
-        state.layer_manager.swap_layers(layer_a, layer_b);
-        state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
-    }
-}
-
-document.getElementById("sidebar-resizer").onmousedown = function(){ state.active_element = this; }
-document.getElementById("sidebar-resizer").function = function(){
+document.getElementById("sidebar-resizer").onmousedown = set_active_element;
+document.getElementById("sidebar-resizer").active_func =  function(){
+    document.body.style.cursor = "ew-resize";
     var w = document.body.offsetWidth - event.clientX - 4;
     document.getElementById("sidebar-windows").style.width = clamp(w, 200, 500) + "px";
 }

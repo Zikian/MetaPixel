@@ -1,32 +1,25 @@
 class Selection{
     constructor(){
-        this.x = state.canvas_wrapper.offsetLeft;
-        this.y = state.canvas_wrapper.offsetTop;
+        this.x = canvas_x();
+        this.y = canvas_y();
         this.w = state.main_canvas.w;
         this.h = state.main_canvas.h;
-        this.true_w = this.w * state.zoom;
-        this.true_h = this.h * state.zoom;
 
-        // If a selection exists, this is true
+        // Check if selection exists
         this.exists = false;
 
-        // If the user is making a selection, this is true
+        // Check if selection is being made
         this.forming = false;
 
-        // If the user is dragging a selection, this is true
+        // Checl if the user is dragging a selection
         this.being_dragged = false;
 
-        // Separate canvases to draw the selection, so that a massive canvas isn't needed
-        this.top_border = document.getElementById("selection-top");
-        this.left_border = document.getElementById("selection-left");
-        this.bottom_border = document.getElementById("selection-bottom");
-        this.right_border = document.getElementById("selection-right");
-
-        this.top_ctx = this.top_border.getContext("2d")
-        this.left_ctx = this.left_border.getContext("2d")
-        this.bottom_ctx = this.bottom_border.getContext("2d")
-        this.right_ctx = this.right_border.getContext("2d")
+        this.selection_rect = document.getElementById("selection-rect");
     }
+
+    width(){ return this.selection_rect.offsetWidth; }
+
+    height(){ return this.selection_rect.offsetHeight; }
 
     get_selection_info(){
         return {
@@ -34,150 +27,124 @@ class Selection{
             y: this.y,
             w: this.w,
             h: this.h,
-            true_w: this.true_w,
-            true_h: this.true_h,
+            width: this.width(),
+            height: this.height(),
             exists: this.exists
         }
     }
 
     draw(){
-        var pixel_size = state.zoom;
-
+        this.selection_rect.style.display = "block";
         if(state.input.shift){
-            state.rectangle_end = rect_to_square(...state.mouse_start, ...state.rectangle_end);
+            state.mouse_end = rect_to_square(...state.mouse_start, ...state.mouse_end);
         }
 
-        var x1 = state.mouse_start[0] * pixel_size;
-        var y1 = state.mouse_start[1] * pixel_size;
-        var x2 = state.rectangle_end[0] * pixel_size;
-        var y2 = state.rectangle_end[1] * pixel_size;
+        var x1 = state.mouse_start[0];
+        var y1 = state.mouse_start[1];
+        var x2 = state.mouse_end[0];
+        var y2 = state.mouse_end[1];
 
         if (x1 == x2 && y1 == y2){ 
-            this.draw_selection(x1, y1, x1 + pixel_size, y1 + pixel_size); 
+            this.draw_selection(x1, y1, x1 + 1, y1 + 1); 
         }
         else if (x1 < x2 && y1 == y2){
-            this.draw_selection(x1, y1, x2 + pixel_size, y1 + pixel_size);
+            this.draw_selection(x1, y1, x2 + 1, y1 + 1);
         }
         else if (x1 <= x2 && y1 < y2){
-            this.draw_selection(x1, y1, x2 + pixel_size, y2 + pixel_size);
+            this.draw_selection(x1, y1, x2 + 1, y2 + 1);
         }
         else if (x2 < x1 && y2 > y1){
-            this.draw_selection(x2, y1, x1 + pixel_size, y2 + pixel_size);
+            this.draw_selection(x2, y1, x1 + 1, y2 + 1);
         }
         else if (x2 < x1 && y2 == y1){
-            this.draw_selection(x2, y2, x1 + pixel_size, y2 + pixel_size);
+            this.draw_selection(x2, y2, x1 + 1, y2 + 1);
         }
         else if (x2 <= x1 && y2 < y1){
-            this.draw_selection(x2, y2, x1 + pixel_size, y1 + pixel_size);
+            this.draw_selection(x2, y2, x1 + 1, y1 + 1);
         }
         else if (y2 < y1 && x1 < x2){
-            this.draw_selection(x1, y2, x2 + pixel_size, y1 + pixel_size);
+            this.draw_selection(x1, y2, x2 + 1, y1 + 1);
         }
     }
 
     draw_selection(x1, y1, x2, y2){
-        x1 += state.canvas_wrapper.offsetLeft;
-        x2 += state.canvas_wrapper.offsetLeft;
-        y1 += state.canvas_wrapper.offsetTop;
-        y2 += state.canvas_wrapper.offsetTop;
         var w = x2 - x1;
         var h = y2 - y1;
 
-        this.top_border.width = w;
-        this.left_border.height = h;
-        this.bottom_border.width = w;
-        this.right_border.height = h;
-
-        this.top_border.style.left = x1 + "px";
-        this.top_border.style.top = y1 + "px";
-        this.left_border.style.left = x1 + "px";
-        this.left_border.style.top = y1 + "px";
-        this.bottom_border.style.left = x1 + "px";
-        this.bottom_border.style.top = y2 - 1 + "px";
-        this.right_border.style.left = x2 - 1 + "px";
-        this.right_border.style.top = y1 + "px";
-
-        this.top_ctx.fillStyle = "red";
-        this.left_ctx.fillStyle = "red";
-        this.bottom_ctx.fillStyle = "red";
-        this.right_ctx.fillStyle = "red";
-
-        this.top_ctx.fillRect(0, 0, w, 1);
-        this.left_ctx.fillRect(0, 0, 1, h);
-        this.bottom_ctx.fillRect(0, 0, w, 1);
-        this.right_ctx.fillRect(0, 0, 1, h);
-
-        this.x = x1;
-        this.y = y1;
-        this.w = w/state.prev_zoom;
-        this.h = h/state.prev_zoom;
-        this.true_w = w;
-        this.true_h = h;
+        this.x = x1 * state.zoom + canvas_x();
+        this.y = y1 * state.zoom + canvas_y();
+        this.w = w;
+        this.h = h;
         this.exists = true;
+
+        this.selection_rect.style.left = this.x + "px";
+        this.selection_rect.style.top = this.y + "px"
+        this.selection_rect.style.width = w * state.zoom - 1 + "px";
+        this.selection_rect.style.height = h * state.zoom - 1 + "px";
     }
 
     get_intersection(){
-        if(this.y + this.true_h <= state.canvas_wrapper.offsetTop || this.y >= state.canvas_wrapper.offsetTop + state.canvas_wrapper.clientHeight ||
-          this.x + this.true_w <= state.canvas_wrapper.offsetLeft || this.x >= state.canvas_wrapper.offsetLeft + state.canvas_wrapper.clientWidth ||
-          !this.exists) {
+        if(!this.exists) { this.clear(); return; }
+
+        var canvas_w = state.canvas_wrapper.clientWidth;
+        var canvas_h = state.canvas_wrapper.clientHeight;
+
+        if(this.y + this.height() <= canvas_y() || 
+           this.y >= canvas_y() + canvas_w ||
+          this.x + this.width() <= canvas_x() || 
+          this.x >= canvas_x() + canvas_w) {
+              console.log("sefsefoij")
               this.clear();
               return;
         }
-        var x1 = Math.max(this.x,  state.canvas_wrapper.offsetLeft) - state.canvas_wrapper.offsetLeft;
-        var y1 = Math.max(this.y, state.canvas_wrapper.offsetTop) - state.canvas_wrapper.offsetTop;
-        var x2 = Math.min(this.x + this.true_w,  state.canvas_wrapper.offsetLeft + state.canvas_wrapper.clientWidth) - state.canvas_wrapper.offsetLeft;
-        var y2 = Math.min(this.y + this.true_h,  state.canvas_wrapper.offsetTop + state.canvas_wrapper.clientHeight) - state.canvas_wrapper.offsetTop;
-        this.draw_selection(x1, y1, x2, y2);
+        var x1 = (Math.max(this.x,  canvas_x()) - canvas_x()) / state.zoom;
+        var y1 = (Math.max(this.y, canvas_y()) - canvas_y()) / state.zoom;
+        var x2 = (Math.min(this.x + this.width(),  canvas_x() + canvas_w) - canvas_x()) / state.zoom;
+        var y2 = (Math.min(this.y + this.height(),  canvas_y() + canvas_h) - canvas_y()) / state.zoom;
+        this.draw_selection(x1, y1, Math.round(x2), Math.round(y2));
     }
 
     clear(){
-        this.top_ctx.clearRect(0, 0, this.w * state.zoom, 1);
-        this.left_ctx.clearRect(0, 0, 1, this.h * state.zoom);
-        this.bottom_ctx.clearRect(0, 0, this.w * state.zoom, 1);
-        this.right_ctx.clearRect(0, 0, 1, this.h * state.zoom);
+        this.selection_rect.style.display = "none";
         this.exists = false;
         this.wrap_around_canvas();
     }
 
     wrap_around_canvas(){
-        this.x = state.canvas_wrapper.offsetLeft;
-        this.y = state.canvas_wrapper.offsetTop;
+        this.x = canvas_x();
+        this.y = canvas_y();
         this.w = state.main_canvas.w
         this.h = state.main_canvas.h
-        this.true_w = this.w * state.zoom;
-        this.true_h = this.w * state.zoom;
     }
 
     contains_mouse(){
-        var x = state.abs_mouse_pos[0] - state.canvas_area.offsetLeft;
-        var y = state.abs_mouse_pos[1] - state.canvas_area.offsetTop;
+        var x = event.clientX - state.canvas_area.offsetLeft;
+        var y = event.clientY - state.canvas_area.offsetTop;
         return (x >= this.x &&
-                x <= this.x + this.true_w &&
+                x <= this.x + this.width() &&
                 y >= this.y &&
-                y <= this.y + this.true_h)
+                y <= this.y + this.height())
     }
 
     contains_pixel_pos(x, y){
-        x *= state.zoom;
-        y *= state.zoom;
-        var pos_x = this.x - state.canvas_wrapper.offsetLeft;
-        var pos_y = this.y - state.canvas_wrapper.offsetTop;
-        return (x >= pos_x && y >= pos_y && x < pos_x + this.true_w && y < pos_y + this.true_h)
+        var pos_x = (this.x - canvas_x())/state.zoom;
+        var pos_y = (this.y - canvas_y())/state.zoom;
+        return (x >= pos_x && 
+                y >= pos_y && 
+                x < pos_x + this.w && 
+                y < pos_y + this.h)
     }
 
     move(x, y){
         this.x += x
         this.y += y
-        if(this.exists){
-            this.draw_selection(this.x - state.canvas_wrapper.offsetLeft, this.y - state.canvas_wrapper.offsetTop, this.x + this.true_w - state.canvas_wrapper.offsetLeft, this.y + this.true_h - state.canvas_wrapper.offsetTop);
-        }
     }
 
     drag(){
-        if (!this.exists) { return; }
         this.x += state.delta_pixel_pos[0] * state.zoom;
         this.y += state.delta_pixel_pos[1] * state.zoom;
-        this.draw_selection(this.x - state.canvas_wrapper.offsetLeft, this.y - state.canvas_wrapper.offsetTop, this.x + this.true_w - state.canvas_wrapper.offsetLeft, this.y + this.true_h - state.canvas_wrapper.offsetTop);
+        this.selection_rect.style.left = this.x + "px";
+        this.selection_rect.style.top = this.y + "px";
     }
 
     resize(){
@@ -185,21 +152,16 @@ class Selection{
             this.wrap_around_canvas();
             return;
         }
+        
+        var old_pixel_x = (this.x - canvas_x()) / state.prev_zoom;
+        var old_pixel_y = (this.y - canvas_y()) / state.prev_zoom;
+        
+        var delta_x = old_pixel_x * state.zoom - old_pixel_x * state.prev_zoom;
+        var delta_y = old_pixel_y * state.zoom - old_pixel_y * state.prev_zoom;  
 
-        var old_zoom = state.prev_zoom;
-        var old_pixel_x = (this.x - state.canvas_wrapper.offsetLeft)/state.prev_zoom;
-        var old_pixel_y = (this.y - state.canvas_wrapper.offsetTop)/state.prev_zoom;
-        var new_zoom = state.zoom;
+        var new_x = (this.x + delta_x - canvas_x()) / state.zoom;
+        var new_y = (this.y + delta_y - canvas_y()) / state.zoom;
 
-        var delta_x = old_pixel_x * new_zoom - old_pixel_x * old_zoom;
-        var delta_y = old_pixel_y * new_zoom - old_pixel_y * old_zoom;
-
-        var new_x = this.x + delta_x - state.canvas_wrapper.offsetLeft;
-        var new_y = this.y + delta_y - state.canvas_wrapper.offsetTop;
-
-        var new_w = this.w * new_zoom;
-        var new_h = this.h * new_zoom;
-
-        this.draw_selection(new_x, new_y, new_x + new_w, new_y + new_h);
+        this.draw_selection(new_x, new_y, new_x + this.w, new_y + this.h);
     }
 }

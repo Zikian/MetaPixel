@@ -12,7 +12,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.canvas_wrapper = document.getElementById("canvas-wrapper");
     
     state.mouse_indicator = document.getElementById("mouse-indicator");
-    state.mouse_indicator.style.display = "none";
+    hide_mouse_indicator();
     state.selection_size_element = document.getElementById("selection-size");
     state.switch_colors_button = document.getElementById("switch-colors-button");
     state.reset_colors_button = document.getElementById("reset-colors-button");
@@ -55,12 +55,10 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     // Different Mouse Positions
     state.pixel_pos = [0, 0];
     state.delta_pixel_pos = null;
-    state.abs_mouse_pos = [0, 0];
+    state.mouse_pos = [0, 0];
     state.delta_mouse = null;
     state.mouse_start = null;
-    state.line_end = null;
-    state.rectangle_end = null;
-    state.rectangle_end = null;
+    state.mouse_end = null;
     
     state.input = {
         ctrl: false,

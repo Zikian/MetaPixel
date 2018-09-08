@@ -36,6 +36,7 @@
     background-color: rgb(108, 107, 114);
     border-radius: 3px;
     display: grid;
+    z-index: 10;
 }
 
 #sidebar-resizer i{
@@ -48,6 +49,10 @@
     font-stretch: expanded;
     color: white;
     transform: rotate(90deg) scaleX(1.5);
+}
+
+#sidebar-resizer:hover{
+    cursor: ew-resize;
 }
 
 .window-resizer{
@@ -146,9 +151,11 @@
     z-index: 100;
 }
 
-.selection-canvas{
+#selection-rect{
+    border: 1px solid red;
+    display: none;
     position: absolute;
-    z-index: 40;
+    z-index: 10;
 }
 
 #selection-size{

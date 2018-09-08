@@ -7,6 +7,35 @@ class Layer_Manager{
         this.layers.push(new Layer(0, this.w, this.h));
         this.current_layer = this.layers[0]
         this.current_layer.set_active();
+
+        document.getElementById("add-layer").onclick = function(){
+            state.layer_manager.add_layer();
+            state.history_manager.add_history("add-layer", [state.layer_manager.current_layer.index]);
+        }
+        
+        document.getElementById("delete-layer").onclick = function(){
+            state.layer_manager.delete_layer();
+        }
+
+        document.getElementById("move-layer-up").onclick = function(){
+            var index = state.layer_manager.current_layer.index;
+            if(index > 0){
+                var layer_a = state.layer_manager.current_layer;
+                var layer_b = state.layer_manager.layers[layer_a.index - 1];
+                state.layer_manager.swap_layers(layer_a, layer_b);
+                state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
+            }
+        }
+        
+        document.getElementById("move-layer-down").onclick = function(){
+            var index = state.layer_manager.current_layer.index;
+            if(index < state.layer_manager.layers.length - 1){
+                var layer_a = state.layer_manager.current_layer;
+                var layer_b = state.layer_manager.layers[layer_a.index + 1];
+                state.layer_manager.swap_layers(layer_a, layer_b);
+                state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
+            }
+        }
     }
 
     add_layer(){

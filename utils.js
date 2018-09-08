@@ -26,7 +26,7 @@ function clamp(x, a, b) {
 }
 
 function canvas_mouse_pos(){
-    return [state.abs_mouse_pos[0] - state.canvas_wrapper.getBoundingClientRect().x, state.abs_mouse_pos[1] - state.canvas_wrapper.getBoundingClientRect().y];
+    return [event.clientX - state.canvas_wrapper.getBoundingClientRect().x, event.clientY - state.canvas_wrapper.getBoundingClientRect().y];
 }
 
 function pixel_pos(){
@@ -49,8 +49,8 @@ function download_img(img){
 
 function update_rect_size_preview(w, h){
     state.selection_size_element.style.display = "block";
-    state.selection_size_element.style.left = state.abs_mouse_pos[0] - state.selection_size_element.clientWidth / 2 + "px";
-    state.selection_size_element.style.top = state.abs_mouse_pos[1] + 20 + "px";
+    state.selection_size_element.style.left = event.clientX - state.selection_size_element.clientWidth / 2 + "px";
+    state.selection_size_element.style.top = event.clientY + 20 + "px";
     document.getElementById("size-span").innerHTML = "W:" + w + ", H:" + h;
 }
 
@@ -101,4 +101,20 @@ function resize_sidebar_window(owner){
             owner.body.style.height = 0 + "px";
         }
     }
+}
+
+function set_active_element(){
+    state.active_element = this;
+}
+
+function hide_mouse_indicator(){
+    state.mouse_indicator.style.display = "none";
+}
+
+function canvas_x(){
+    return state.canvas_wrapper.offsetLeft;
+}
+
+function canvas_y(){
+    return state.canvas_wrapper.offsetTop;
 }

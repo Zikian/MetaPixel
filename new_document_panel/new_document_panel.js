@@ -25,7 +25,8 @@ class New_Document_Panel{
         this.height_input.onchange = this.onchange_validation();
         this.width_input.onchange = this.onchange_validation();
 
-        this.header.onmousedown = function(){ state.active_element = document.getElementById("new-document-header"); };
+        this.header.onmousedown = set_active_element;
+        this.header.active_func =  function(){ drag_element(state.new_document_panel.panel, state.delta_mouse); }
 
         this.panel.style.left = (window.innerWidth - this.panel.clientWidth)/2 - 150 + "px";
         this.panel.style.top = (window.innerHeight - 400)/2 + "px";

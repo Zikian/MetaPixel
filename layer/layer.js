@@ -61,8 +61,8 @@ class Layer {
 
         this.body = document.getElementById("layers-area");
         this.resizer = document.getElementById("layers-resizer");
-        this.resizer.onmousedown = function(){ state.active_element = this; }
-        this.resizer.function = resize_sidebar_window(this);
+        this.resizer.onmousedown = set_active_element;
+        this.resizer.active_func =  resize_sidebar_window(this);
     }
 
     set_render_img(owner) {

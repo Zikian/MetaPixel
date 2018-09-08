@@ -68,8 +68,8 @@ class Palette{
 
         this.body = document.getElementById("palette-body");
         this.resizer = document.getElementById("palette-resizer");
-        this.resizer.onmousedown = function(){ state.active_element = this; }
-        this.resizer.function = resize_sidebar_window(this);
+        this.resizer.onmousedown = set_active_element;
+        this.resizer.active_func =  resize_sidebar_window(this);
     }
 
     validate_settings(){
