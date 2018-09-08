@@ -249,3 +249,33 @@
 #hand-tooltip{
     width: 132px;
 }
+
+/* HORIZONTAL MIRROR TOOL */
+
+#mirrorx{
+    background-image: url(../images/mirror_tool.png);
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+#mirror-x-tooltip{
+    width: 155px;
+}
+
+/* VERTICAL MIRROR TOOL */
+
+#mirror-y-img{
+    width: 100%;
+    height: 100%;
+
+    background-image: url(../images/mirror_tool.png);
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    transform: rotate(90deg);
+}
+
+#mirror-y-tooltip{
+    width: 136px;
+}

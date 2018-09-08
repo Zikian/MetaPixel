@@ -117,16 +117,7 @@ class Selection{
         this.h = state.main_canvas.h
     }
 
-    contains_mouse(){
-        var x = event.clientX - state.canvas_area.offsetLeft;
-        var y = event.clientY - state.canvas_area.offsetTop;
-        return (x >= this.x &&
-                x <= this.x + this.width() &&
-                y >= this.y &&
-                y <= this.y + this.height())
-    }
-
-    contains_pixel_pos(x, y){
+    contains_pixel(x, y){
         var pos_x = (this.x - canvas_x())/state.zoom;
         var pos_y = (this.y - canvas_y())/state.zoom;
         return (x >= pos_x && 

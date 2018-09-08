@@ -88,7 +88,7 @@ class Layer {
     }
 
     data_at(x, y) {
-        if (state.current_selection.contains_pixel_pos(x, y)) {
+        if (state.current_selection.contains_pixel(x, y)) {
             return this.data[x][y]
         }
         return null;

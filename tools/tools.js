@@ -8,7 +8,9 @@ class Tool_Handler{
             eyedropper: new Eyedropper_Tool("eyedropper"),
             rectangle: new Rectangle_Tool("rectangle"),
             ellipse: new Ellipse_Tool("ellipse"),
-            hand: new Hand_Tool("hand")
+            hand: new Hand_Tool("hand"),
+            mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
+            mirrory: new Vertical_Mirror_Tool("mirrory")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -68,7 +70,7 @@ class Draw_Tool extends Tool{
     mousedown_actions(){
         if(state.input.shift) { this.draw_type = "line" }
         else { this.draw_type = "draw"; }
-        if(!state.current_selection.contains_mouse()){ return; }
+        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
         state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
     }
 
@@ -140,10 +142,10 @@ class Selection_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_selection = state.current_selection.get_selection_info();
-        if(state.active_element == state.canvas_area && !state.current_selection.contains_mouse()){
+        if(state.active_element == state.canvas_area && !state.current_selection.contains_pixel(...state.pixel_pos)){
             state.current_selection.clear();
         }
-        if (!state.current_selection.contains_mouse() || !state.current_selection.exists){
+        if (!state.current_selection.contains_pixel(...state.pixel_pos) || !state.current_selection.exists){
             state.current_selection.forming = true;
         }
     }
@@ -156,7 +158,7 @@ class Selection_Tool extends Tool{
             var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
             update_rect_size_preview(w, h)
         } 
-        if (state.current_selection.exists && state.current_selection.contains_mouse() && !state.current_selection.forming || state.current_selection.being_dragged){
+        if (state.current_selection.exists && state.current_selection.contains_pixel(...state.pixel_pos) && !state.current_selection.forming || state.current_selection.being_dragged){
             state.current_selection.being_dragged = true;
             state.current_selection.drag();
         }
@@ -292,5 +294,59 @@ class Hand_Tool extends Tool{
     on_exit(){
         document.body.style.cursor = "default";
         state.mouse_indicator.style.display = "block";
+    }
+}
+
+class Horizontal_Mirror_Tool extends Tool{
+    constructor(id){ super(id); }
+
+    mousedown_actions(){
+        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
+        state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
+        state.main_canvas.draw_pixel(state.color_picker.rgba, state.main_canvas.w - state.pixel_pos[0], state.pixel_pos[1]); 
+    }
+
+    mousemove_actions(){
+        state.main_canvas.draw_buffer.push(state.pixel_pos);
+        if (state.main_canvas.draw_buffer.length == 2){
+            state.main_canvas.line(...state.main_canvas.draw_buffer[0], ...state.main_canvas.draw_buffer[1])
+            var start_x = state.main_canvas.w - state.main_canvas.draw_buffer[0][0];
+            var end_x = state.main_canvas.w - state.main_canvas.draw_buffer[1][0];
+            state.main_canvas.line(start_x, state.main_canvas.draw_buffer[0][1], end_x, state.main_canvas.draw_buffer[1][1]);
+            state.main_canvas.draw_buffer.shift()
+        }
+    }
+
+    mouseup_actions(){
+        state.history_manager.add_history("pen-stroke")
+        state.main_canvas.draw_buffer = [];
+        state.preview_canvas.redraw();
+    }
+}
+
+class Vertical_Mirror_Tool extends Tool{
+    constructor(id){ super(id); }
+
+    mousedown_actions(){
+        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
+        state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
+        state.main_canvas.draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.main_canvas.h - state.pixel_pos[1]); 
+    }
+
+    mousemove_actions(){
+        state.main_canvas.draw_buffer.push(state.pixel_pos);
+        if (state.main_canvas.draw_buffer.length == 2){
+            state.main_canvas.line(...state.main_canvas.draw_buffer[0], ...state.main_canvas.draw_buffer[1])
+            var start_y = state.main_canvas.h - state.main_canvas.draw_buffer[0][1];
+            var end_y = state.main_canvas.h - state.main_canvas.draw_buffer[1][1];
+            state.main_canvas.line(state.main_canvas.draw_buffer[0][0], start_y, state.main_canvas.draw_buffer[1][0], end_y);
+            state.main_canvas.draw_buffer.shift()
+        }
+    }
+
+    mouseup_actions(){
+        state.history_manager.add_history("pen-stroke")
+        state.main_canvas.draw_buffer = [];
+        state.preview_canvas.redraw();
     }
 }

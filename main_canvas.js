@@ -147,7 +147,7 @@ class Main_Canvas{
         
         this.draw_preview_ctx.beginPath();
         while(true){
-            if(state.current_selection.contains_pixel_pos(x0, y0)){
+            if(state.current_selection.contains_pixel(x0, y0)){
                 this.preview_pixel(x0, y0)
             }
     
