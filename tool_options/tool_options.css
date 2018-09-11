@@ -1,0 +1,88 @@
+/* #tool-options{
+    position: absolute;
+    top: 50px;
+    left: 120px;
+    width: 200px;
+    box-shadow: 0px 0px 11px 2px rgba(0,0,0,0.57);
+    border: 1px solid black;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+#tool-options-body{
+    display: grid;
+    height: 200px;
+    background-color: white;
+}
+
+#tool-options-settings{
+    grid-row: 1;
+    height: 93%;
+    width: 93%;
+    justify-self: center;
+    align-self: center;
+}
+
+#brush-size-input{
+    position: absolute;
+}
+
+#opacity-input{
+    width: 138px;
+    position: absolute;
+    top: 80px;
+}
+
+#tool-options .input-slider span{
+    color: black;
+    font-size: 10pt;
+}
+
+#tool-options-footer{
+    height: 15px;
+    background-color: rgb(64, 64, 202);
+} */
+
+#tool-options{
+    float: left;
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+#tool-options .input-name{
+    color: white;
+    position: relative;
+    font-size: 10pt;
+    margin-top: 7px;
+    margin-left: 10px;
+}
+
+#brush-size-name{
+    position: absolute;
+    top: 7px;
+    color: white;
+    font-size: 10pt;
+    left: 10px;
+}
+
+#brush-size-input{
+    top: 30px;
+    position: absolute;
+    left: 12px;
+}
+
+#opacity-name{
+    position: absolute;
+    top: 60px;
+    color: white;
+    font-size: 10pt;
+    left: 10px;
+}
+
+#opacity-input{
+    width: 60px;
+    position: absolute;
+    top: 84px;
+    left: 17px;
+}

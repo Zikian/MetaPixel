@@ -1,0 +1,32 @@
+.window-header{
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    height: 25px;
+    background-color: rgb(64, 64, 202);
+}
+
+.window-header-title{
+    color: white;
+    line-height: 25px;
+    font-size: 10pt;
+    margin-left: 7px;
+}
+
+.window-cross{
+    color: white;
+    float: right;
+    line-height: 25px !important;
+    font-size: 10pt;
+    margin-right: 7px;
+}
+
+.window-cross:hover{
+    color: rgb(176, 176, 176);
+}
+
+.window-footer{
+    height: 15px;
+    background-color: rgb(64, 64, 202);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}

@@ -1,0 +1,60 @@
+#animator{
+    grid-row: 2;
+    width: 100%;
+    border-left: 1px solid black;
+}
+
+#animator-resizer{
+    height: 20px;
+    text-align: center;
+}
+
+#animator-resizer i{
+    left: 49.5%;
+    line-height: 20px;
+}
+
+#animator-body{
+    height: 200px;
+    display: grid;
+    grid-template-columns: auto 1fr 250px;
+}
+
+#animations-window{
+    grid-column: 1;
+    display: grid;
+    grid-template-rows: 20px 1fr;
+    grid-template-columns: auto 8px;
+    overflow: hidden;
+}
+
+#animations-window-header{
+    grid-row: 1;
+    grid-column: 1;
+    text-align: center;
+    height: 20px;
+    background-color: rgb(59, 59, 65);
+}
+
+#animations-window-header span{
+    color: white;
+    font-size: 10pt;
+    line-height: 20px;
+}
+
+#animations-window-body{
+    grid-column: 1;
+    grid-row: 2;
+    background-color: rgb(85, 85, 92);
+    width: 250px;
+}
+
+#animations-window-resizer{
+    grid-column: 2;
+    grid-row-start: 1;
+    grid-row-end: 3;
+}
+
+#animations-window-resizer i{
+    font-size: 8pt;
+}

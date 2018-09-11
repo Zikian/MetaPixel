@@ -1,0 +1,41 @@
+/* Common css for sidebar windows */
+
+.sidebar-window{
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-window-header{
+    position: relative;
+    text-align: center;
+    height: 30px;
+}
+
+.sidebar-window-span{
+    color: white;
+    font-size: 10pt;
+    line-height: 30px;
+}
+
+.sidebar-window-button{
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 0;
+    text-align: center;
+}
+
+.sidebar-window-button-icon{
+    color: white;
+    font-size: 14pt;
+    line-height: 30px !important;
+}
+
+.sidebar-resizer{
+    height: 8px;
+}
+
+.sidebar-window-body{
+    height: 170px;
+    background-color: rgb(85, 85, 92);
+}
