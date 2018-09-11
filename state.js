@@ -24,11 +24,16 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.color_picker.update_color();
     
     state.new_document_panel = new New_Document_Panel();
-    state.main_canvas = new Main_Canvas(w, w);
+    state.main_canvas = new Main_Canvas(w, h);
     state.history_manager = new History_Manager();
     state.preview_canvas = new Preview_Canvas();
     state.palette = new Palette();
-
+    // state.animator = new Animator();
+    // state.tiles = new Tiles();
+    
+    state.tool_options = new Tool_Options();
+    state.brush_size = 1;
+    
     state.eyedropper_ctx = document.getElementById("eyedropper-canvas").getContext("2d");
     document.getElementById("eyedropper-canvas").width = w;
     document.getElementById("eyedropper-canvas").height = h;
@@ -53,9 +58,11 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.active_element = null;
     
     // Different Mouse Positions
-    state.pixel_pos = [0, 0];
-    state.delta_pixel_pos = null;
     state.mouse_pos = [0, 0];
+    state.pixel_pos = [0, 0];
+    state.selection_start = null;
+    state.selection_end = null;
+    state.delta_pixel_pos = null;
     state.delta_mouse = null;
     state.mouse_start = null;
     state.mouse_end = null;
@@ -72,7 +79,7 @@ function init(w = 40, h = 40, transparency = true, name = "Untitled Document"){
     state.canvas_wrapper.style.left = (state.canvas_area.clientWidth - state.canvas_wrapper.clientWidth)/2  + "px";
     state.canvas_wrapper.style.top = (state.canvas_area.clientHeight - state.canvas_wrapper.clientHeight)/2 + "px";
     
-    state.current_selection = new Selection();
+    state.selection = new Selection();
     state.selection_canvas = null;
     state.layer_manager = new Layer_Manager(w, h);
     state.layer_settings = new Layer_Settings();

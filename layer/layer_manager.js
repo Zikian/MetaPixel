@@ -38,6 +38,22 @@ class Layer_Manager{
         }
     }
 
+    clip_current(){
+        //Removes current clip by clearing draw canvas and render canvas, and makes new clip
+
+        this.current_layer.clear();
+        this.current_layer.redraw();
+
+        //Use draw preview canvas as temp to store render canvas data
+        state.main_canvas.draw_preview_ctx.drawImage(this.current_layer.render_canvas, 0, 0);
+        this.current_layer.render_canvas.width = this.current_layer.render_canvas.width;
+        //Redraw render canvas from preview canvas
+        this.current_layer.render_ctx.drawImage(state.main_canvas.draw_preview_canvas, 0, 0);
+        state.main_canvas.draw_preview_canvas.width = state.main_canvas.draw_preview_canvas.width;
+
+        this.current_layer.clip();
+    }
+
     add_layer(){
         var new_layer = new Layer(this.layers.length, this.w, this.h)
         this.layers.splice(this.current_layer.index, 0, new_layer);

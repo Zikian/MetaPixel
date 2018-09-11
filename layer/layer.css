@@ -1,35 +1,5 @@
-#layers{
-    position: relative;
-    display: grid;
-    grid-template-rows: 30px auto 8px;
+#layers-header{
     background-color: rgb(59, 59, 65);
-    z-index: 1;
-}
-
-#layers #header{
-    position: relative;
-    grid-row: 1;
-    text-align: center;
-}
-
-#layers #header span{
-    color: white;
-    line-height: 30px;
-    font-size: 10pt;
-}
-
-#add-layer, #delete-layer, #move-layer-up, #move-layer-down{
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    text-align: center;
-    top: 0;
-}
-
-#layers #header i{
-    color: white;
-    line-height: 30px;
-    font-size: 14pt;
 }
 
 #add-layer{
@@ -48,24 +18,20 @@
     right: 30px;
 }
 
-#layers-area{
-    height: 170px;
+#layers-body{
     position: relative;
-    grid-row: 2;
-    background-color: rgb(85, 85, 92);
     overflow: scroll;
     overflow-x: hidden;
 }
 
 .layer{
     position: absolute;
-    height: 30px;
     width: 100%;
     background-color: rgb(59, 59, 65);
     text-align: center;
 }
 
-.layer #visibility-icon{
+.layer .visibility-icon{
     position: absolute;
     left: 0;
     top: 0;
@@ -76,24 +42,7 @@
     color: white;
 }
 
-.layer span{
-    line-height: 30px;
-    font-size: 10pt;
-    color: white;
-}
-
 .layer-settings-button{
-    position: absolute;
-    top: 0;
     right: 0;
-    height: 30px;
-    width: 30px;
-    text-align: center;
     background-color: rgb(59, 59, 65);
-}
-
-.layer-settings-button i{
-    line-height: 30px;
-    color: white;
-    font-size: 14pt;
 }

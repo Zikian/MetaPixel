@@ -1,68 +1,38 @@
-#preview{
-    position: relative;
-    display: grid;
-    grid-template-rows: 30px auto 8px;
-    background-color: rgb(85, 85, 92);
-}
-
-#preview span{
-    color: white;
-    line-height: 30px;
-    font-size: 10pt;
-}
-
-#preview #preview-icon{
-    color: white;
-    line-height: 30px;
-    font-size: 14pt;
-}
-
-#preview header{
-    grid-row: 1;
-    position: relative;
-    height: 30px;
-    text-align: center;
-    background-color: rgb(59, 59, 65);
-    box-shadow: 0px 1px 0px 0px black inset;
+#preview-header{
     z-index: 1;
+    background-color: rgb(59, 59, 65);
+}
+
+#palette-settings-button{
+    right: 0;
+}
+
+#preview-header{
+    box-shadow: 0px 1px 0px 0px black inset;
 }
 
 #preview-zoom{
     position: absolute;
-    z-index: 10;
+    z-index: 1;
     margin-left: 7px;
 }
 
 #preview-zoom-in{
-    position: absolute;
     right: 30px;
-    top: 0;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    float:left;
     box-shadow: 0px 1px 0px 0px black inset;
 }
 
 #preview-zoom-out{
-    position: absolute;
     right: 0;
-    top: 0;
-    text-align: center;
-    width: 30px;
-    height: 30px;
-    float:left;
     box-shadow: 0px 1px 0px 0px black inset;
 }
 
-#preview-canvas-area{
+#preview-body{
     position: relative;
     display: grid;
-    grid-row: 2;
-    height: 170px;
 }
 
-#preview-canvas-area canvas{
+#preview-body canvas{
     grid-row: 1;
     justify-self: center;
     align-self: center;

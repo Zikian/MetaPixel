@@ -1,20 +1,5 @@
 #palette{
-    position: relative;
-    display: grid;
-    grid-template-rows: 30px auto 8px;
-    background-color: rgb(59, 59, 65);
-}
-
-#palette #header{
-    position: relative;
-    grid-row: 1;
-    text-align: center;
-}
-
-#palette #header span{
-    color: white;
-    line-height: 30px;
-    font-size: 10pt;
+    z-index: 2;
 }
 
 #palette-wrapper{
@@ -33,37 +18,10 @@
     outline-offset: -7px;
 }
 
-#add-color{
-    position: absolute;
-    top: 0;
-    width: 30px;
-    height: auto;
-    text-align: center;
-}
-
-#add-color i{
-    color: white;
-    line-height: 30px;
-    font-size: 14pt;
-}
-
 #palette-body{
-    background-color: rgb(85, 85, 92);
     overflow: scroll;
-    height: 170px;
 }
 
 #remove-color{
-    position: absolute;
-    top: 0;
     left: 30px;
-    width: 30px;
-    height: auto;
-    text-align: center;
-}
-
-#remove-color i{
-    color: white;
-    line-height: 30px;
-    font-size: 14pt;
 }

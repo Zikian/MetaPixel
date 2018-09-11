@@ -68,9 +68,9 @@ class Draw_Tool extends Tool{
     }
 
     mousedown_actions(){
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         if(state.input.shift) { this.draw_type = "line" }
         else { this.draw_type = "draw"; }
-        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
         state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
     }
 
@@ -89,16 +89,17 @@ class Draw_Tool extends Tool{
 
     mouseup_actions(){
         if(this.draw_type == "draw") {
-            state.history_manager.add_history("pen-stroke")
             state.main_canvas.draw_buffer = [];
             state.preview_canvas.redraw();
         } else {
             state.main_canvas.clear_preview();
             state.main_canvas.line(state.mouse_start[0], state.mouse_start[1], state.pixel_pos[0], state.pixel_pos[1]);
-            state.history_manager.add_history("pen-stroke");
             state.preview_canvas.redraw();
         }
         if(!state.input.shift) { this.draw_type = "draw"; }
+        
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
+        state.history_manager.add_history("pen-stroke");
     }
 }
 
@@ -110,6 +111,7 @@ class Eraser_Tool extends Tool{
     }
 
     mousedown_actions(){
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.main_canvas.erase_pixel(...state.pixel_pos)
     }
 
@@ -122,6 +124,7 @@ class Eraser_Tool extends Tool{
     }
 
     mouseup_actions(){
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke");
         state.main_canvas.draw_buffer = [];
         state.preview_canvas.redraw();
@@ -141,36 +144,38 @@ class Selection_Tool extends Tool{
     }
 
     mousedown_actions(){
-        state.history_manager.prev_selection = state.current_selection.get_selection_info();
-        if(state.active_element == state.canvas_area && !state.current_selection.contains_pixel(...state.pixel_pos)){
-            state.current_selection.clear();
+        state.history_manager.prev_selection = state.selection.get_selection_info();
+        state.selection_start = true_pixel_pos();
+        if(state.active_element == state.canvas_area && !state.selection.contains_pixel(...state.pixel_pos)){
+            state.selection.clear();
         }
-        if (!state.current_selection.contains_pixel(...state.pixel_pos) || !state.current_selection.exists){
-            state.current_selection.forming = true;
+        if (!state.selection.contains_pixel(...state.pixel_pos) || !state.selection.exists){
+            state.selection.forming = true;
         }
     }
     
     mousemove_actions(){
-        if(state.current_selection.forming){
-            state.mouse_end = state.pixel_pos;
-            state.current_selection.draw();
-            var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
-            var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
+        if(state.selection.forming){
+            state.selection_end = true_pixel_pos()
+            state.selection.draw();
+            var w = calc_distance(state.selection_start[0], state.selection_end[0]);
+            var h = calc_distance(state.selection_start[1], state.selection_end[1]);
             update_rect_size_preview(w, h)
         } 
-        if (state.current_selection.exists && state.current_selection.contains_pixel(...state.pixel_pos) && !state.current_selection.forming || state.current_selection.being_dragged){
-            state.current_selection.being_dragged = true;
-            state.current_selection.drag();
+        if (state.selection.exists && state.selection.contains_pixel(...state.pixel_pos) && !state.selection.forming || state.selection.being_dragged){
+            state.selection.being_dragged = true;
+            state.selection.drag();
         }
     }
 
     mouseup_actions(){
         state.selection_size_element.style.display = "none";
-        state.current_selection.forming = false;
-        state.current_selection.being_dragged = false;
-        state.current_selection.get_intersection();
-        state.history_manager.new_selection = state.current_selection.get_selection_info();
+        state.selection.forming = false;
+        state.selection.being_dragged = false;
+        state.selection.get_intersection();
+        state.history_manager.new_selection = state.selection.get_selection_info();
         state.history_manager.add_history("selection")
+        state.layer_manager.clip_current();
     }
 
     on_exit(){
@@ -184,9 +189,13 @@ class Fill_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, state.main_canvas.data_at(...state.pixel_pos).rgba);
-        state.history_manager.add_history("pen-stroke");
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
+        var old_color = state.layer_manager.current_layer.data_at(...state.pixel_pos)
+        state.main_canvas.fill(...state.pixel_pos, state.color_picker.rgba, old_color);
         state.preview_canvas.redraw();
+        state.layer_manager.current_layer.redraw();
+        state.history_manager.new_data  = state.layer_manager.current_layer.render_canvas.toDataURL();
+        state.history_manager.add_history("pen-stroke");
     }
 }
 
@@ -213,6 +222,7 @@ class Rectangle_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.mouse_end = state.mouse_start;
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
@@ -237,6 +247,7 @@ class Rectangle_Tool extends Tool{
         state.main_canvas.clear_preview();
         state.main_canvas.rectangle(...state.mouse_start, ...state.mouse_end);
         state.selection_size_element.style.display = "none";
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
     }
@@ -248,6 +259,7 @@ class Ellipse_Tool extends Tool{
     }
 
     mousedown_actions(){
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.mouse_end = state.mouse_start;
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
@@ -272,9 +284,10 @@ class Ellipse_Tool extends Tool{
         state.main_canvas.clear_preview();
         state.main_canvas.ellipse(...state.mouse_start, ...state.mouse_end);
         state.selection_size_element.style.display = "none";
-        state.history_manager.add_history("pen-stroke");
         state.preview_canvas.redraw();
         if(!state.input.shift) { this.draw_type = "ellipse"}
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
+        state.history_manager.add_history("pen-stroke");
     }
 }
 
@@ -288,7 +301,7 @@ class Hand_Tool extends Tool{
     
     mousemove_actions(){
         drag_element(state.canvas_wrapper, state.delta_mouse);
-        state.current_selection.move(state.delta_mouse[0], state.delta_mouse[1]);
+        state.selection.move(state.delta_mouse[0], state.delta_mouse[1]);
     }
 
     on_exit(){
@@ -301,7 +314,7 @@ class Horizontal_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         state.main_canvas.draw_pixel(state.color_picker.rgba, state.main_canvas.w - state.pixel_pos[0], state.pixel_pos[1]); 
     }
@@ -318,6 +331,7 @@ class Horizontal_Mirror_Tool extends Tool{
     }
 
     mouseup_actions(){
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke")
         state.main_canvas.draw_buffer = [];
         state.preview_canvas.redraw();
@@ -328,7 +342,7 @@ class Vertical_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        if(!state.current_selection.contains_pixel(...state.pixel_pos)){ return; }
+        state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.main_canvas.draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         state.main_canvas.draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.main_canvas.h - state.pixel_pos[1]); 
     }
@@ -345,6 +359,7 @@ class Vertical_Mirror_Tool extends Tool{
     }
 
     mouseup_actions(){
+        state.history_manager.new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke")
         state.main_canvas.draw_buffer = [];
         state.preview_canvas.redraw();

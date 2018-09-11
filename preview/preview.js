@@ -3,7 +3,7 @@ class Preview_Canvas{
         this.canvas = document.getElementById("preview-canvas");
         this.ctx = this.canvas.getContext("2d");
 
-        this.wrapper = document.getElementById("preview-canvas-area");
+        this.wrapper = document.getElementById("preview-body");
 
         this.canvas.width = state.main_canvas.w;
         this.canvas.height = state.main_canvas.h;
@@ -15,7 +15,7 @@ class Preview_Canvas{
         document.getElementById("preview-zoom-in").onclick = this.button_zoom(this, "in");
         document.getElementById("preview-zoom-out").onclick = this.button_zoom(this, "out");
 
-        this.body = document.getElementById("preview-canvas-area");
+        this.body = document.getElementById("preview-body");
         this.resizer = document.getElementById("preview-resizer");
         this.resizer.onmousedown = function(){ state.active_element = this; }
         this.resizer.active_func =  resize_sidebar_window(this);

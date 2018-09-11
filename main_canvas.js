@@ -5,21 +5,6 @@ class Main_Canvas{
         this.draw_preview_canvas.width = w * state.zoom;
         this.draw_preview_canvas.height = h * state.zoom;
 
-        this.background_canvas = document.getElementById("background-canvas");
-        this.background_ctx = this.background_canvas.getContext("2d");
-        this.background_canvas.width = w * state.zoom;
-        this.background_canvas.height = h * state.zoom;
-
-        this.draw_canvas = document.getElementById("draw-canvas");
-        this.draw_ctx = this.draw_canvas.getContext("2d");
-        this.draw_canvas.width = w * state.zoom;
-        this.draw_canvas.height = h * state.zoom;
-
-        this.foreground_canvas = document.getElementById("foreground-canvas")
-        this.foreground_ctx = this.foreground_canvas.getContext("2d")
-        this.foreground_canvas.width = w * state.zoom;
-        this.foreground_canvas.height = h * state.zoom;
-
         this.w = w;
         this.h = h;
         
@@ -57,8 +42,8 @@ class Main_Canvas{
         state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
         state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
         
-        state.current_selection.move(delta_x, delta_y)
-        state.current_selection.resize();
+        state.selection.move(delta_x, delta_y)
+        state.selection.resize();
     }
 
     fill(x, y, new_color, old_color){
@@ -117,7 +102,7 @@ class Main_Canvas{
     }
 
     preview_pixel(x, y){
-        this.draw_preview_ctx.rect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
+        this.draw_preview_ctx.rect(x * state.zoom, y * state.zoom, state.zoom * state.brush_size, state.zoom * state.brush_size);
         this.draw_preview_ctx.fillStyle = state.color_picker.color;
         this.draw_preview_ctx.fill();
     }
@@ -147,9 +132,7 @@ class Main_Canvas{
         
         this.draw_preview_ctx.beginPath();
         while(true){
-            if(state.current_selection.contains_pixel(x0, y0)){
-                this.preview_pixel(x0, y0)
-            }
+            this.preview_pixel(x0, y0)
     
             if ((x0==x1) && (y0==y1)) {
                 break;
@@ -170,10 +153,10 @@ class Main_Canvas{
     }
 
     clear_selection(){
-        if (!state.current_selection.exists) { return; }
-        var x = state.current_selection.x - canvas_x();
-        var y = state.current_selection.y - canvas_y();
-        this.clear_rect(x, y, state.current_selection.width(), state.current_selection.height());
+        if (!state.selection.exists) { return; }
+        var x = state.selection.x - canvas_x();
+        var y = state.selection.y - canvas_y();
+        this.clear_rect(x, y, state.selection.width(), state.selection.height());
         state.preview_canvas.redraw();
     }
 
@@ -184,14 +167,4 @@ class Main_Canvas{
     clear_preview(){
         this.draw_preview_canvas.width = this.draw_preview_canvas.width;
     }
-
-    data_at(x, y){
-        return state.layer_manager.current_layer.data_at(x, y);
-    }
 }
-
-function Pixel_Data(){
-    this.rgba = [255, 255, 255, 0];
-    this.pos = null;
-}
-

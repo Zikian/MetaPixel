@@ -12,8 +12,8 @@ function pauseEvent(e){
 }
 
 function resize_mouse_indicator(){
-    state.mouse_indicator.style.width = state.zoom + "px";
-    state.mouse_indicator.style.height = state.zoom + "px";
+    state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
+    state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
 }
 
 function resize_canvas_wrapper(){
@@ -29,9 +29,16 @@ function canvas_mouse_pos(){
     return [event.clientX - state.canvas_wrapper.getBoundingClientRect().x, event.clientY - state.canvas_wrapper.getBoundingClientRect().y];
 }
 
-function pixel_pos(){
+function true_pixel_pos(){
     x = Math.floor(canvas_mouse_pos()[0] / (state.zoom));
     y = Math.floor(canvas_mouse_pos()[1] / (state.zoom));
+    return [x, y];
+}
+
+function pixel_pos(){
+    var true_pixel = true_pixel_pos();
+    x = true_pixel[0] - Math.floor(state.brush_size / 2);
+    y = true_pixel[1] - Math.floor(state.brush_size / 2);
     return [x, y];
 }
 
@@ -117,4 +124,8 @@ function canvas_x(){
 
 function canvas_y(){
     return state.canvas_wrapper.offsetTop;
+}
+
+function compare_data(arr1, arr2){
+    return arr1[0] == arr2[0] && arr1[1] == arr2[1] && arr1[2] == arr2[2] && arr1[3] == arr2[3];
 }

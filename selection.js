@@ -17,9 +17,9 @@ class Selection{
         this.selection_rect = document.getElementById("selection-rect");
     }
 
-    width(){ return this.selection_rect.offsetWidth; }
+    width(){ return this.w * state.zoom; }
 
-    height(){ return this.selection_rect.offsetHeight; }
+    height(){ return this.h * state.zoom; }
 
     get_selection_info(){
         return {
@@ -35,14 +35,15 @@ class Selection{
 
     draw(){
         this.selection_rect.style.display = "block";
+        
         if(state.input.shift){
-            state.mouse_end = rect_to_square(...state.mouse_start, ...state.mouse_end);
+            state.seleciton_end = rect_to_square(...state.selection_start, ...state.seleciton_end);
         }
 
-        var x1 = state.mouse_start[0];
-        var y1 = state.mouse_start[1];
-        var x2 = state.mouse_end[0];
-        var y2 = state.mouse_end[1];
+        var x1 = state.selection_start[0];
+        var y1 = state.selection_start[1];
+        var x2 = state.selection_end[0];
+        var y2 = state.selection_end[1];
 
         if (x1 == x2 && y1 == y2){ 
             this.draw_selection(x1, y1, x1 + 1, y1 + 1); 
@@ -93,7 +94,6 @@ class Selection{
            this.y >= canvas_y() + canvas_w ||
           this.x + this.width() <= canvas_x() || 
           this.x >= canvas_x() + canvas_w) {
-              console.log("sefsefoij")
               this.clear();
               return;
         }
@@ -101,13 +101,16 @@ class Selection{
         var y1 = (Math.max(this.y, canvas_y()) - canvas_y()) / state.zoom;
         var x2 = (Math.min(this.x + this.width(),  canvas_x() + canvas_w) - canvas_x()) / state.zoom;
         var y2 = (Math.min(this.y + this.height(),  canvas_y() + canvas_h) - canvas_y()) / state.zoom;
+
         this.draw_selection(x1, y1, Math.round(x2), Math.round(y2));
+        state.layer_manager.clip_current();
     }
 
     clear(){
         this.selection_rect.style.display = "none";
         this.exists = false;
         this.wrap_around_canvas();
+        state.layer_manager.clip_current();
     }
 
     wrap_around_canvas(){
@@ -154,5 +157,6 @@ class Selection{
         var new_y = (this.y + delta_y - canvas_y()) / state.zoom;
 
         this.draw_selection(new_x, new_y, new_x + this.w, new_y + this.h);
+        state.layer_manager.clip_current();
     }
 }

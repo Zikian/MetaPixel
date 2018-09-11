@@ -8,7 +8,6 @@ class New_Document_Panel{
         this.ok_button = document.getElementById("new-document-ok");
         this.cancel_button = document.getElementById("new-document-cancel");
 
-
         this.name_error = document.getElementById("name-error");
         this.name_input = document.getElementById("name-input");
         this.width_input = document.getElementById("width-input");

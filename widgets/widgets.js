@@ -134,9 +134,11 @@ class Input_Slider{
         this.slider = this.wrapper.getElementsByClassName("input-slider-slider")[0];
         this.selector = this.wrapper.getElementsByClassName("input-slider-selector")[0];
 
-        this.selector.active_func = function(){ input_function(); };
+        this.selector.active_func = function(){ 
+            input_function(); 
+        };
         
-        this.name_elem.innerHTML = name + ":";
+        if(name.length > 0) { this.name_elem.innerHTML = name + ":"; }
         this.input.value = default_val;
         this.input.min = 0;
         this.input.oninput = this.oninput(this);
@@ -145,23 +147,15 @@ class Input_Slider{
         }
         
         this.add_events(this);
-        this.i = 0;
     }
 
     add_events(owner){
         this.caret.onmousedown = function(e){
             pauseEvent(e);
+            state.active_element = owner.selector;
             var mouse_offset = event.clientY - owner.wrapper.getBoundingClientRect().y;
-            owner.slider.style.top = mouse_offset - 100 + owner.input_to_slider(owner.input.value) + "px";
             owner.slider.style.display = "block";
-            owner.update_slider();
-        }
-        this.selector.onmousedown = function(e){
-            pauseEvent(e);
-            owner.update_slider();
-        }
-        this.slider.onmousedown = function(e){
-            pauseEvent(e);
+            owner.slider.style.top = mouse_offset - 100 + owner.input_to_slider(owner.input.value) + "px";
             owner.update_slider();
         }
         window.addEventListener("mousemove", function(){
@@ -177,16 +171,16 @@ class Input_Slider{
     }
     
     update_slider(){
-        state.active_element = this.selector
-        this.selector.style.top = clamp(event.clientY - this.slider.getBoundingClientRect().y - 5, -5, 95) + "px";
-        this.slider.value = this.selector.offsetTop + 5;
+        var offset = clamp(event.clientY - this.slider.getBoundingClientRect().y - 5, -5, 95);
+        this.selector.style.top = offset + "px";
+        this.slider.value = offset + 5;
         this.input.value = this.max_val - this.slider_to_input(this.slider.value);
     }
     
     input_to_slider(val){
-    	return Math.round(val * 100 / this.max_val);
+        return Math.round(val * 100 / this.max_val);
     }
-
+    
     slider_to_input(val){
         return Math.round(val * this.max_val / 100);
     }

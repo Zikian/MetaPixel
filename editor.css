@@ -1,6 +1,6 @@
-.editor{
+#editor{
     display: grid;
-    grid-template-columns: 100px 1fr auto;
+    grid-template-columns: 101px 1fr auto;
     grid-row: 2;
 }
 
@@ -8,19 +8,12 @@
     grid-row: 1;
     grid-column: 1;
     box-shadow: 0px 1px 0px 0px black inset;
-    background-color: rgb(59, 59, 65); 
 }
 
-#sidebar-left i{
-    line-height: 50px;
-    font-size: 26px;
-    color: white;
-}
 
 #sidebar-right{
     display: grid;
     grid-column: 3;
-    grid-template-rows: 200px 200px 200px;
     grid-template-columns: 10px 1fr;
 }
 
@@ -29,18 +22,20 @@
 }
 
 #sidebar-resizer{
+    grid-row-start: 1;
+    grid-row-end: 6;
+}
+
+.vertical-resizer{
     position: relative;
     grid-column: 1;
-    grid-row-start: 1;
-    grid-row-end: 5;
     background-color: rgb(108, 107, 114);
-    border-radius: 3px;
     display: grid;
     z-index: 10;
 }
 
-#sidebar-resizer i{
-    top: 49%;
+.vertical-resizer i{
+    top: 48.5%;
     left: -1px;
     z-index: 10;
     position: absolute;
@@ -51,18 +46,17 @@
     transform: rotate(90deg) scaleX(1.5);
 }
 
-#sidebar-resizer:hover{
+.vertical-resizer:hover{
     cursor: ew-resize;
 }
 
-.window-resizer{
+.horizontal-resizer{
     position: relative;
-    grid-row: 3;
     background-color: rgb(108, 107, 114);
     z-index: 10;
 }
 
-.window-resizer i{
+.horizontal-resizer i{
     transform: scaleX(1.5);
     font-size: 8pt;
     color:white;
@@ -71,18 +65,25 @@
     top: -1px;
 }
 
-.window-resizer:hover{
+.horizontal-resizer:hover{
     cursor: ns-resize;
+}
+
+#editor-center{
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-column: 2;
+    align-self: center;
+    z-index: 2;
+    height: 100%;
 }
 
 #canvas-area{
     position: relative;
-    grid-column: 2;
-    align-self: center;
+    grid-row: 1;
     height: 100%;
-    background-color: rgb(26, 27, 32);
     overflow: hidden;
-    z-index: 1;
+    background-color: rgb(26, 27, 32);
 }
 
 .layer-canvas{
@@ -100,6 +101,7 @@
 
 #canvas-area #canvas-wrapper{
     position: absolute;
+    overflow: auto;
 
     background: repeating-linear-gradient(
     135deg,

@@ -84,7 +84,9 @@
 }
 
 #switch-colors-button i{
-    line-height: 30px !important;
+    line-height: 30px;
+    color: white;
+    font-size: 14pt;
 }
 
 #switch-colors-tooltip{
@@ -125,6 +127,12 @@
     height: 50px;   
     float: left;
     text-align: center;
+}
+
+.tool-icon{
+    line-height: 50px !important;
+    font-size: 26px;
+    color: white;
 }
 
 .tooltip{

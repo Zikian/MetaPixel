@@ -3,14 +3,11 @@ class Layer {
         this.visible = true;
         this.index = index;
         this.opacity = 1;
-        this.data = [];
         this.prev_pixel = {
             color: null,
             x: null,
             y: null
         };
-
-        var arr = new Array(40)
 
         this.w = w;
         this.h = h;
@@ -32,43 +29,32 @@ class Layer {
         this.name_elem = document.createElement("span");
         this.visibility_icon = document.createElement("i");
         this.settings_button = document.createElement("div");
-        this.settings_button.className = "layer-settings-button button"
+        this.settings_button.className = "button sidebar-window-button layer-settings-button"
         var settings_icon = document.createElement("i");
-        settings_icon.className = "fas fa-cog";
+        settings_icon.className = "fas fa-cog sidebar-window-button-icon";
 
         this.wrapper.className = "layer";
         this.wrapper.style.top = 30 * this.index + "px";
         this.name_elem.innerHTML = "Layer " + index;
-        this.visibility_icon.className = "fas fa-circle";
-        this.visibility_icon.id = "visibility-icon";
+        this.name_elem.className = "sidebar-window-span";
+        this.visibility_icon.className = "fas fa-circle visibility-icon";
 
         this.settings_button.appendChild(settings_icon);
         this.wrapper.appendChild(this.name_elem);
         this.wrapper.appendChild(this.visibility_icon);
         this.wrapper.appendChild(this.settings_button);
-        document.getElementById("layers-area").appendChild(this.render_canvas);
-        document.getElementById("layers-area").appendChild(this.wrapper);
+        document.getElementById("layers-body").appendChild(this.render_canvas);
+        document.getElementById("layers-body").appendChild(this.wrapper);
         document.getElementById("canvas-wrapper").appendChild(this.canvas);
 
         this.wrapper.onclick = this.change_layer(this);
         this.visibility_icon.onclick = this.toggle_visibility(this, "button")
         this.settings_button.onclick = this.show_settings(this);
 
-        this.init_data();
-        this.render_img = new Image();
-        this.render_img.onload = this.set_render_img(this);
-        this.render_img.src = this.render_canvas.toDataURL();
-
-        this.body = document.getElementById("layers-area");
+        this.body = document.getElementById("layers-body");
         this.resizer = document.getElementById("layers-resizer");
         this.resizer.onmousedown = set_active_element;
-        this.resizer.active_func =  resize_sidebar_window(this);
-    }
-
-    set_render_img(owner) {
-        return function () {
-            owner.ctx.drawImage(this, 0, 0, owner.w * state.zoom, owner.h * state.zoom);
-        }
+        this.resizer.active_func = resize_sidebar_window(this);
     }
 
     show_settings(owner) {
@@ -77,30 +63,29 @@ class Layer {
         }
     }
 
-    init_data() {
-        for (var x = 0; x < this.w; x++) {
-            this.data.push([]);
-            for (var y = 0; y < this.h; y++) {
-                this.data[x].push(new Pixel_Data());
-                this.data_at(x, y).pos = [x, y]
-            }
-        }
-    }
-
     data_at(x, y) {
-        if (state.current_selection.contains_pixel(x, y)) {
-            return this.data[x][y]
+        if(state.selection.contains_pixel(x, y)) {
+            return this.render_ctx.getImageData(x, y, 1, 1).data;
         }
         return null;
     }
 
     get_state() {
         return {
-            data: this.data.slice(0),
+            data: this.render_canvas.toDataURL(),
             index: this.index,
             name: this.name_elem.innerHTML,
             visible: this.visible
         }
+    }
+
+    clip(){
+        var selectionx = state.selection.x - canvas_x();
+        var selectiony = state.selection.y - canvas_y();
+        this.ctx.rect(selectionx, selectiony, state.selection.width(), state.selection.height());
+        this.ctx.clip();
+        this.render_ctx.rect(selectionx / state.zoom, selectiony / state.zoom, state.selection.w, state.selection.h);
+        this.render_ctx.clip();
     }
 
     redraw() {
@@ -111,8 +96,9 @@ class Layer {
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.oImageSmoothingEnabled = false;
         this.ctx.globalAlpha = this.opacity;
-        this.render_img.src = this.render_canvas.toDataURL();
-        this.ctx.drawImage(this.render_img, 0, 0, this.w * state.zoom, this.h * state.zoom);
+        this.ctx.scale(state.zoom, state.zoom);
+        this.ctx.drawImage(this.render_canvas, 0, 0);
+        this.ctx.scale(1 / state.zoom, 1 / state.zoom);
     }
 
     resize() {
@@ -121,39 +107,24 @@ class Layer {
     }
 
     draw_pixel(color, x, y) {
-        var data = this.data_at(x, y);
-        if (data == null) { return; }
         if (this.prev_pixel.color == rgba(color) && this.prev_pixel.x == x && this.prev_pixel.y == y) { return; }
-        if (rgba(color) == rgba([255, 255, 255, 0])) {
-            this.ctx.clearRect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
-            this.render_ctx.clearRect(x, y, 1, 1)
-        } else {
-            this.ctx.beginPath();
-            this.ctx.rect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
-            this.ctx.fillStyle = rgba(color);
-            this.ctx.fill();
 
-            this.render_ctx.beginPath();
-            this.render_ctx.rect(x, y, 1, 1);
-            this.render_ctx.fillStyle = rgba(color);
-            this.render_ctx.fill();
+        this.ctx.fillStyle = rgba(color);
+        this.ctx.fillRect(x * state.zoom, y * state.zoom, state.zoom * state.brush_size, state.zoom * state.brush_size);
+        
+        this.render_ctx.fillStyle = rgba(color);
+        this.render_ctx.fillRect(x, y, state.brush_size, state.brush_size);
 
-        }
         this.prev_pixel = {
             color: rgba(color),
             x: x,
             y: y
         };
-        state.history_manager.push_prev_data(data);
-        data.rgba = color;
-        state.history_manager.push_new_data(data);
     }
 
     erase_pixel(x, y) {
-        var data = this.data_at(x, y);
-        if (data == null) { return; }
-        if (rgba(data.rgba) == rgba([255, 255, 255, 0])) { return; }
-        this.draw_pixel([255, 255, 255, 0], x, y);
+        this.ctx.clearRect(x * state.zoom, y * state.zoom,  state.zoom * state.brush_size, state.zoom * state.brush_size);
+        this.render_ctx.clearRect(x, y, state.brush_size, state.brush_size)
     }
 
     line(x0, y0, x1, y1, erase) {
@@ -218,15 +189,20 @@ class Layer {
 
     fill(x, y, new_color, old_color) {
         var data = this.data_at(x, y);
-        if (data == null) { return; }
-        if (rgba(data.rgba) == rgba(new_color)) { return; }
-        if (rgba(data.rgba) == rgba(old_color)) {
-            this.draw_pixel(new_color, x, y);
-            if (y < this.h - 1) { this.fill(x, y + 1, new_color, old_color); }
-            if (y > 0) { this.fill(x, y - 1, new_color, old_color); }
-            if (x < this.w - 1) { this.fill(x + 1, y, new_color, old_color); }
-            if (x > 0) { this.fill(x - 1, y, new_color, old_color); }
-        }
+        if(data == null) { return; }
+
+        var is_old_color = compare_data(data, old_color);
+        var is_new_color = compare_data(data, new_color);
+        if(is_new_color) { return; }
+        if(!is_old_color) { return; }
+
+        this.render_ctx.fillStyle = rgba(new_color);
+        this.render_ctx.fillRect(x, y, 1, 1);
+
+        this.fill(x, y + 1, new_color, old_color)
+        this.fill(x, y - 1, new_color, old_color)
+        this.fill(x + 1, y, new_color, old_color)
+        this.fill(x - 1, y, new_color, old_color)
     }
 
     clear_rect(x1, y1, w, h) {
@@ -235,12 +211,9 @@ class Layer {
         h /= state.zoom;
         x1 /= state.zoom;
         y1 /= state.zoom;
+        state.history_manager.prev_data = this.render_canvas.toDataURL();
         this.render_ctx.clearRect(x1, y1, w, h);
-        for (var x = x1; x < x1 + w; x++) {
-            for (var y = y1; y < y1 + h; y++) {
-                this.erase_pixel(x, y);
-            }
-        }
+        state.history_manager.new_data = this.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke")
         state.preview_canvas.redraw();
     }
@@ -290,8 +263,8 @@ class Layer {
     }
 
     delete() {
-        document.getElementById("layers-area").removeChild(this.wrapper);
-        document.getElementById("layers-area").removeChild(this.render_canvas);
+        document.getElementById("layers-body").removeChild(this.wrapper);
+        document.getElementById("layers-body").removeChild(this.render_canvas);
         document.getElementById("canvas-wrapper").removeChild(this.canvas);
     }
 }

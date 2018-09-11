@@ -24,7 +24,7 @@ window.addEventListener("mousemove", function(e){
     
     var prev_pixel_pos = state.pixel_pos;
     state.pixel_pos = pixel_pos();
-    state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
+    state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]]
 
     state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
     state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
@@ -130,7 +130,6 @@ state.canvas_area.addEventListener("wheel", function(e){
 
 state.canvas_area.onmousedown = set_active_element;
 state.canvas_area.active_func = function(){ state.tool_handler.current_tool.mousemove_actions(); }
-state.canvas_wrapper.onmouseout = hide_mouse_indicator;
 
 state.canvas_wrapper.addEventListener("mouseover", function(){
     if (state.tool_handler.current_tool.id != "select" && state.tool_handler.current_tool.id != "hand"){
@@ -161,8 +160,8 @@ document.getElementById("secondary-color-rect").onmousedown = function(){
     state.color_picker.update_color("to-background");
 }
 
-document.getElementById("sidebar-resizer").onmousedown = set_active_element;
-document.getElementById("sidebar-resizer").active_func =  function(){
+document.getElementById("sidebar-right-resizer").onmousedown = set_active_element;
+document.getElementById("sidebar-right-resizer").active_func =  function(){
     document.body.style.cursor = "ew-resize";
     var w = document.body.offsetWidth - event.clientX - 4;
     document.getElementById("sidebar-windows").style.width = clamp(w, 200, 500) + "px";

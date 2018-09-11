@@ -124,6 +124,11 @@ class Color_Picker{
                 break;
             case "alpha-input":
                 this.alpha = this.alpha_input.input.value / 255;
+                this.rgba = this.rgb.concat(this.alpha);
+                break;
+            case "tool-options-opacity":
+                this.alpha = state.tool_options.opacity_input.input.value / 255;
+                this.rgba = this.rgb.concat(this.alpha);
                 break;
             case "red-input":
             case "green-input":
