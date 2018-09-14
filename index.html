@@ -62,19 +62,43 @@
                 <i id="new-document-cross" class="fas fa-times window-cross"></i>
             </header>
             <div id="new-document-body">
-                <div id=content-wrapper>
+
+                <div id="single-image-document"><span>Single Image</span></div>
+                <div id="tiled-document"><span>Tiled</span></div>
+
+                <div id="document-name-wrapper">
                     <span>Document Name:</span>
                     <input type="text" id="name-input" class="text-input" value="Untitled">
+                </div>
+                    
+                <div id="document-width-wrapper">
                     <span>Width (px):</span>
-                    <input type="number" id="width-input" value="0" min="0">
+                    <input id="document-width-input" type="number" id="width-input" value="0" min="0">
+                </div>
+
+                <div id="document-height-wrapper">
                     <span>Height (px):</span>
-                    <input type="number" id="height-input" value="0" min="0">
+                    <input type="number" id="document-height-input" value="0" min="0">
+                </div>
+
+                <div id="tile-width-wrapper">
+                    <span>Tile Width (px):</span>
+                    <input type="number" id="tile-width" value="0" min="0">
+                </div>
+
+                <div id="tile-height-wrapper">
+                    <span>Tile Height (px):</span>
+                    <input type="number" id="tile-height" value="0" min="0">
+                </div>
+
+                <div id="transparency-wrapper">
                     <input type="checkbox" checked="checked" id="transparency-input">
-                    <span>Transparency</span>
-                    <div id="buttons">
-                        <button id="new-document-ok">OK</button>
-                        <button id="new-document-cancel">Cancel</button>
-                    </div>
+                    <span id="transparency-span">Transparency</span>
+                </div>
+
+                <div id="submit-buttons-wrapper">
+                    <button id="new-document-ok">OK</button>
+                    <button id="new-document-cancel">Cancel</button>
                 </div>
             </div>
             <div class="window-footer"></div>
@@ -191,6 +215,13 @@
                     </div>
                 </div>
                 
+                <div id="tile_placer" class="tool">
+                    <div id="tile-placer-tooltip" class="tooltip">
+                        <span>Tile Placer</span>
+                        <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
+                
                 <div id="toolbox-footer"></div>
 
                 <div id="tool-options">
@@ -223,11 +254,12 @@
             <div id="editor-center">
                 <div id="canvas-area">
                     <div id="selection-rect"></div>
+                    <canvas id="save-canvas"></canvas>
+                    <canvas id="eyedropper-canvas"></canvas>
                     <div id="canvas-wrapper">
-                        <canvas id="draw-canvas"></canvas>
                         <canvas id="draw-preview-canvas"></canvas>
-                        <canvas id="save-canvas"></canvas>
-                        <canvas id="eyedropper-canvas"></canvas>
+                        <div id="tile-indicator"></div>
+                        <div id="tile-grid"></div>
                         <div id="mouse-indicator"></div>
                     </div>
                 </div>
@@ -416,13 +448,18 @@
                         <div class="window-footer"></div>
                     </div>
 
-                    <!-- <div id="tiles" class="sidebar-window">
+                    <div id="tiles" class="sidebar-window">
                         <div id="tiles-header" class="sidebar-window-header">
                             <span class="sidebar-window-span">Tiles</span>
+                            <div id="add-tile" class="button sidebar-window-button"">
+                                <i class="fas fa-plus sidebar-window-button-icon"></i>
+                            </div>
                         </div>
-                        <div id="tiles-body" class="sidebar-window-body"></div>
+                        <div id="tiles-body" class="sidebar-window-body">
+                            <div id="tiles-wrapper"></div> 
+                        </div>
                         <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
-                    </div> -->
+                    </div>
 
                     <div id="palette" class="sidebar-window">
                         <div class="sidebar-window-header">
@@ -457,39 +494,6 @@
             </div>
         </div>
 
-        <!-- <div id="tool-options">
-            <div id="tool-options-header" class="window-header">
-                <span class="window-header-title">Options</span>
-                <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
-            </div>
-            <div id="tool-options-body">
-                <div id="tool-options-settings">
-                    <div class="input-slider" id="brush-size-input">
-                        <span class="input-slider-name"></span>
-                        <div class="input-slider-wrapper">
-                            <input type="number">
-                            <i class="fas fa-caret-down"></i>
-                            <div class="input-slider-slider">
-                                <div class="input-slider-selector"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="input-slider" id="opacity-input">
-                        <span class="input-slider-name"></span>
-                        <div class="input-slider-wrapper">
-                            <input type="number">
-                            <i class="fas fa-caret-down"></i>
-                            <div class="input-slider-slider">
-                                <div class="input-slider-selector"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="window-footer"></div>
-        </div> -->
-
         <script src="utils.js"></script>
         <script src="widgets/widgets.js"></script>
         <script src="main_canvas.js"></script>
@@ -507,8 +511,8 @@
         <script src="new_document_panel/new_document_panel.js"></script>
         <script src="tools/tools.js"></script>
         <script src="tool_options/tool_options.js"></script>
+        <script src="header/header.js"></script>
         <script src="state.js"></script>
         <script src="actions.js"></script>
-        <script src="header/header.js"></script>
     </body>
 </html>                         

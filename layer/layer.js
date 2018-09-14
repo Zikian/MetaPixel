@@ -89,21 +89,25 @@ class Layer {
     }
 
     redraw() {
-        this.clear();
-        this.ctx.imageSmoothingEnabled = false;
-        this.ctx.webkitImageSmoothingEnabled = false;
-        this.ctx.mozImageSmoothingEnabled = false;
-        this.ctx.mozImageSmoothingEnabled = false;
-        this.ctx.oImageSmoothingEnabled = false;
-        this.ctx.globalAlpha = this.opacity;
-        this.ctx.scale(state.zoom, state.zoom);
-        this.ctx.drawImage(this.render_canvas, 0, 0);
-        this.ctx.scale(1 / state.zoom, 1 / state.zoom);
+        // this.ctx.imageSmoothingEnabled = false;
+        // this.ctx.webkitImageSmoothingEnabled = false;
+        // this.ctx.mozImageSmoothingEnabled = false;
+        // this.ctx.mozImageSmoothingEnabled = false;
+        // this.ctx.oImageSmoothingEnabled = false;
+        // this.ctx.globalAlpha = this.opacity;
+        // this.ctx.drawImage(this.render_image, 0, 0);
+    }
+
+    test(owner){
+        return function(){
+            owner.ctx.drawImage(owner.render_canvas, 0, 0)
+        }
     }
 
     resize() {
-        this.canvas.width = this.w * state.zoom;
-        this.canvas.height = this.h * state.zoom;
+        this.canvas.style.width = this.w * state.zoom + "px";
+        this.canvas.style.height = this.h * state.zoom + "px";
+        this.ctx.scale(state.prev_zoom / state.zoom, state.prev_zoom / state.zoom)
     }
 
     draw_pixel(color, x, y) {
@@ -228,11 +232,11 @@ class Layer {
             if (owner.visible) {
                 owner.visible = false;
                 owner.canvas.style.display = "none";
-                owner.visibility_icon.className = "far fa-circle";
+                owner.visibility_icon.className = "far fa-circle visibility-icon";
             } else {
                 owner.visible = true;
                 owner.canvas.style.display = "block";
-                owner.visibility_icon.className = "fas fa-circle";
+                owner.visibility_icon.className = "fas fa-circle visibility-icon";
             }
             state.preview_canvas.redraw();
             if (origin == "button") {
@@ -247,7 +251,7 @@ class Layer {
     }
 
     change_layer(owner) {
-        return function () {
+        return function() {
             state.layer_manager.change_layer(owner.index);
         }
     }

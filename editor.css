@@ -99,7 +99,7 @@
     left: 200px;
 }
 
-#canvas-area #canvas-wrapper{
+#canvas-wrapper{
     position: absolute;
     overflow: auto;
 

@@ -17,7 +17,7 @@ window.addEventListener('mousedown', function(e) {
 
 window.addEventListener("mousemove", function(e){
     pauseEvent(e);
-
+    
     var prev_mouse = state.mouse_pos.slice();
     state.mouse_pos = [e.clientX, e.clientY];
     state.delta_mouse = [e.clientX - prev_mouse[0], e.clientY - prev_mouse[1]]
@@ -139,14 +139,6 @@ state.canvas_wrapper.addEventListener("mouseover", function(){
         state.mouse_indicator.style.backgroundColor = state.color_picker.color;
     }
 });
-
-state.switch_colors_button.onclick = function(){
-    state.color_picker.update_color("switch-colors");
-}
-
-state.reset_colors_button.onclick = function(){
-    state.color_picker.update_color("reset-colors");
-}
 
 document.getElementById("primary-color-rect").onmousedown = function(){
     state.color_picker.window.style.display = "grid";

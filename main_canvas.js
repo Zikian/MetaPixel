@@ -14,6 +14,7 @@ class Main_Canvas{
     }
 
     zoom(direction){
+        var start = performance.now();
         state.prev_zoom = state.zoom;
         var zoom_stage_index = this.zoom_stages.indexOf(state.zoom);
         if (direction == "in" && zoom_stage_index < this.zoom_stages.length - 1){
@@ -31,7 +32,7 @@ class Main_Canvas{
         var delta_y = old_y * old_zoom - old_y * new_zoom;
         
         state.layer_manager.resize_layers();
-        state.layer_manager.redraw_layers();
+        // state.layer_manager.redraw_layers();
         
         drag_element(state.canvas_wrapper, [delta_x, delta_y]);
         
@@ -44,8 +45,13 @@ class Main_Canvas{
         
         state.selection.move(delta_x, delta_y)
         state.selection.resize();
-    }
 
+        state.tile_manager.resize_grid();
+        state.tile_manager.reposition_indices();
+        var end = performance.now();
+        console.log("call took:" + (end - start) + "milliseconds")
+    }
+    
     fill(x, y, new_color, old_color){
         state.layer_manager.current_layer.fill(x, y, new_color, old_color);
     }

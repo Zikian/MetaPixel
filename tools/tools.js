@@ -1,5 +1,16 @@
 class Tool_Handler{
     constructor(){ 
+        this.switch_colors_button = document.getElementById("switch-colors-button");
+        this.reset_colors_button = document.getElementById("reset-colors-button");
+
+        this.switch_colors_button.onclick = function(){
+            state.color_picker.update_color("switch-colors");
+        }
+        
+        this.reset_colors_button.onclick = function(){
+            state.color_picker.update_color("reset-colors");
+        }
+
         this.tools = {
             drawtool: new Draw_Tool("drawtool"),
             eraser: new Eraser_Tool("eraser"),
@@ -10,7 +21,8 @@ class Tool_Handler{
             ellipse: new Ellipse_Tool("ellipse"),
             hand: new Hand_Tool("hand"),
             mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
-            mirrory: new Vertical_Mirror_Tool("mirrory")
+            mirrory: new Vertical_Mirror_Tool("mirrory"),
+            tile_placer: new Tile_Placer_Tool("tile_placer")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -363,5 +375,21 @@ class Vertical_Mirror_Tool extends Tool{
         state.history_manager.add_history("pen-stroke")
         state.main_canvas.draw_buffer = [];
         state.preview_canvas.redraw();
+    }
+}
+
+class Tile_Placer_Tool extends Tool{
+    constructor(id) { 
+        super(id); 
+    }
+
+    on_enter(){
+    }
+
+    mousemove_actions(){
+        var hovered_tile = state.tile_manager.get_hovered_tile()
+    }
+
+    on_exit(){
     }
 }

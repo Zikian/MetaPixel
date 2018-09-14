@@ -160,7 +160,8 @@
 .tooltip i{
     position: absolute;
     left: -8px;
-    top: -10px;
+    top: 0;
+    font-size: 20pt;
 }
 
 .tool:hover .tooltip{
@@ -286,4 +287,10 @@
 
 #mirror-y-tooltip{
     width: 136px;
+}
+
+/* TILE PLACER TOOL */
+
+#tile-placer-tooltip{
+    width: 100px;
 }

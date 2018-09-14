@@ -49,7 +49,7 @@ class Color_Picker{
         this.blue_input = new Input_Slider("blue-input", "B", 0, 255, input_function);
         
         input_function = function(){ state.color_picker.update_color("hex-input"); }
-        this.hex_input = new Input("hexadecimal", "hex-input", "Hex", 70, "000000", 6, input_function);
+        this.hex_input = new Input("hexadecimal", "hex-input", "Hex", 75, "000000", 6, input_function);
         
         this.reset_vars();
 
@@ -57,6 +57,8 @@ class Color_Picker{
         this.old_color_rect.style.backgroundColor = this.color;
         document.getElementById("primary-color-rect").style.backgroundColor = this.color;
         document.getElementById("secondary-color-rect").style.backgroundColor = "white";
+
+        this.update_color();
     }
 
     reset_vars(){
