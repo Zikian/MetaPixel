@@ -28,6 +28,7 @@
 }
 
 #preview-body{
+    overflow: hidden;
     position: relative;
     display: grid;
 }

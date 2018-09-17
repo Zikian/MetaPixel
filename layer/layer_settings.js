@@ -8,8 +8,9 @@ class Layer_Settings{
         this.name_input = document.getElementById("layer-name-setting")
 
         var input_function = function(){
-            state.layer_settings.target.opacity = state.layer_settings.opacity_input.input.value / 255;
-            state.layer_settings.target.redraw();
+            var opacity = state.layer_settings.opacity_input.input.value / 255;
+            state.layer_settings.target.opacity = opacity;
+            state.canvas_handler.redraw_layers();
         }
         this.opacity_input = new Input_Slider("opacity-setting", "Opacity", 255, 255, input_function);
         this.ok_button = document.getElementById("layer-settings-ok");
@@ -33,7 +34,7 @@ class Layer_Settings{
     validate(owner){
         return function(){
             var prev_settings = {
-                opacity: owner.target.opacity,
+                opacity: this.prev_opacity,
                 name: owner.target.name_elem.innerHTML
             };
 
@@ -46,7 +47,7 @@ class Layer_Settings{
                 opacity: owner.target.opacity,
                 name: owner.target.name_elem.innerHTML
             };
-
+            
             if(prev_settings.opacity == new_settings.opacity && prev_settings.name == new_settings.name){ return; }
             state.history_manager.add_history("layer-settings", [prev_settings, new_settings, owner.target]);
         }
@@ -56,7 +57,7 @@ class Layer_Settings{
         return function(){
             owner.wrapper.style.display = "none"
             owner.target.opacity = owner.prev_opacity;
-            owner.target.redraw();
+            state.canvas_handler.redraw_layers();
         }
     }
 }

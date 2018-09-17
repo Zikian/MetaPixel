@@ -5,8 +5,8 @@ class Preview_Canvas{
 
         this.wrapper = document.getElementById("preview-body");
 
-        this.canvas.width = state.main_canvas.w;
-        this.canvas.height = state.main_canvas.h;
+        this.canvas.width = state.canvas_handler.w;
+        this.canvas.height = state.canvas_handler.h;
 
         this.zoom_stages = this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18];
         this.current_zoom = 1;
@@ -39,8 +39,8 @@ class Preview_Canvas{
             this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }   
 
-        this.canvas.width = state.main_canvas.w * this.current_zoom;
-        this.canvas.height = state.main_canvas.h * this.current_zoom;
+        this.canvas.width = state.canvas_handler.w * this.current_zoom;
+        this.canvas.height = state.canvas_handler.h * this.current_zoom;
 
         if(origin == "button"){
             this.canvas.style.left = (this.wrapper.offsetWidth - this.canvas.width) / 2 + "px";
@@ -56,11 +56,7 @@ class Preview_Canvas{
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.imageSmoothingEnabled = false;
-        for(var i = state.layer_manager.layers.length - 1; i >= 0; i--){
-            if (state.layer_manager.layers[i].visible){
-                this.ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0, state.main_canvas.w * this.current_zoom, state.main_canvas.h * this.current_zoom);
-            }
-        }
+        //REDO THIS
     }
 
     clear(){

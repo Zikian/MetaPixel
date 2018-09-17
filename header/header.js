@@ -38,9 +38,9 @@ class Header{
         }
 
         this.save_as.onclick = function(){
-            var save_canvas = document.getElementById("save-canvas");
-            save_canvas.width = state.main_canvas.w * state.zoom;
-            save_canvas.height = state.main_canvas.h * state.zoom;
+            var save_canvas = document.createElement("canvas");
+            save_canvas.width = state.canvas_handler.w * state.zoom;
+            save_canvas.height = state.canvas_handler.h * state.zoom;
             var ctx = save_canvas.getContext("2d");
             
             ctx.mozImageSmoothingEnabled = false;
@@ -49,11 +49,12 @@ class Header{
 
             if(!state.transparency){
                 ctx.fillStyle = "white";
-                ctx.fillRect(0, 0, state.main_canvas.w * state.zoom, state.main_canvas.h * state.zoom);
+                ctx.fillRect(0, 0, state.canvas_handler.w * state.zoom, state.canvas_handler.h * state.zoom);
             }
 
-            for(var i = 0; i < state.layer_manager.layers.length; i++){
-                ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0, state.main_canvas.w * state.zoom, state.main_canvas.h * state.zoom)
+            this.ctx.scale(1/state.zoom, 1/state.zoom);
+            for(var layer in state.layer_manager.layers){
+                this.ctx.drawImage(layer.canvas, 0, 0);
             }
 
             state.header.download_img(save_canvas.toDataURL());

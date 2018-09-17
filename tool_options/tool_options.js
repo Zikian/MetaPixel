@@ -5,9 +5,10 @@ class Tool_Options{
         input_function = function(){
             var brush_size = parseInt(state.tool_options.brush_size_input.input.value);
             state.brush_size = brush_size;
-            resize_mouse_indicator();
+            state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
+            state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
         }
-        this.brush_size_input = new Input_Slider("brush-size-input", "", 1, 20, input_function);
+        this.brush_size_input = new Input_Slider("brush-size-input", "", 1, 50, input_function);
 
         input_function = function(){
             state.color_picker.update_color("tool-options-opacity"); 

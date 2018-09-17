@@ -1,10 +1,11 @@
 var state = {
     header: new Header(),
-    canvas_area: document.getElementById("canvas-area"),
+    editor: document.getElementById("editor"),
     canvas_wrapper: document.getElementById("canvas-wrapper"),
     mouse_indicator: document.getElementById("mouse-indicator"),
     selection_size_element: document.getElementById("selection-size"),
     active_element: null,
+    draw_buffer: [],
 
     input: {
         ctrl: false,
@@ -28,7 +29,16 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.brush_size = 1;
     state.transparency = transparency;
     state.document_name = name;
+    state.prev_pixel = {};
+    state.doc_w = w;
+    state.doc_h = h;
     
+    state.canvas_wrapper.style.left = (state.editor.offsetWidth - w * state.zoom)/2  + "px";
+    state.canvas_wrapper.style.top = (state.editor.offsetHeight - w * state.zoom)/2 + "px";
+
+    state.canvas_x = state.canvas_wrapper.offsetLeft;
+    state.canvas_y = state.canvas_wrapper.offsetTop;
+
     // Different Mouse Positions
     state.mouse_pos = [0, 0];
     state.pixel_pos = [0, 0];
@@ -41,21 +51,23 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
 
     state.color_picker = new Color_Picker();
     state.new_document_panel = new New_Document_Panel();
-    state.main_canvas = new Main_Canvas(w, h);
     state.history_manager = new History_Manager();
+    state.canvas_handler = new Canvas_Handler();
     state.preview_canvas = new Preview_Canvas();
     state.palette = new Palette();
     // state.animator = new Animator();
     state.tile_manager = new Tile_Manager(tile_w, tile_h);
     state.tool_options = new Tool_Options();
     state.tool_handler = new Tool_Handler("drawtool");
-    state.selection = new Selection();
-    state.layer_manager = new Layer_Manager(w, h);
+    state.layer_manager = new Layer_Manager();
     state.layer_settings = new Layer_Settings();
+    state.selection = new Selection();
+    state.overlay_canvas = new Overlay_Canvas();
     
-    state.eyedropper_ctx = document.getElementById("eyedropper-canvas").getContext("2d");
-    document.getElementById("eyedropper-canvas").width = w;
-    document.getElementById("eyedropper-canvas").height = h;
+    var eyedropper_canvas = document.createElement("canvas");
+    state.eyedropper_ctx = eyedropper_canvas.getContext("2d");
+    eyedropper_canvas.width = w;
+    eyedropper_canvas.height = h;
     
     if (!state.transparency){
         state.canvas_wrapper.style.background = "none";
@@ -69,13 +81,11 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
         state.preview_canvas.canvas.style.backgroundColor = "transparent"
     }
     
-    state.canvas_wrapper.style.left = (state.canvas_area.offsetWidth - w * state.zoom)/2  + "px";
-    state.canvas_wrapper.style.top = (state.canvas_area.offsetHeight - w * state.zoom)/2 + "px";
-
     hide_mouse_indicator();
-    resize_canvas_wrapper();
-    resize_mouse_indicator();
+    state.canvas_wrapper.style.width = canvas_w() + "px";
+    state.canvas_wrapper.style.height = canvas_h() + "px";
+    state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
+    state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
 }
 
 init("tiled", 4, 4, 16, 16, true, "Untitled");
-

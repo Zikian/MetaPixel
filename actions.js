@@ -3,14 +3,16 @@ window.addEventListener('mouseup', function(e) {
     if(state.active_element.className.includes("resizer")){
         document.body.style.cursor = "default"
     }
-    state.tool_handler.current_tool.mouseup_actions();
+    if(state.active_element == state.editor){
+        state.tool_handler.current_tool.mouseup_actions();
+    }
     state.active_element = null;
 }, false);
 
 window.addEventListener('mousedown', function(e) {
-    e.stopPropagation();
     state.mouse_start = state.pixel_pos;
-    if(state.active_element == state.canvas_area || state.active_element == state.canvas_wrapper){
+    state.mouse_end = state.mouse_start;
+    if(state.active_element == state.editor){
         state.tool_handler.current_tool.mousedown_actions();
     }
 }, false);
@@ -23,12 +25,14 @@ window.addEventListener("mousemove", function(e){
     state.delta_mouse = [e.clientX - prev_mouse[0], e.clientY - prev_mouse[1]]
     
     var prev_pixel_pos = state.pixel_pos;
-    state.pixel_pos = pixel_pos();
+    state.pixel_pos = calc_pixel_pos();
     state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]]
+
+    state.mouse_end = state.pixel_pos;
 
     state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
     state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
-    
+
     if(state.active_element != null){
         state.active_element.active_func();
     }
@@ -38,7 +42,8 @@ document.addEventListener("keydown", function(event){
     if(document.activeElement.tagName == "INPUT"){ return; }   
     switch(event.keyCode){
         case 8: // BACKSPACE
-            state.main_canvas.clear_selection();
+            if(!state.selection.exists){ return; }
+            state.layer_manager.current_layer.clear_selection();
             break;
         case 32: // SPACE
             if(state.input.space) { return; }
@@ -87,10 +92,10 @@ document.addEventListener("keydown", function(event){
             }
             break;
         case 187: // +
-            state.main_canvas.zoom("in");
+            state.canvas_handler.zoom("in");
             break;
         case 189: // -
-            state.main_canvas.zoom("out");
+            state.canvas_handler.zoom("out");
             break;
         case 16: // SHIFT
             state.input.shift = true;
@@ -123,15 +128,17 @@ document.addEventListener("keyup", function(event){
     }
 })
 
-state.canvas_area.addEventListener("wheel", function(e){
-    if (e.deltaY > 0){ state.main_canvas.zoom("out"); } 
-    else { state.main_canvas.zoom("in"); }
+state.editor.addEventListener("wheel", function(e){
+    if (e.deltaY > 0){ state.canvas_handler.zoom("out"); } 
+    else { state.canvas_handler.zoom("in"); }
 })
 
-state.canvas_area.onmousedown = set_active_element;
-state.canvas_area.active_func = function(){ state.tool_handler.current_tool.mousemove_actions(); }
+state.editor.onmousedown = set_active_element;
+state.editor.active_func = function(){ state.tool_handler.current_tool.mousemove_actions(); }
 
+state.mouse_indicator.style.display = "block";
 state.canvas_wrapper.addEventListener("mouseover", function(){
+    event.stopPropagation();
     if (state.tool_handler.current_tool.id != "select" && state.tool_handler.current_tool.id != "hand"){
         state.mouse_indicator.style.display = "block";
     }

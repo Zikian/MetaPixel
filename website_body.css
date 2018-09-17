@@ -1,4 +1,4 @@
-#editor{
+#website-body{
     display: grid;
     grid-template-columns: 101px 1fr auto;
     grid-row: 2;
@@ -69,7 +69,7 @@
     cursor: ns-resize;
 }
 
-#editor-center{
+#website-body-center{
     display: grid;
     grid-template-rows: 1fr auto;
     grid-column: 2;
@@ -78,7 +78,7 @@
     height: 100%;
 }
 
-#canvas-area{
+#editor{
     position: relative;
     grid-row: 1;
     height: 100%;
@@ -86,65 +86,25 @@
     background-color: rgb(26, 27, 32);
 }
 
-.layer-canvas{
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.render-canvas, #eyedropper-canvas{
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 200px;
-}
-
 #canvas-wrapper{
     position: absolute;
-    overflow: auto;
+    overflow: hidden;
 
-    background: repeating-linear-gradient(
-    135deg,
-    #ffffff,
-    #ffffff 2.5px,
-    #dbdbdb 2.5px,
-    #dbdbdb 5px
-    );
-}
-
-#save-canvas{
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-}
-
-#canvas-area #render-canvas{
-    position: absolute;
-    top: 0;
-    left: 0;
+    background: 
+        linear-gradient(to right, grey 1px, transparent 1px), 
+        linear-gradient(to bottom, grey 1px, transparent 1px),
+        repeating-linear-gradient(135deg,#ffffff,#ffffff 2.5px,#dbdbdb 2.5px,#dbdbdb 5px);
 }
 
 #background-canvas{
     z-index: 1;
-}
- 
-#draw-canvas{
-    z-index: 2;
 }
 
 #foreground-canvas{
     z-index: 3;
 }
 
-#canvas-area #canvas-wrapper #draw-preview-canvas{
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-#canvas-area #mouse-indicator{
+#editor #mouse-indicator{
     display: inline-block;
     position: absolute;
     top: 0;
@@ -153,11 +113,15 @@
     z-index: 100;
 }
 
+#overlay-canvas{
+    z-index: 100;
+}
+
 #selection-rect{
     border: 1px solid red;
     display: none;
     position: absolute;
-    z-index: 10;
+    z-index: 1000;
 }
 
 #selection-size{

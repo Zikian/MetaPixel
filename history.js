@@ -3,7 +3,6 @@ class History_Manager{
         this.history = [];
         this.redo_history = [];
         this.prev_data = null;
-        this.new_data = null;
         this.prev_selection = null;
         this.new_selection = null;
     }
@@ -12,7 +11,8 @@ class History_Manager{
         this.redo_history = []
         switch(type){
             case "pen-stroke":
-                this.history.push(new Pen_Stroke(this.prev_data, this.new_data, state.layer_manager.current_layer.index));
+                var new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
+                this.history.push(new Pen_Stroke(this.prev_data, new_data, state.layer_manager.current_layer.index));
                 break;
             case "selection":
                 if (this.prev_selection == null){ return; }
@@ -49,8 +49,8 @@ class History_Manager{
         this.history[this.history.length - 1].undo();
         this.redo_history.push(this.history.pop());
         state.preview_canvas.redraw();
+        
     }
-    
     redo_last(){
         if(this.redo_history.length == 0) { return; }
         this.redo_history[this.redo_history.length - 1].redo();
@@ -71,7 +71,7 @@ class Pen_Stroke{
         img.onload = this.preserve_scope(this);
         img.src = this.prev_data;
     }
-
+    
     redo(){
         var img = new Image();
         img.onload = this.preserve_scope(this)
@@ -81,9 +81,9 @@ class Pen_Stroke{
     preserve_scope(owner){
         return function(){
             var layer = state.layer_manager.layers[owner.layer_index];
-            layer.render_canvas.width = layer.render_canvas.width;
+            layer.clear();
             layer.render_ctx.drawImage(this, 0, 0);
-            layer.redraw();
+            state.canvas_handler.redraw_layers();
         }
     }
 }
@@ -99,18 +99,18 @@ class Selection_History{
             state.selection.clear();
             return;
         }
-        state.selection.x = this.prev_selection.x;
-        state.selection.y = this.prev_selection.y;
+        state.selection.editor_x = this.prev_selection.editor_x;
+        state.selection.editor_y = this.prev_selection.editor_y;
         state.selection.w = this.prev_selection.w;
         state.selection.h = this.prev_selection.h;
         state.selection.selection_rect.style.width = this.prev_selection.width + "px";
         state.selection.selection_rect.style.height = this.prev_selection.height + "px";
         state.selection.exists = this.prev_selection.exists;
         state.selection.selection_rect.style.display = "block";
-        state.selection.draw_selection((this.prev_selection.x - canvas_x()) / state.zoom,
-                                              (this.prev_selection.y - canvas_y()) / state.zoom, 
-                                              (this.prev_selection.x + this.prev_selection.width - canvas_x()) / state.zoom, 
-                                              (this.prev_selection.y + this.prev_selection.height - canvas_y()) / state.zoom)
+        state.selection.draw_selection((this.prev_selection.editor_x - canvas_x()) / state.zoom,
+                                              (this.prev_selection.editor_y - canvas_y()) / state.zoom, 
+                                              (this.prev_selection.editor_x + this.prev_selection.width - canvas_x()) / state.zoom, 
+                                              (this.prev_selection.editor_y + this.prev_selection.height - canvas_y()) / state.zoom)
     }
 
     redo(){
@@ -118,18 +118,18 @@ class Selection_History{
             state.selection.clear();
             return;
         }
-        state.selection.x = this.new_selection.x;
-        state.selection.y = this.new_selection.y;
+        state.selection.editor_x = this.new_selection.editor_x;
+        state.selection.editor_y = this.new_selection.editor_y;
         state.selection.w = this.new_selection.w;
         state.selection.h = this.new_selection.h;
         state.selection.selection_rect.style.width = this.new_selection.width + "px";
         state.selection.selection_rect.style.height = this.new_selection.height + "px";
         state.selection.exists = this.new_selection.exists;
         state.selection.selection_rect.style.display = "block";
-        state.selection.draw_selection((this.new_selection.x - canvas_x()) / state.zoom,
-                                               (this.new_selection.y - canvas_y()) / state.zoom, 
-                                               (this.new_selection.x + this.new_selection.width - canvas_x()) / state.zoom, 
-                                               (this.new_selection.y + this.new_selection.height - canvas_y()) / state.zoom)
+        state.selection.draw_selection((this.new_selection.editor_x - canvas_x()) / state.zoom,
+                                               (this.new_selection.editor_y - canvas_y()) / state.zoom, 
+                                               (this.new_selection.editor_x + this.new_selection.width - canvas_x()) / state.zoom, 
+                                               (this.new_selection.editor_y + this.new_selection.height - canvas_y()) / state.zoom)
     }
 }
 
@@ -157,24 +157,27 @@ class Delete_Layer{
     }
 
     undo(){
-        this.new_layer = new Layer(this.layer_state.index, state.main_canvas.w, state.main_canvas.h);
-        this.new_layer.index = this.layer_state.index;
-        this.new_layer.name_elem.innerHTML = this.layer_state.name;
+        var new_layer = new Layer(this.layer_state.index, state.canvas_handler.w, state.canvas_handler.h);
+        new_layer.index = this.layer_state.index;
+        new_layer.name_elem.innerHTML = this.layer_state.name;
         
-        var img = new Image()
-        img.onload = this.preserve_scope(this);
-        img.src = this.layer_state.data;
         
-        state.layer_manager.layers.splice(this.new_layer.index, 0, this.new_layer);
+        state.layer_manager.layers.splice(new_layer.index, 0, new_layer);
         state.layer_manager.update_layer_indices();
-        state.layer_manager.change_layer(this.new_layer.index);
-        this.new_layer.redraw();
-
+        state.layer_manager.change_layer(new_layer.index);
+        
         if(!this.layer_state.visible){
-            this.new_layer.visible = false;
-            this.new_layer.canvas.style.display = "none";
-            this.new_layer.visibility_icon.className = "far fa-circle";
+            new_layer.visible = false;
+            new_layer.canvas.style.display = "none";
+            new_layer.visibility_icon.className = "far fa-circle";
         }
+
+        var img = new Image()
+        img.onload = function(){
+            new_layer.render_ctx.drawImage(this, 0, 0);
+            state.canvas_handler.redraw_layers();
+        }
+        img.src = this.layer_state.data;
     }
 
     redo(){
@@ -182,13 +185,7 @@ class Delete_Layer{
         state.layer_manager.layers.splice(this.layer_state.index, 1);
         state.layer_manager.update_layer_indices();
         state.layer_manager.change_layer(0)
-    }
-
-    preserve_scope(owner){
-        return function(){
-            owner.new_layer.render_ctx.drawImage(this, 0, 0);
-            owner.new_layer.redraw();
-        }
+        state.canvas_handler.redraw_layers();
     }
 }
 
@@ -212,17 +209,20 @@ class Layer_Settings_History{
     constructor(prev_settings, new_settings, layer){
         this.prev_settings = prev_settings;
         this.new_settings = new_settings;
+        console.log("sefoijseofijsefoij")
         this.layer = layer;
     }
 
     undo(){
         this.layer.opacity = this.prev_settings.opacity;
         this.layer.name_elem.innerHTML = this.prev_settings.name;
+        state.canvas_handler.redraw_layers();
     }
     
     redo(){
         this.layer.opacity = this.new_settings.opacity;
         this.layer.name_elem.innerHTML = this.new_settings.name;
+        state.canvas_handler.redraw_layers();
     }
 }
 

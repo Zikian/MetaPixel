@@ -2,8 +2,8 @@ class Tile_Manager{
     constructor(tile_w, tile_h){
         this.tile_w = tile_w;
         this.tile_h = tile_h;
-        this.tiles_x = state.main_canvas.w / this.tile_w;
-        this.tiles_y = state.main_canvas.h / this.tile_h;
+        this.tiles_x = state.canvas_handler.w / this.tile_w;
+        this.tiles_y = state.canvas_handler.h / this.tile_h;
         
         this.tiles = [];
         this.current_tile = null;
@@ -15,7 +15,6 @@ class Tile_Manager{
         this.body = document.getElementById("tiles-body")
         this.resizer.active_func = resize_sidebar_window(this);
 
-        this.grid = document.getElementById("tile-grid");
         this.resize_grid();
 
         this.add_tile_button = document.getElementById("add-tile");
@@ -31,7 +30,6 @@ class Tile_Manager{
                 index_elem.x = x;
                 index_elem.y = y;
                 index_elem.index = null;
-                state.canvas_wrapper.appendChild(index_elem);
                 this.tile_indices.push(index_elem);
             }
         }
@@ -68,6 +66,6 @@ class Tile_Manager{
     }
 
     resize_grid(){
-        this.grid.style.backgroundSize = this.tile_w * state.zoom + "px " + this.tile_h * state.zoom + "px";
+        state.canvas_wrapper.style.backgroundSize = this.tile_w * state.zoom + "px " + this.tile_h * state.zoom + "px";
     }
 }

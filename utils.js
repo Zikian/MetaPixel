@@ -11,35 +11,8 @@ function pauseEvent(e){
     return false;
 }
 
-function resize_mouse_indicator(){
-    state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
-    state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
-}
-
-function resize_canvas_wrapper(){
-    state.canvas_wrapper.style.width = state.main_canvas.w * state.zoom + "px";
-    state.canvas_wrapper.style.height = state.main_canvas.h * state.zoom + "px";
-}
-
 function clamp(x, a, b) {
-  return Math.max(a, Math.min(b, x));
-}
-
-function canvas_mouse_pos(){
-    return [event.clientX - state.canvas_wrapper.getBoundingClientRect().x, event.clientY - state.canvas_wrapper.getBoundingClientRect().y];
-}
-
-function true_pixel_pos(){
-    x = Math.floor(canvas_mouse_pos()[0] / (state.zoom));
-    y = Math.floor(canvas_mouse_pos()[1] / (state.zoom));
-    return [x, y];
-}
-
-function pixel_pos(){
-    var true_pixel = true_pixel_pos();
-    x = true_pixel[0] - Math.floor(state.brush_size / 2);
-    y = true_pixel[1] - Math.floor(state.brush_size / 2);
-    return [x, y];
+    return Math.max(a, Math.min(b, x));
 }
 
 function download_img(img){
@@ -100,12 +73,12 @@ function rect_to_square(x1, y1, x2, y2){
     return [x1 + dx, y1 - dx];
 }
 
-function resize_sidebar_window(owner){
+function resize_sidebar_window(window_body){
     return function(){
         document.body.style.cursor = "ns-resize";
-        owner.body.style.height = event.clientY - owner.body.getBoundingClientRect().y + "px";
-        if(event.clientY - owner.body.getBoundingClientRect().y < 0){
-            owner.body.style.height = 0 + "px";
+        window_body.style.height = event.clientY - window_body.getBoundingClientRect().y + "px";
+        if(event.clientY - window_body.getBoundingClientRect().y < 0){
+            window_body.style.height = 0;
         }
     }
 }
@@ -118,14 +91,34 @@ function hide_mouse_indicator(){
     state.mouse_indicator.style.display = "none";
 }
 
+function compare_data(arr1, arr2){
+    return arr1[0] == arr2[0] && arr1[1] == arr2[1] && arr1[2] == arr2[2] && arr1[3] == arr2[3];
+}
+
 function canvas_x(){
-    return state.canvas_wrapper.offsetLeft;
+    return state.canvas_x;
 }
 
 function canvas_y(){
-    return state.canvas_wrapper.offsetTop;
+    return state.canvas_y;
 }
 
-function compare_data(arr1, arr2){
-    return arr1[0] == arr2[0] && arr1[1] == arr2[1] && arr1[2] == arr2[2] && arr1[3] == arr2[3];
+function canvas_w(){
+    return state.doc_w * state.zoom;
+}
+
+function canvas_h(){
+    return state.doc_h * state.zoom;
+}
+
+function calc_pixel_pos(){
+    var x = Math.round((event.clientX - state.editor.getBoundingClientRect().x - state.canvas_x) / state.zoom - state.brush_size / 2);
+    var y = Math.round((event.clientY - state.editor.getBoundingClientRect().y - state.canvas_y) / state.zoom - state.brush_size / 2);
+    return [x, y];
+}
+
+function calc_true_pixel_pos(){
+    var x = Math.round((event.clientX - state.editor.getBoundingClientRect().x - state.canvas_x) / state.zoom);
+    var y = Math.round((event.clientY - state.editor.getBoundingClientRect().y - state.canvas_y) / state.zoom); 
+    return [x, y];
 }

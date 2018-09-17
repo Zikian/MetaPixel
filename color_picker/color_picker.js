@@ -6,7 +6,7 @@ class Color_Picker{
         this.header.onmousedown = set_active_element;
         this.header.active_func = function(){
             drag_element(state.color_picker.window,  state.delta_mouse);
-            state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.canvas_area.getBoundingClientRect().y, window.innerHeight) + "px";
+            state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.editor.getBoundingClientRect().y, window.innerHeight) + "px";
         }
         this.header_text = document.getElementById("color-picker-header-text");
         
@@ -146,8 +146,8 @@ class Color_Picker{
                 this.update_from_rgb(...hex_to_rgb(this.hex_input.input.value));
                 break;
             case "eyedropper":
-                if(!state.main_canvas.contains_mouse()){ return; }
-                var color = state.eyedropper_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data
+                var color = state.eyedropper_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
+                if(compare_data(color, [0, 0, 0, 0])){ return; }
                 this.update_from_rgba(Array.prototype.slice.call(color));
                 break;
             case "switch-colors":

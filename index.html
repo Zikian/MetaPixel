@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="windows_common.css">
         <link rel="stylesheet" href="header/header.css">
         <link rel="stylesheet" href="new_document_panel/new_document_panel.css">
-        <link rel="stylesheet" href="editor.css">
+        <link rel="stylesheet" href="website_body.css">
         <link rel="stylesheet" href="animator/animator.css">
         <link rel="stylesheet" href="color_picker/color_picker.css">
         <link rel="stylesheet" href="tools/tools.css">
@@ -104,7 +104,7 @@
             <div class="window-footer"></div>
         </div>
 
-        <div id="editor">
+        <div id="website-body">
             <div id="sidebar-left">
                 <div id="color-preview">
                     <div id="primary-color-rect" class="color-preview-square"></div>
@@ -251,15 +251,14 @@
                 </div>
             </div>
 
-            <div id="editor-center">
-                <div id="canvas-area">
+            <div id="website-body-center">
+                <div id="editor">
                     <div id="selection-rect"></div>
-                    <canvas id="save-canvas"></canvas>
-                    <canvas id="eyedropper-canvas"></canvas>
+                    <canvas id="overlay-canvas"></canvas>
                     <div id="canvas-wrapper">
-                        <canvas id="draw-preview-canvas"></canvas>
-                        <div id="tile-indicator"></div>
-                        <div id="tile-grid"></div>
+                        <canvas id= "background-canvas"></canvas>
+                        <canvas id= "middleground-canvas"></canvas>
+                        <canvas id= "foreground-canvas"></canvas>
                         <div id="mouse-indicator"></div>
                     </div>
                 </div>
@@ -496,7 +495,7 @@
 
         <script src="utils.js"></script>
         <script src="widgets/widgets.js"></script>
-        <script src="main_canvas.js"></script>
+        <script src="canvas_handler.js"></script>
         <script src="preview/preview.js"></script>
         <script src="layer/layer_manager.js"></script>
         <script src="layer/layer.js"></script>
@@ -504,6 +503,8 @@
         <script src="palette/palette.js"></script>
         <script src="tiles/tiles.js"></script>
         <script src="selection.js"></script>
+        <script src="draw_functions.js"></script>
+        <script src="overlay_canvas.js"></script>
         <script src="history.js"></script>
         <script src="animator/animator.js"></script>
         <script src="color_picker/color_operations.js"></script>

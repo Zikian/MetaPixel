@@ -41,6 +41,7 @@ input::-webkit-inner-spin-button {
 
 canvas{
     image-rendering: pixelated;
+    position: absolute;
 }
 
 span, img{
