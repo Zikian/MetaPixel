@@ -1,19 +1,16 @@
 class Tile_Manager{
-    constructor(tile_w, tile_h){
-        this.tile_w = tile_w;
-        this.tile_h = tile_h;
-        this.tiles_x = state.doc_w / this.tile_w;
-        this.tiles_y = state.doc_h / this.tile_h;
+    constructor(){
+        this.tiles_x = state.doc_w / state.tile_w;
+        this.tiles_y = state.doc_h / state.tile_h;
         
         this.tiles = [];
         this.current_tile = null;
 
         this.tiles_wrapper = document.getElementById("tiles-wrapper");
 
-        this.resizer = document.getElementById("tiles-resizer");
-        this.resizer.onmousedown = set_active_element;
-        this.body = document.getElementById("tiles-body")
-        this.resizer.active_func = resize_sidebar_window(this);
+        var resizer = document.getElementById("tiles-resizer");
+        resizer.onmousedown = set_active_element;
+        resizer.active_func = resize_sidebar_window(document.getElementById("tiles-body"));
 
         this.resize_grid();
 
@@ -39,15 +36,15 @@ class Tile_Manager{
 
     get_hovered_tile(){
         return {
-            x: Math.floor(state.pixel_pos[0] / this.tile_w),
-            y: Math.floor(state.pixel_pos[1] / this.tile_h)
+            x: Math.floor(state.pixel_pos[0] / state.tile_w),
+            y: Math.floor(state.pixel_pos[1] / state.tile_h)
         }
     }
 
     reposition_indices(){
         this.tile_indices.forEach(index_elem => {
-            index_elem.style.left = index_elem.x * this.tile_w * state.zoom + 4 + "px";
-            index_elem.style.top = index_elem.y * this.tile_h * state.zoom + "px";
+            index_elem.style.left = index_elem.x * state.tile_w * state.zoom + 4 + "px";
+            index_elem.style.top = index_elem.y * state.tile_h * state.zoom + "px";
         });
     }
 
@@ -66,6 +63,6 @@ class Tile_Manager{
     }
 
     resize_grid(){
-        state.canvas_wrapper.style.backgroundSize = this.tile_w * state.zoom + "px " + this.tile_h * state.zoom + "px";
+        state.canvas_wrapper.style.backgroundSize = state.tile_w * state.zoom + "px " + state.tile_h * state.zoom + "px";
     }
 }

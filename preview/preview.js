@@ -15,10 +15,9 @@ class Preview_Canvas{
         document.getElementById("preview-zoom-in").onclick = this.button_zoom(this, "in");
         document.getElementById("preview-zoom-out").onclick = this.button_zoom(this, "out");
 
-        this.body = document.getElementById("preview-body");
-        this.resizer = document.getElementById("preview-resizer");
-        this.resizer.onmousedown = function(){ state.active_element = this; }
-        this.resizer.active_func =  resize_sidebar_window(this);
+        var resizer = document.getElementById("preview-resizer");
+        resizer.onmousedown = function(){ state.active_element = this; }
+        resizer.active_func =  resize_sidebar_window(document.getElementById("preview-body"));
     }
 
     button_zoom(owner, direction){
@@ -39,16 +38,15 @@ class Preview_Canvas{
             this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }   
 
-        this.canvas.width = state.doc_w * this.current_zoom;
-        this.canvas.height = state.doc_h * this.current_zoom;
+        this.canvas.style.width = state.doc_w * this.current_zoom + "px";
+        this.canvas.style.height = state.doc_h * this.current_zoom + "px";
 
         if(origin == "button"){
-            this.canvas.style.left = (this.wrapper.offsetWidth - this.canvas.width) / 2 + "px";
-            this.canvas.style.top = (this.wrapper.offsetHeight - this.canvas.height) / 2 + "px";
+            this.canvas.style.left = (this.wrapper.offsetWidth - this.canvas.offsetWidth) / 2 + "px";
+            this.canvas.style.top = (this.wrapper.offsetHeight - this.canvas.offsetWidth) / 2 + "px";
         }
 
         this.zoom_element.innerHTML = "(" + this.current_zoom + "x)";
-        this.redraw();
     }
 
     redraw(){
@@ -56,7 +54,14 @@ class Preview_Canvas{
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;
         this.ctx.imageSmoothingEnabled = false;
-        //REDO THIS
+        this.ctx.scale(this.zoom, this.zoom);
+        var layers = state.layer_manager.layers.slice();
+        layers.reverse().forEach(layer => {
+            if(layer.visible){
+                this.ctx.globalAlpha = layer.opacity;
+                this.ctx.drawImage(layer.render_canvas, 0, 0);
+            }
+        })
     }
 
     clear(){

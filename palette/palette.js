@@ -66,10 +66,9 @@ class Palette{
         this.add_color([0, 0, 0]);
         this.add_color([255, 255, 255]);
 
-        this.body = document.getElementById("palette-body");
-        this.resizer = document.getElementById("palette-resizer");
-        this.resizer.onmousedown = set_active_element;
-        this.resizer.active_func =  resize_sidebar_window(this);
+        var resizer = document.getElementById("palette-resizer");
+        resizer.onmousedown = set_active_element;
+        resizer.active_func = resize_sidebar_window(document.getElementById("palette-body"));
     }
 
     validate_settings(){

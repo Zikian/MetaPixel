@@ -48,14 +48,12 @@ class History_Manager{
         if(this.history.length == 0) { return; }
         this.history[this.history.length - 1].undo();
         this.redo_history.push(this.history.pop());
-        state.preview_canvas.redraw();
         
     }
     redo_last(){
         if(this.redo_history.length == 0) { return; }
         this.redo_history[this.redo_history.length - 1].redo();
         this.history.push(this.redo_history.pop());
-        state.preview_canvas.redraw();
     }
 }
 
@@ -84,6 +82,7 @@ class Pen_Stroke{
             layer.clear();
             layer.render_ctx.drawImage(this, 0, 0);
             state.canvas_handler.redraw_layers();
+            state.preview_canvas.redraw();
         }
     }
 }
@@ -99,19 +98,17 @@ class Selection_History{
             state.selection.clear();
             return;
         }
-        state.selection.editor_x = this.prev_selection.editor_x;
-        state.selection.editor_y = this.prev_selection.editor_y;
+        state.selection.editor_x = this.prev_selection.x + canvas_x();
+        state.selection.editor_y = this.prev_selection.y + canvas_y();
         state.selection.w = this.prev_selection.w;
         state.selection.h = this.prev_selection.h;
-        state.overlay_canvas.canvas.width = this.prev_selection.width;
-        state.overlay_canvas.canvas.height = this.prev_selection.height;
+        state.overlay_canvas.canvas.width = this.prev_selection.w * state.zoom;
+        state.overlay_canvas.canvas.height = this.prev_selection.h * state.zoom;
         state.selection.exists = this.prev_selection.exists;
-        state.overlay_canvas.canvas.style.outline = "1px red solid";
-        state.selection.draw_selection((this.prev_selection.editor_x - canvas_x()) / state.zoom,
-                                              (this.prev_selection.editor_y - canvas_y()) / state.zoom, 
-                                              (this.prev_selection.editor_x + this.prev_selection.width - canvas_x()) / state.zoom, 
-                                              (this.prev_selection.editor_y + this.prev_selection.height - canvas_y()) / state.zoom)
-        console.log()
+        state.selection.draw_selection((state.selection.editor_x - canvas_x()) / state.zoom,
+                                              (state.selection.editor_y - canvas_y()) / state.zoom, 
+                                              (state.selection.editor_x + state.selection.w * state.zoom - canvas_x()) / state.zoom, 
+                                              (state.selection.editor_y + state.selection.h * state.zoom - canvas_y()) / state.zoom)
     }
 
     redo(){
@@ -119,18 +116,17 @@ class Selection_History{
             state.selection.clear();
             return;
         }
-        state.selection.editor_x = this.new_selection.editor_x;
-        state.selection.editor_y = this.new_selection.editor_y;
+        state.selection.editor_x = this.new_selection.x + canvas_x();
+        state.selection.editor_y = this.new_selection.y + canvas_y();
         state.selection.w = this.new_selection.w;
         state.selection.h = this.new_selection.h;
-        state.overlay_canvas.canvas.width = this.new_selection.width;
-        state.overlay_canvas.canvas.height = this.new_selection.height;
+        state.overlay_canvas.canvas.width = this.new_selection.w * state.zoom;
+        state.overlay_canvas.canvas.height = this.new_selection.h * state.zoom;
         state.selection.exists = this.new_selection.exists;
-        state.overlay_canvas.canvas.style.outline = "1px red solid";
-        state.selection.draw_selection((this.new_selection.editor_x - canvas_x()) / state.zoom,
-                                               (this.new_selection.editor_y - canvas_y()) / state.zoom, 
-                                               (this.new_selection.editor_x + this.new_selection.width - canvas_x()) / state.zoom, 
-                                               (this.new_selection.editor_y + this.new_selection.height - canvas_y()) / state.zoom)
+        state.selection.draw_selection((state.selection.editor_x - canvas_x()) / state.zoom,
+                                               (state.selection.editor_y - canvas_y()) / state.zoom, 
+                                               (state.selection.editor_x + state.selection.w * state.zoom - canvas_x()) / state.zoom, 
+                                               (state.selection.editor_y + state.selection.h * state.zoom - canvas_y()) / state.zoom)
     }
 }
 
@@ -177,6 +173,7 @@ class Delete_Layer{
         img.onload = function(){
             new_layer.render_ctx.drawImage(this, 0, 0);
             state.canvas_handler.redraw_layers();
+            state.preview_canvas.redraw();
         }
         img.src = this.layer_state.data;
     }
@@ -187,6 +184,7 @@ class Delete_Layer{
         state.layer_manager.update_layer_indices();
         state.layer_manager.change_layer(0)
         state.canvas_handler.redraw_layers();
+        state.preview_canvas.redraw();
     }
 }
 
@@ -210,7 +208,6 @@ class Layer_Settings_History{
     constructor(prev_settings, new_settings, layer){
         this.prev_settings = prev_settings;
         this.new_settings = new_settings;
-        console.log("sefoijseofijsefoij")
         this.layer = layer;
     }
 

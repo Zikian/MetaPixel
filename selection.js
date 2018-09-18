@@ -5,6 +5,8 @@ class Selection{
         this.w = 0;
         this.h = 0;
 
+        this.prevent_doubleclick = false;
+
         // Check if selection exists
         this.exists = false;
 
@@ -23,19 +25,15 @@ class Selection{
 
     get_selection_info(){
         return {
-            editor_x: this.editor_x,
-            editor_y: this.editor_y,
+            x: this.editor_x - canvas_x(), // Subtract canvas position to account for canvas movement between undo/redo
+            y: this.editor_y - canvas_y(),
             w: this.w,
             h: this.h,
-            width: this.width(),
-            height: this.height(),
             exists: this.exists
         }
     }
 
     draw(){
-        state.overlay_canvas.canvas.style.outline = "1px red solid";
-        
         if(state.input.shift){
             state.selection_end = rect_to_square(...state.selection_start, ...state.selection_end);
         }
@@ -71,7 +69,6 @@ class Selection{
     draw_selection(x1, y1, x2, y2){
         var w = x2 - x1;
         var h = y2 - y1;
-
         this.editor_x = x1 * state.zoom + canvas_x();
         this.editor_y = y1 * state.zoom + canvas_y();
         this.w = w;
@@ -82,23 +79,22 @@ class Selection{
         state.overlay_canvas.canvas.style.top = this.editor_y + "px"
         state.overlay_canvas.canvas.width = w * state.zoom;
         state.overlay_canvas.canvas.height = h * state.zoom;
+        state.overlay_canvas.canvas.style.outline = "1px red solid";
     }
 
     get_intersection(){
-        if(!this.exists) { this.clear(); return; }
-
-        if(this.editor_y + this.height() <= canvas_y() || 
-           this.editor_y >= canvas_y() + canvas_w() ||
-          this.editor_x + this.width() <= canvas_x() || 
-          this.editor_x >= canvas_x() + canvas_w()) {
-              this.clear();
-              return;
-        }
+        if(!this.exists) { return; }
         var x1 = (Math.max(this.editor_x,  canvas_x()) - canvas_x()) / state.zoom;
         var y1 = (Math.max(this.editor_y, canvas_y()) - canvas_y()) / state.zoom;
         var x2 = (Math.min(this.editor_x + this.width(),  canvas_x() + canvas_w()) - canvas_x()) / state.zoom;
         var y2 = (Math.min(this.editor_y + this.height(),  canvas_y() + canvas_h()) - canvas_y()) / state.zoom;
-
+        
+        // Selection is outside of canvas
+        if(x2 <= x1 || y2 <= y1){
+            this.clear();
+            return;
+        }
+        
         this.draw_selection(x1, y1, Math.round(x2), Math.round(y2));
     }
 

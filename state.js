@@ -32,6 +32,8 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.prev_pixel = {};
     state.doc_w = w;
     state.doc_h = h;
+    state.tile_w = tile_w;
+    state.tile_h = tile_h;
     
     state.canvas_wrapper.style.left = (state.editor.offsetWidth - w * state.zoom)/2  + "px";
     state.canvas_wrapper.style.top = (state.editor.offsetHeight - w * state.zoom)/2 + "px";
@@ -41,7 +43,7 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
 
     // Different Mouse Positions
     state.mouse_pos = [0, 0];
-    state.pixel_pos = [0, 0];
+    state.pixel_pos = [-100, -100];
     state.selection_start = null;
     state.selection_end = null;
     state.delta_pixel_pos = null;
@@ -81,11 +83,12 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
         state.preview_canvas.canvas.style.backgroundColor = "transparent"
     }
     
-    hide_mouse_indicator();
     state.canvas_wrapper.style.width = canvas_w() + "px";
     state.canvas_wrapper.style.height = canvas_h() + "px";
     state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
     state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
+    state.mouse_indicator.style.left = "-10000px";
+    state.mouse_indicator.style.top = "-10000px";
 }
 
 init("tiled", 4, 4, 16, 16, true, "Untitled");

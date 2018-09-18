@@ -96,25 +96,17 @@
         repeating-linear-gradient(135deg,#ffffff,#ffffff 2.5px,#dbdbdb 2.5px,#dbdbdb 5px);
 }
 
-#background-canvas{
-    z-index: 1;
-}
-
-#foreground-canvas{
-    z-index: 3;
-}
-
-#editor #mouse-indicator{
+#mouse-indicator{
     display: inline-block;
     position: absolute;
     top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.603);
-    z-index: 100;
+    z-index: 102;
 }
 
 #overlay-canvas{
-    z-index: 100;
+    z-index: 1000;
 }
 
 #selection-size{

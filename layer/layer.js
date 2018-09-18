@@ -54,10 +54,11 @@ class Layer {
         var x = state.selection.editor_x - canvas_x();
         var y = state.selection.editor_y - canvas_y();
         state.history_manager.prev_data = this.render_canvas.toDataURL();
-        this.ctx.clearRect(x, y, state.selection.width(), state.selection.height());
+        this.render_ctx.clearRect(x, y, state.selection.width(), state.selection.height());
         state.history_manager.new_data = this.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke")
         state.preview_canvas.redraw();
+        state.canvas_handler.draw_middleground();
     }
 
     clear() {
@@ -76,10 +77,10 @@ class Layer {
                 state.canvas_handler.redraw_layers();
                 owner.visibility_icon.className = "fas fa-circle visibility-icon";
             }
-            state.preview_canvas.redraw();
             if (origin == "button") {
                 state.history_manager.add_history("layer-visibility", [owner.index]);
             }
+            state.preview_canvas.redraw();
         }
     }
 

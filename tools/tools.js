@@ -83,8 +83,10 @@ class Draw_Tool extends Tool{
         state.draw_buffer.push(state.pixel_pos);
         state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         if(state.input.shift) { this.draw_type = "line" }
-        else { this.draw_type = "draw"; }
-        draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
+        else { 
+            draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
+            this.draw_type = "draw"; 
+        }
     }
 
     mousemove_actions(){
@@ -147,7 +149,7 @@ class Selection_Tool extends Tool{
     constructor(id){ super(id); }
 
     on_enter(){
-        hide_mouse_indicator();
+        state.mouse_indicator.style.display = "none";
         document.body.style.cursor = "crosshair";
     }
 
@@ -155,6 +157,7 @@ class Selection_Tool extends Tool{
         state.history_manager.prev_selection = state.selection.get_selection_info();
         state.selection_start = calc_true_pixel_pos();
         if(state.active_element == state.editor && !state.selection.contains_pixel(...state.pixel_pos)){
+            state.selection.prevent_doubleclick = false;
             state.selection.clear();
         }
         if (!state.selection.contains_pixel(...state.pixel_pos) || !state.selection.exists){
@@ -164,6 +167,7 @@ class Selection_Tool extends Tool{
     
     mousemove_actions(){
         if(state.selection.forming){
+            state.selection.prevent_doubleclick = true;
             state.selection_end = calc_true_pixel_pos()
             state.selection.draw();
             var w = calc_distance(state.selection_start[0], state.selection_end[0]);
@@ -197,15 +201,25 @@ class Selection_Tool extends Tool{
 class Fill_Tool extends Tool{
     constructor(id){ super(id); }
 
+    on_enter(){
+        state.mouse_indicator.style.width = state.zoom + "px";
+        state.mouse_indicator.style.height = state.zoom + "px";
+    }
+
     mousedown_actions(){
         var current_layer = state.layer_manager.current_layer;
         state.history_manager.prev_data = current_layer.render_canvas.toDataURL();
         var old_color = current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
-        current_layer.render_ctx.fillStyle = state.color_picker.rgba;
+        current_layer.render_ctx.fillStyle = state.color_picker.color;
         fill(...state.pixel_pos, state.color_picker.rgba, old_color);
         state.preview_canvas.redraw();
         state.history_manager.add_history("pen-stroke");
         state.canvas_handler.draw_middleground();
+    }
+
+    on_exit(){
+        state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
+        state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
     }
 }
 
@@ -253,8 +267,8 @@ class Rectangle_Tool extends Tool{
     
     mouseup_actions(){
         state.overlay_canvas.clear();
-        state.preview_canvas.redraw();
         rectangle(...state.mouse_start, ...state.mouse_end);
+        state.preview_canvas.redraw();
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
     }
@@ -287,8 +301,8 @@ class Ellipse_Tool extends Tool{
 
     mouseup_actions(){
         state.overlay_canvas.clear();
-        state.preview_canvas.redraw();
         ellipse(...state.mouse_start, ...state.mouse_end);
+        state.preview_canvas.redraw();
         state.selection_size_element.style.display = "none";
         if(!state.input.shift) { this.draw_type = "ellipse"}
         state.history_manager.add_history("pen-stroke");
@@ -299,8 +313,8 @@ class Hand_Tool extends Tool{
     constructor(id){ super(id); }
 
     on_enter(){
+        state.mouse_indicator.style.display = "none";
         document.body.style.cursor = "grab";
-        hide_mouse_indicator();
     }
     
     mousemove_actions(){
