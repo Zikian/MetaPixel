@@ -80,6 +80,7 @@ class Draw_Tool extends Tool{
     }
 
     mousedown_actions(){
+        state.draw_buffer.push(state.pixel_pos);
         state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         if(state.input.shift) { this.draw_type = "line" }
         else { this.draw_type = "draw"; }
@@ -201,9 +202,10 @@ class Fill_Tool extends Tool{
         state.history_manager.prev_data = current_layer.render_canvas.toDataURL();
         var old_color = current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
         current_layer.render_ctx.fillStyle = state.color_picker.rgba;
-        current_layer.fill(...state.pixel_pos, state.color_picker.rgba, old_color);
+        fill(...state.pixel_pos, state.color_picker.rgba, old_color);
         state.preview_canvas.redraw();
         state.history_manager.add_history("pen-stroke");
+        state.canvas_handler.draw_middleground();
     }
 }
 
@@ -222,7 +224,7 @@ class Eyedropper_Tool extends Tool{
     }
 
     mouseup_actions(){
-        state.eyedropper_ctx.clearRect(0, 0, state.canvas_handler.w, state.canvas_handler.h);
+        state.eyedropper_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
     }
 }
 
@@ -315,17 +317,18 @@ class Horizontal_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
+        state.draw_buffer.push(state.pixel_pos);
         state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
-        draw_pixel(state.color_picker.rgba, state.canvas_handler.w - state.pixel_pos[0], state.pixel_pos[1]); 
+        draw_pixel(state.color_picker.rgba, state.doc_w - state.pixel_pos[0], state.pixel_pos[1]); 
     }
 
     mousemove_actions(){
         state.draw_buffer.push(state.pixel_pos);
         if (state.draw_buffer.length == 2){
             draw_line(...state.draw_buffer[0], ...state.draw_buffer[1])
-            var start_x = state.canvas_handler.w - state.draw_buffer[0][0];
-            var end_x = state.canvas_handler.w - state.draw_buffer[1][0];
+            var start_x = state.doc_w - state.draw_buffer[0][0];
+            var end_x = state.doc_w - state.draw_buffer[1][0];
             draw_line(start_x, state.draw_buffer[0][1], end_x, state.draw_buffer[1][1]);
             state.draw_buffer.shift()
         }
@@ -342,23 +345,24 @@ class Vertical_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
+        state.draw_buffer.push(state.pixel_pos);
         state.history_manager.prev_data = state.layer_manager.current_layer.render_canvas.toDataURL();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
-        draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.canvas_handler.h - state.pixel_pos[1]); 
+        draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.doc_h - state.pixel_pos[1]); 
     }
 
     mousemove_actions(){
         state.draw_buffer.push(state.pixel_pos);
         if (state.draw_buffer.length == 2){
             draw_line(...state.draw_buffer[0], ...state.draw_buffer[1])
-            var start_y = state.canvas_handler.h - state.draw_buffer[0][1];
-            var end_y = state.canvas_handler.h - state.draw_buffer[1][1];
+            var start_y = state.doc_h - state.draw_buffer[0][1];
+            var end_y = state.doc_h - state.draw_buffer[1][1];
             draw_line(state.draw_buffer[0][0], start_y, state.draw_buffer[1][0], end_y);
             state.draw_buffer.shift()
         }
     }
 
-    mouseup_actions(){
+    mouseup_actions(){  
         state.history_manager.add_history("pen-stroke")
         state.draw_buffer = [];
         state.preview_canvas.redraw();
@@ -374,7 +378,7 @@ class Tile_Placer_Tool extends Tool{
     }
 
     mousemove_actions(){
-        var hovered_tile = state.tile_manager.get_hovered_tile()
+        // var hovered_tile = state.tile_manager.get_hovered_tile()
     }
 
     on_exit(){

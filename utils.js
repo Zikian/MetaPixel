@@ -122,3 +122,13 @@ function calc_true_pixel_pos(){
     var y = Math.round((event.clientY - state.editor.getBoundingClientRect().y - state.canvas_y) / state.zoom); 
     return [x, y];
 }
+
+function hidden_x(){
+    //Portion of canvas that is clipped by editor on the left
+    return -Math.min(state.canvas_x, 0);
+}
+
+function hidden_y(){
+    //Portion of canvas that is clipped by editor on the right
+    return -Math.min(state.canvas_y, 0);
+}

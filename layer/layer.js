@@ -50,25 +50,6 @@ class Layer {
         }
     }
 
-    fill(x, y, new_color, old_color) {
-        var data = this.render_ctx.getImageData(x * state.zoom, y * state.zoom, 1, 1).data;
-
-        var is_old_color = compare_data(data, old_color);
-        var is_new_color = compare_data(data, new_color);
-        if(is_new_color) { return; }
-        if(!is_old_color) { return; }
-
-        this.render_ctx.fillRect(x * state.zoom, y * state.zoom, state.zoom, state.zoom);
-        
-        var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
-        var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
-
-        if(y + 1 < selection_y + state.selection.h) { this.fill(x, y + 1, new_color, old_color); }
-        if(y - 1 >= selection_y) { this.fill(x, y - 1, new_color, old_color); }
-        if(x + 1 < selection_x + state.selection.w) { this.fill(x + 1, y, new_color, old_color); }
-        if(x - 1 >= selection_x){ this.fill(x - 1, y, new_color, old_color); }
-    }
-
     clear_selection(){
         var x = state.selection.editor_x - canvas_x();
         var y = state.selection.editor_y - canvas_y();

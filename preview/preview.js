@@ -5,8 +5,8 @@ class Preview_Canvas{
 
         this.wrapper = document.getElementById("preview-body");
 
-        this.canvas.width = state.canvas_handler.w;
-        this.canvas.height = state.canvas_handler.h;
+        this.canvas.width = state.doc_w;
+        this.canvas.height = state.doc_h;
 
         this.zoom_stages = this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18];
         this.current_zoom = 1;
@@ -39,8 +39,8 @@ class Preview_Canvas{
             this.current_zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }   
 
-        this.canvas.width = state.canvas_handler.w * this.current_zoom;
-        this.canvas.height = state.canvas_handler.h * this.current_zoom;
+        this.canvas.width = state.doc_w * this.current_zoom;
+        this.canvas.height = state.doc_h * this.current_zoom;
 
         if(origin == "button"){
             this.canvas.style.left = (this.wrapper.offsetWidth - this.canvas.width) / 2 + "px";

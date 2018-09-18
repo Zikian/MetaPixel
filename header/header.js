@@ -39,8 +39,8 @@ class Header{
 
         this.save_as.onclick = function(){
             var save_canvas = document.createElement("canvas");
-            save_canvas.width = state.canvas_handler.w * state.zoom;
-            save_canvas.height = state.canvas_handler.h * state.zoom;
+            save_canvas.width = state.doc_w * state.zoom;
+            save_canvas.height = state.doc_h * state.zoom;
             var ctx = save_canvas.getContext("2d");
             
             ctx.mozImageSmoothingEnabled = false;
@@ -49,7 +49,7 @@ class Header{
 
             if(!state.transparency){
                 ctx.fillStyle = "white";
-                ctx.fillRect(0, 0, state.canvas_handler.w * state.zoom, state.canvas_handler.h * state.zoom);
+                ctx.fillRect(0, 0, state.doc_w * state.zoom, state.doc_h * state.zoom);
             }
 
             this.ctx.scale(1/state.zoom, 1/state.zoom);

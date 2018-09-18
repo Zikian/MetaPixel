@@ -20,7 +20,9 @@ class Overlay_Canvas{
 
     draw_pixel(color, x, y) {
         this.ctx.fillStyle = rgba(color);
-        this.ctx.fillRect(x * state.zoom, y * state.zoom, state.zoom * state.brush_size, state.zoom * state.brush_size);
+        var selection_offset_x = canvas_x() - state.selection.editor_x;
+        var selection_offset_y = canvas_y() - state.selection.editor_y;
+        this.ctx.fillRect(x * state.zoom + selection_offset_x, y * state.zoom + selection_offset_y, state.zoom * state.brush_size, state.zoom * state.brush_size);
     }
 
     draw_line(x0, y0, x1, y1) {

@@ -14,7 +14,6 @@ class Selection{
         // Checl if the user is dragging a selection
         this.being_dragged = false;
 
-        this.selection_rect = document.getElementById("selection-rect");
         this.wrap_around_canvas();
     }
 
@@ -24,8 +23,8 @@ class Selection{
 
     get_selection_info(){
         return {
-            x: this.editor_x,
-            y: this.editor_y,
+            editor_x: this.editor_x,
+            editor_y: this.editor_y,
             w: this.w,
             h: this.h,
             width: this.width(),
@@ -35,10 +34,10 @@ class Selection{
     }
 
     draw(){
-        this.selection_rect.style.display = "block";
+        state.overlay_canvas.canvas.style.outline = "1px red solid";
         
         if(state.input.shift){
-            state.seleciton_end = rect_to_square(...state.selection_start, ...state.seleciton_end);
+            state.selection_end = rect_to_square(...state.selection_start, ...state.selection_end);
         }
 
         var x1 = state.selection_start[0];
@@ -79,10 +78,10 @@ class Selection{
         this.h = h;
         this.exists = true;
 
-        this.selection_rect.style.left = this.editor_x + "px";
-        this.selection_rect.style.top = this.editor_y + "px"
-        this.selection_rect.style.width = w * state.zoom - 1 + "px";
-        this.selection_rect.style.height = h * state.zoom - 1 + "px";
+        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
+        state.overlay_canvas.canvas.style.top = this.editor_y + "px"
+        state.overlay_canvas.canvas.width = w * state.zoom;
+        state.overlay_canvas.canvas.height = h * state.zoom;
     }
 
     get_intersection(){
@@ -104,7 +103,7 @@ class Selection{
     }
 
     clear(){
-        this.selection_rect.style.display = "none";
+        state.overlay_canvas.canvas.style.outline = "none";
         this.exists = false;
         this.wrap_around_canvas();
     }
@@ -112,8 +111,10 @@ class Selection{
     wrap_around_canvas(){
         this.editor_x = canvas_x();
         this.editor_y = canvas_y();
-        this.w = state.canvas_handler.w;
-        this.h = state.canvas_handler.h;
+        this.w = state.doc_w;
+        this.h = state.doc_h;
+        state.overlay_canvas.canvas.width = this.width();
+        state.overlay_canvas.canvas.height = this.height();
     }
 
     contains_pixel(x, y){
@@ -126,15 +127,17 @@ class Selection{
     }
 
     move(x, y){
-        this.editor_x += x
-        this.editor_y += y
+        this.editor_x += x;
+        this.editor_y += y;
+        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
+        state.overlay_canvas.canvas.style.top = this.editor_y + "px";
     }
 
     drag(){
         this.editor_x += state.delta_pixel_pos[0] * state.zoom;
         this.editor_y += state.delta_pixel_pos[1] * state.zoom;
-        this.selection_rect.style.left = this.editor_x + "px";
-        this.selection_rect.style.top = this.editor_y + "px";
+        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
+        state.overlay_canvas.canvas.style.top = this.editor_y + "px";
     }
 
     resize(){

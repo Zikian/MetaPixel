@@ -2,8 +2,8 @@ class Tile_Manager{
     constructor(tile_w, tile_h){
         this.tile_w = tile_w;
         this.tile_h = tile_h;
-        this.tiles_x = state.canvas_handler.w / this.tile_w;
-        this.tiles_y = state.canvas_handler.h / this.tile_h;
+        this.tiles_x = state.doc_w / this.tile_w;
+        this.tiles_y = state.doc_h / this.tile_h;
         
         this.tiles = [];
         this.current_tile = null;

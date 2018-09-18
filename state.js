@@ -61,8 +61,8 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.tool_handler = new Tool_Handler("drawtool");
     state.layer_manager = new Layer_Manager();
     state.layer_settings = new Layer_Settings();
-    state.selection = new Selection();
     state.overlay_canvas = new Overlay_Canvas();
+    state.selection = new Selection();
     
     var eyedropper_canvas = document.createElement("canvas");
     state.eyedropper_ctx = eyedropper_canvas.getContext("2d");

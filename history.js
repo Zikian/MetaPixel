@@ -103,14 +103,15 @@ class Selection_History{
         state.selection.editor_y = this.prev_selection.editor_y;
         state.selection.w = this.prev_selection.w;
         state.selection.h = this.prev_selection.h;
-        state.selection.selection_rect.style.width = this.prev_selection.width + "px";
-        state.selection.selection_rect.style.height = this.prev_selection.height + "px";
+        state.overlay_canvas.canvas.width = this.prev_selection.width;
+        state.overlay_canvas.canvas.height = this.prev_selection.height;
         state.selection.exists = this.prev_selection.exists;
-        state.selection.selection_rect.style.display = "block";
+        state.overlay_canvas.canvas.style.outline = "1px red solid";
         state.selection.draw_selection((this.prev_selection.editor_x - canvas_x()) / state.zoom,
                                               (this.prev_selection.editor_y - canvas_y()) / state.zoom, 
                                               (this.prev_selection.editor_x + this.prev_selection.width - canvas_x()) / state.zoom, 
                                               (this.prev_selection.editor_y + this.prev_selection.height - canvas_y()) / state.zoom)
+        console.log()
     }
 
     redo(){
@@ -122,10 +123,10 @@ class Selection_History{
         state.selection.editor_y = this.new_selection.editor_y;
         state.selection.w = this.new_selection.w;
         state.selection.h = this.new_selection.h;
-        state.selection.selection_rect.style.width = this.new_selection.width + "px";
-        state.selection.selection_rect.style.height = this.new_selection.height + "px";
+        state.overlay_canvas.canvas.width = this.new_selection.width;
+        state.overlay_canvas.canvas.height = this.new_selection.height;
         state.selection.exists = this.new_selection.exists;
-        state.selection.selection_rect.style.display = "block";
+        state.overlay_canvas.canvas.style.outline = "1px red solid";
         state.selection.draw_selection((this.new_selection.editor_x - canvas_x()) / state.zoom,
                                                (this.new_selection.editor_y - canvas_y()) / state.zoom, 
                                                (this.new_selection.editor_x + this.new_selection.width - canvas_x()) / state.zoom, 
@@ -157,7 +158,7 @@ class Delete_Layer{
     }
 
     undo(){
-        var new_layer = new Layer(this.layer_state.index, state.canvas_handler.w, state.canvas_handler.h);
+        var new_layer = new Layer(this.layer_state.index, state.doc_w, state.doc_h);
         new_layer.index = this.layer_state.index;
         new_layer.name_elem.innerHTML = this.layer_state.name;
         
