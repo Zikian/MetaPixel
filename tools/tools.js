@@ -82,7 +82,7 @@ class Draw_Tool extends Tool{
 
     mousedown_actions(){
         state.draw_buffer.push(state.pixel_pos);
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         if(state.input.shift) { this.draw_type = "line" }
         else {
             draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
@@ -127,7 +127,7 @@ class Eraser_Tool extends Tool{
     }
 
     mousedown_actions(){
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         erase_pixel(...state.pixel_pos)
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_draw_canvas();
@@ -163,7 +163,7 @@ class Selection_Tool extends Tool{
     }
 
     mousedown_actions(){
-        state.history_manager.prev_selection = state.selection.get_selection_info();
+        state.history_manager.prev_selection_state = state.selection.get_state();
         state.selection_start = calc_true_pixel_pos();
         if(state.active_element == state.editor && !state.selection.contains_pixel(...state.pixel_pos)){
             state.selection.prevent_doubleclick = false;
@@ -194,7 +194,6 @@ class Selection_Tool extends Tool{
         state.selection.forming = false;
         state.selection.being_dragged = false;
         state.selection.get_intersection();
-        state.history_manager.new_selection = state.selection.get_selection_info();
         state.history_manager.add_history("selection")
     }
 
@@ -215,7 +214,7 @@ class Fill_Tool extends Tool{
 
     mousedown_actions(){
         var current_layer = state.current_layer;
-        state.history_manager.prev_data = current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = current_layer.get_data();
         var old_color = current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
         current_layer.render_ctx.fillStyle = state.color_picker.color;
         fill(...state.pixel_pos, state.color_picker.rgba, old_color);
@@ -254,7 +253,7 @@ class Rectangle_Tool extends Tool{
     constructor(id){ super(id); }
 
     mousedown_actions(){
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
@@ -290,7 +289,7 @@ class Ellipse_Tool extends Tool{
     }
 
     mousedown_actions(){
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
@@ -344,7 +343,7 @@ class Horizontal_Mirror_Tool extends Tool{
 
     mousedown_actions(){
         state.draw_buffer.push(state.pixel_pos);
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         draw_pixel(state.color_picker.rgba, state.doc_w - state.pixel_pos[0], state.pixel_pos[1]); 
         state.canvas_handler.render_foreground();
@@ -374,7 +373,7 @@ class Vertical_Mirror_Tool extends Tool{
 
     mousedown_actions(){
         state.draw_buffer.push(state.pixel_pos);
-        state.history_manager.prev_data = state.current_layer.render_canvas.toDataURL();
+        state.history_manager.prev_data = state.current_layer.get_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.doc_h - state.pixel_pos[1]); 
         state.canvas_handler.render_foreground();

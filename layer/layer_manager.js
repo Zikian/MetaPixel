@@ -12,7 +12,8 @@ class Layer_Manager{
         }
         
         document.getElementById("delete-layer").onclick = function(){
-            layer_manager.delete_layer();
+            state.history_manager.add_history("delete-layer", [state.current_layer.get_state()]);
+            layer_manager.delete_layer(state.current_layer.index);
         }
 
         document.getElementById("move-layer-up").onclick = function(){
@@ -51,13 +52,10 @@ class Layer_Manager{
         }
     }
 
-    delete_layer(){
+    delete_layer(index){
         if (this.layers.length == 1) { return; }
 
-        var layer_state = state.current_layer.get_state();
-        state.history_manager.add_history("delete-layer", [layer_state]);
-
-        this.layers.splice(state.current_layer.index, 1);
+        this.layers.splice(index, 1);
         state.current_layer.delete();
         this.update_layer_indices(state.current_layer);
         this.change_layer(0)

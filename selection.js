@@ -25,7 +25,7 @@ class Selection{
 
     height(){ return this.h * state.zoom; }
 
-    get_selection_info(){
+    get_state(){
         return {
             x: this.editor_x - canvas_x(), // Subtract canvas position to account for canvas movement between undo/redo
             y: this.editor_y - canvas_y(),
@@ -33,6 +33,18 @@ class Selection{
             h: this.h,
             exists: this.exists
         }
+    }
+
+    load_from_state(new_state){
+        if(!new_state.exists){ this.clear(); return; }
+        this.editor_x = new_state.x + canvas_w();
+        this.editor_y = new_state.y + canvas_y();
+        this.w = new_state.w;
+        this.h = new_state.h;
+        this.draw_selection(new_state.x / state.zoom,
+                            new_state.y / state.zoom,
+                            new_state.x / state.zoom + new_state.w,
+                            new_state.y / state.zoom + new_state.h)
     }
 
     draw(){

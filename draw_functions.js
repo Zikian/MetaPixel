@@ -17,7 +17,7 @@ function draw_pixel(color, x, y){
     if(new_w < 0 || new_h < 0) { return; }
 
     var containing_tile = state.tile_manager.get_containing_tile(new_x1, new_y1);
-    if(containing_tile.x < 0 || containing_tile.y < 0){ return; }
+    if(containing_tile.x == null || containing_tile.y == null){ return; }
     var target_tile = state.tile_manager.tile_indices[containing_tile.x][containing_tile.y].index;
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color)

@@ -50,7 +50,7 @@ class Layer_Settings{
             };
             
             if(prev_settings.opacity == new_settings.opacity && prev_settings.name == new_settings.name){ return; }
-            state.history_manager.add_history("layer-settings", [prev_settings, new_settings, owner.target]);
+            state.history_manager.add_history("layer-settings", [prev_settings, new_settings, owner.target.index]);
         }
     }
 

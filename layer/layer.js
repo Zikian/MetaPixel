@@ -26,7 +26,10 @@ class Layer {
         
         this.visibility_icon = document.createElement("i");
         this.visibility_icon.className = "fas fa-circle visibility-icon";
-        this.visibility_icon.onclick = this.toggle_visibility(this, "button")
+        this.visibility_icon.onclick = function(){
+            this_instance.toggle_visibility();
+            state.history_manager.add_history("layer-visibility", [owner.index]);
+        }
 
         this.settings_button = document.createElement("div");
         this.settings_button.className = "button sidebar-window-button layer-settings-button"
@@ -48,19 +51,43 @@ class Layer {
 
     get_state() {
         return {
-            data: this.render_canvas.toDataURL(),
+            data: this.get_data(),
             index: this.index,
             name: this.name_elem.innerHTML,
             visible: this.visible
         }
     }
 
+    get_data(){
+        return this.render_canvas.toDataURL();
+    }
+
+    draw_data(data){
+        this.clear();
+        var img = new Image();
+        var this_instance = this;
+        img.onload = function(){
+            this_instance.render_ctx.drawImage(this, 0, 0);
+            state.canvas_handler.redraw_layers();
+            state.canvas_handler.render_draw_canvas();
+            state.preview_canvas.redraw();
+        }
+        img.src = data;
+    }
+
+    update_settings(settings){
+        this.opacity = settings.opacity;
+        this.name_elem.innerHTML = settings.name;
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
+    }
+
     clear_selection(){
         var x = state.selection.editor_x - canvas_x();
         var y = state.selection.editor_y - canvas_y();
-        state.history_manager.prev_data = this.render_canvas.toDataURL();
+        state.history_manager.prev_data = this.get_data();
         this.render_ctx.clearRect(x / state.zoom, y / state.zoom, state.selection.w, state.selection.h);
-        state.history_manager.new_data = this.render_canvas.toDataURL();
+        state.history_manager.new_data = this.get_data();
         state.history_manager.add_history("pen-stroke")
         state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers()
@@ -71,25 +98,18 @@ class Layer {
         this.render_canvas.width = this.render_canvas.width;
     }
 
-    toggle_visibility(owner, origin) {
-        return function () {
-            window.event.stopPropagation();
-            if (owner.visible) {
-                owner.visible = false;
-                state.canvas_handler.redraw_layers();
-                state.canvas_handler.render_draw_canvas();
-                owner.visibility_icon.className = "far fa-circle visibility-icon";
-            } else {
-                owner.visible = true;
-                state.canvas_handler.redraw_layers();
-                state.canvas_handler.render_draw_canvas();
-                owner.visibility_icon.className = "fas fa-circle visibility-icon";
-            }
-            if (origin == "button") {
-                state.history_manager.add_history("layer-visibility", [owner.index]);
-            }
-            state.preview_canvas.redraw();
+    toggle_visibility() {
+        event.stopPropagation();
+        if (this.visible) {
+            this.visible = false;
+            this.visibility_icon.className = "far fa-circle visibility-icon";
+        } else {
+            this.visible = true;
+            this.visibility_icon.className = "fas fa-circle visibility-icon";
         }
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
+        state.preview_canvas.redraw();
     }
 
     reposition() {
