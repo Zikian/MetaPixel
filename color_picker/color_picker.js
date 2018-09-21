@@ -4,7 +4,7 @@ class Color_Picker{
         
         this.header = document.getElementById("color-picker-header");
         this.header.onmousedown = set_active_element;
-        this.header.active_func = function(){
+        this.header.mousedrag_actions = function(){
             drag_element(state.color_picker.window,  state.delta_mouse);
             state.color_picker.window.style.top = clamp(state.color_picker.window.offsetTop, state.editor.getBoundingClientRect().y, window.innerHeight) + "px";
         }
@@ -147,7 +147,7 @@ class Color_Picker{
                 break;
             case "eyedropper":
                 var color = state.eyedropper_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
-                if(compare_data(color, [0, 0, 0, 0])){ return; }
+                if(compare_colors(color, [0, 0, 0, 0])){ return; }
                 this.update_from_rgba(Array.prototype.slice.call(color));
                 break;
             case "switch-colors":

@@ -28,10 +28,10 @@ function download_img(img){
 }
 
 function update_rect_size_preview(w, h){
-    state.selection_size_element.style.display = "block";
     state.selection_size_element.style.left = event.clientX - state.selection_size_element.clientWidth / 2 + "px";
     state.selection_size_element.style.top = event.clientY + 20 + "px";
     document.getElementById("size-span").innerHTML = "W:" + w + ", H:" + h;
+    state.selection_size_element.style.display = "block";
 }
 
 function get_file_name(){
@@ -108,23 +108,43 @@ function canvas_h(){
 }
 
 function calc_pixel_pos(){
-    var x = Math.round((event.clientX - state.editor.getBoundingClientRect().x - state.canvas_x) / state.zoom - state.brush_size / 2);
-    var y = Math.round((event.clientY - state.editor.getBoundingClientRect().y - state.canvas_y) / state.zoom - state.brush_size / 2);
+    var x = Math.round((event.clientX - 101 - state.canvas_x) / state.zoom - state.brush_size / 2);
+    var y = Math.round((event.clientY - 30 - state.canvas_y) / state.zoom - state.brush_size / 2);
     return [x, y];
 }
 
 function calc_true_pixel_pos(){
-    var x = Math.round((event.clientX - state.editor.getBoundingClientRect().x - state.canvas_x) / state.zoom);
-    var y = Math.round((event.clientY - state.editor.getBoundingClientRect().y - state.canvas_y) / state.zoom); 
+    var x = Math.round((event.clientX - 101 - state.canvas_x) / state.zoom);
+    var y = Math.round((event.clientY - 30 - state.canvas_y) / state.zoom); 
     return [x, y];
 }
 
 function hidden_x(){
-    //Portion of canvas that is clipped by editor on the left
+    //Portion of canvas that is clipped by editor at the left border
     return -Math.min(state.canvas_x, 0);
 }
 
 function hidden_y(){
-    //Portion of canvas that is clipped by editor on the right
+    //Portion of canvas that is clipped by editor at the top border
     return -Math.min(state.canvas_y, 0);
+}
+
+function update_mouse_indicator(){
+    var mouse_indicator_x = state.pixel_pos[0] * state.zoom + canvas_x();
+    var mouse_indicator_y = state.pixel_pos[1] * state.zoom + canvas_y();
+    var mouse_indicator_x1 = Math.max(mouse_indicator_x, canvas_x());
+    var mouse_indicator_y1 = Math.max(mouse_indicator_y, canvas_y());
+    var mouse_indicator_x2 = Math.min(mouse_indicator_x + state.brush_size * state.zoom, canvas_x() + canvas_w());
+    var mouse_indicator_y2 = Math.min(mouse_indicator_y + state.brush_size * state.zoom, canvas_y() + canvas_h());
+    var mouse_indicator_w = mouse_indicator_x2 - mouse_indicator_x1;
+    var mouse_indicator_h = mouse_indicator_y2 - mouse_indicator_y1;
+    if(mouse_indicator_w < 0 || mouse_indicator_h < 0){
+        state.mouse_indicator.style.width = 0;
+        state.mouse_indicator.style.height = 0;
+    }
+    
+    state.mouse_indicator.style.left = mouse_indicator_x1 + "px";
+    state.mouse_indicator.style.top = mouse_indicator_y1 + "px";
+    state.mouse_indicator.style.width = mouse_indicator_w + "px";
+    state.mouse_indicator.style.height = mouse_indicator_h + "px";
 }

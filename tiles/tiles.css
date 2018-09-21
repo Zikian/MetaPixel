@@ -4,6 +4,7 @@
 }
 
 #tiles-wrapper{
+    position: relative;
     justify-self: center;
     border: 1px solid black;
     width: 230px;
@@ -31,4 +32,10 @@
     font-size: 10pt;
     color: red;
     z-index: 1000000;
+}
+
+#tile-placer-rect{
+    position: absolute;
+    outline: 2px solid rgb(34, 255, 185);
+    display: none;
 }

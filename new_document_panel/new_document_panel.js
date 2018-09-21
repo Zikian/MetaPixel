@@ -60,7 +60,7 @@ class New_Document_Panel{
         this.tile_height_input.oninput = function(){ state.new_document_panel.input_validation(this); }
 
         this.header.onmousedown = set_active_element;
-        this.header.active_func =  function(){ drag_element(state.new_document_panel.panel, state.delta_mouse); }
+        this.header.mousedrag_actions =  function(){ drag_element(state.new_document_panel.panel, state.delta_mouse); }
 
         this.panel.style.left = (window.innerWidth - this.panel.clientWidth)/2 - 150 + "px";
         this.panel.style.top = (window.innerHeight - 400)/2 + "px";
@@ -97,13 +97,14 @@ class New_Document_Panel{
             clicked.style.backgroundColor = "transparent";
             this.single_image_button.style.backgroundColor = rgb([195, 213, 236]);
             
-            this.tile_width_wrapper.style.display = "block"
-            this.tile_height_wrapper.style.display = "block"
-
+            
             this.document_width_wrapper.style.gridArea = "3 / 1 / span 1 / span 1"
             this.document_height_wrapper.style.gridArea = "4 / 1 / span 1 / span 1"
             this.width_input.style.width = "105px";
             this.height_input.style.width = "105px";
+            
+            this.tile_width_wrapper.style.display = "block"
+            this.tile_height_wrapper.style.display = "block"
         }
     }
 

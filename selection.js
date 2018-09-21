@@ -16,6 +16,8 @@ class Selection{
         // Checl if the user is dragging a selection
         this.being_dragged = false;
 
+        this.selection_rect = document.getElementById("selection-rect");
+        
         this.wrap_around_canvas();
     }
 
@@ -75,11 +77,12 @@ class Selection{
         this.h = h;
         this.exists = true;
 
-        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
-        state.overlay_canvas.canvas.style.top = this.editor_y + "px"
-        state.overlay_canvas.canvas.width = w * state.zoom;
-        state.overlay_canvas.canvas.height = h * state.zoom;
-        state.overlay_canvas.canvas.style.outline = "1px red solid";
+        this.selection_rect.style.left = this.editor_x + "px";
+        this.selection_rect.style.top = this.editor_y + "px"
+        this.selection_rect.style.width = w * state.zoom + "px";
+        this.selection_rect.style.height = h * state.zoom + "px";
+
+        this.selection_rect.style.display = "block";
     }
 
     get_intersection(){
@@ -99,18 +102,16 @@ class Selection{
     }
 
     clear(){
-        state.overlay_canvas.canvas.style.outline = "none";
         this.exists = false;
         this.wrap_around_canvas();
     }
-
+    
     wrap_around_canvas(){
+        this.selection_rect.style.display = "none";
         this.editor_x = canvas_x();
         this.editor_y = canvas_y();
         this.w = state.doc_w;
         this.h = state.doc_h;
-        state.overlay_canvas.canvas.width = this.width();
-        state.overlay_canvas.canvas.height = this.height();
     }
 
     contains_pixel(x, y){
@@ -125,15 +126,15 @@ class Selection{
     move(x, y){
         this.editor_x += x;
         this.editor_y += y;
-        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
-        state.overlay_canvas.canvas.style.top = this.editor_y + "px";
+        this.selection_rect.style.left = this.editor_x + "px";
+        this.selection_rect.style.top = this.editor_y + "px";
     }
 
     drag(){
         this.editor_x += state.delta_pixel_pos[0] * state.zoom;
         this.editor_y += state.delta_pixel_pos[1] * state.zoom;
-        state.overlay_canvas.canvas.style.left = this.editor_x + "px";
-        state.overlay_canvas.canvas.style.top = this.editor_y + "px";
+        this.selection_rect.style.left = this.editor_x + "px";
+        this.selection_rect.style.top = this.editor_y + "px";
     }
 
     resize(){

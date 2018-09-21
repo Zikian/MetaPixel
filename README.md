@@ -1,4 +1,4 @@
-# MetaPixel
+# Pixel-Editor
 Web App to create pixel art
 
-https://zikian.github.io/MetaPixel/
+https://zikian.github.io/Pixel-Editor/

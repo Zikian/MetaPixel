@@ -56,9 +56,9 @@ class Palette{
             }
         }
         document.getElementById("palette-settings-button").onclick = function(){
-            document.getElementById("palette-settings").style.display = "block";
             state.palette.width_input.value = state.palette.width;
             state.palette.height_input.value = state.palette.height;
+            document.getElementById("palette-settings").style.display = "block";
         }
         
         this.colors = [];
@@ -68,7 +68,7 @@ class Palette{
 
         var resizer = document.getElementById("palette-resizer");
         resizer.onmousedown = set_active_element;
-        resizer.active_func = resize_sidebar_window(document.getElementById("palette-body"));
+        resizer.mousedrag_actions = resize_sidebar_window(document.getElementById("palette-body"));
     }
 
     validate_settings(){

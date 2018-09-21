@@ -17,7 +17,7 @@ class Preview_Canvas{
 
         var resizer = document.getElementById("preview-resizer");
         resizer.onmousedown = function(){ state.active_element = this; }
-        resizer.active_func =  resize_sidebar_window(document.getElementById("preview-body"));
+        resizer.mousedrag_actions =  resize_sidebar_window(document.getElementById("preview-body"));
     }
 
     button_zoom(owner, direction){

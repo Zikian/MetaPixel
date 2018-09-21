@@ -17,7 +17,7 @@ class Layer {
         this.wrapper = document.createElement("div");
         this.wrapper.className = "layer";
         this.wrapper.style.top = 30 * this.index + "px";
-        var this_instance = this
+        var this_instance = this;
         this.wrapper.onclick = function(){ state.layer_manager.change_layer(this_instance.index); };
         
         this.name_elem = document.createElement("span");
@@ -39,6 +39,11 @@ class Layer {
         this.wrapper.appendChild(this.visibility_icon);
         this.wrapper.appendChild(this.settings_button);
         document.getElementById("layers-body").appendChild(this.wrapper);
+
+        //Each element of painted tiles is an array containing
+        //the positions of the tiles painted onto the document
+        //corresponding to the index of the array in painted tiles.
+        this.painted_tiles = [];
     }
 
     get_state() {
@@ -54,11 +59,12 @@ class Layer {
         var x = state.selection.editor_x - canvas_x();
         var y = state.selection.editor_y - canvas_y();
         state.history_manager.prev_data = this.render_canvas.toDataURL();
-        this.render_ctx.clearRect(x, y, state.selection.width(), state.selection.height());
+        this.render_ctx.clearRect(x / state.zoom, y / state.zoom, state.selection.w, state.selection.h);
         state.history_manager.new_data = this.render_canvas.toDataURL();
         state.history_manager.add_history("pen-stroke")
         state.preview_canvas.redraw();
-        state.canvas_handler.draw_middleground();
+        state.canvas_handler.redraw_layers()
+        state.canvas_handler.render_draw_canvas();
     }
 
     clear() {
@@ -71,10 +77,12 @@ class Layer {
             if (owner.visible) {
                 owner.visible = false;
                 state.canvas_handler.redraw_layers();
+                state.canvas_handler.render_draw_canvas();
                 owner.visibility_icon.className = "far fa-circle visibility-icon";
             } else {
                 owner.visible = true;
                 state.canvas_handler.redraw_layers();
+                state.canvas_handler.render_draw_canvas();
                 owner.visibility_icon.className = "fas fa-circle visibility-icon";
             }
             if (origin == "button") {

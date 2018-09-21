@@ -1,10 +1,8 @@
 var state = {
     header: new Header(),
     editor: document.getElementById("editor"),
-    canvas_wrapper: document.getElementById("canvas-wrapper"),
     mouse_indicator: document.getElementById("mouse-indicator"),
     selection_size_element: document.getElementById("selection-size"),
-    active_element: null,
     draw_buffer: [],
 
     input: {
@@ -12,7 +10,9 @@ var state = {
         shift: false,
         last_shortcut: null,
         space: false
-    }
+    },
+
+    null_active_element: document.createElement("div")
 };
 
 function init(document_type, w, h, tile_w, tile_h, transparency, name){
@@ -34,12 +34,13 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.doc_h = h;
     state.tile_w = tile_w;
     state.tile_h = tile_h;
-    
-    state.canvas_wrapper.style.left = (state.editor.offsetWidth - w * state.zoom)/2  + "px";
-    state.canvas_wrapper.style.top = (state.editor.offsetHeight - w * state.zoom)/2 + "px";
+    state.tiles_x = w / tile_w;
+    state.tiles_y = h / tile_h;
 
-    state.canvas_x = state.canvas_wrapper.offsetLeft;
-    state.canvas_y = state.canvas_wrapper.offsetTop;
+    state.current_layer = null;
+
+    state.null_active_element.mousedrag_actions = function(){};
+    state.active_element = state.null_active_element;
 
     // Different Mouse Positions
     state.mouse_pos = [0, 0];
@@ -58,13 +59,12 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.preview_canvas = new Preview_Canvas();
     state.palette = new Palette();
     // state.animator = new Animator();
-    state.tile_manager = new Tile_Manager(tile_w, tile_h);
     state.tool_options = new Tool_Options();
     state.tool_handler = new Tool_Handler("drawtool");
     state.layer_manager = new Layer_Manager();
     state.layer_settings = new Layer_Settings();
-    state.overlay_canvas = new Overlay_Canvas();
     state.selection = new Selection();
+    state.tile_manager = new Tile_Manager(tile_w, tile_h);
     
     var eyedropper_canvas = document.createElement("canvas");
     state.eyedropper_ctx = eyedropper_canvas.getContext("2d");
@@ -72,23 +72,33 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     eyedropper_canvas.height = h;
     
     if (!state.transparency){
-        state.canvas_wrapper.style.background = "none";
-        state.canvas_wrapper.style.backgroundColor = "white";
+        state.canvas_handler.draw_canvas.style.background = "none";
+        state.canvas_handler.draw_canvas.style.backgroundColor = "white";
         state.preview_canvas.canvas.style.background = "none";
         state.preview_canvas.canvas.style.backgroundColor = "white"
     } else {
-        state.canvas_wrapper.style.background = "repeating-linear-gradient(135deg, #ffffff, #ffffff 2.5px, #dbdbdb 2.5px, #dbdbdb 5px );";
-        state.canvas_wrapper.style.backgroundColor = "transparent";
+        state.canvas_handler.draw_canvas.style.background = "repeating-linear-gradient(135deg, #ffffff, #ffffff 2.5px, #dbdbdb 2.5px, #dbdbdb 5px );";
+        state.canvas_handler.draw_canvas.style.backgroundColor = "transparent";
         state.preview_canvas.canvas.style.background = "repeating-linear-gradient(135deg, #ffffff, #ffffff 2.5px, #dbdbdb 2.5px, #dbdbdb 5px );";
         state.preview_canvas.canvas.style.backgroundColor = "transparent"
     }
-    
-    state.canvas_wrapper.style.width = canvas_w() + "px";
-    state.canvas_wrapper.style.height = canvas_h() + "px";
-    state.mouse_indicator.style.width = state.zoom * state.brush_size + "px";
-    state.mouse_indicator.style.height = state.zoom * state.brush_size + "px";
-    state.mouse_indicator.style.left = "-10000px";
-    state.mouse_indicator.style.top = "-10000px";
+
+    state.tile_manager.add_tile();
 }
 
 init("tiled", 4, 4, 16, 16, true, "Untitled");
+
+
+//Layer test
+// state.brush_size = 20;
+// state.current_layer.name_elem.innerHTML = "Blue"
+// draw_pixel([0, 0, 255, 255], 10, 10);
+// state.layer_manager.add_layer();
+// state.current_layer.name_elem.innerHTML = "Green"
+// draw_pixel([0, 255, 0, 255], 25, 15);
+// state.layer_manager.add_layer();
+// state.current_layer.name_elem.innerHTML = "Red"
+// draw_pixel([255, 0, 0, 255], 15, 25);
+// state.layer_manager.change_layer(1);
+// state.brush_size = 1;
+// state.canvas_handler.draw_tile_grid();

@@ -4,7 +4,6 @@ class Slider{
         
         this.wrapper.className = type + "-slider";
         this.selector = this.wrapper.getElementsByClassName("slider-selector")[0];
-        this.selector.active_func = function(){ input_function(); };
         
         this.type = type;
         this.size = size;
@@ -41,11 +40,10 @@ class Slider{
             owner.update_slider();
             owner.input_function();
         }
-        window.addEventListener("mousemove", function(){
-            if(state.active_element == owner.selector){
-                owner.update_slider();
-            }
-        })
+        this.selector.mousedrag_actions = function(){
+            owner.update_slider();
+            owner.input_function();
+        }
     }
   
     update_position(value_y, value_x = null){
@@ -133,10 +131,6 @@ class Input_Slider{
         this.name_elem = this.wrapper.getElementsByClassName("input-slider-name")[0];
         this.slider = this.wrapper.getElementsByClassName("input-slider-slider")[0];
         this.selector = this.wrapper.getElementsByClassName("input-slider-selector")[0];
-
-        this.selector.active_func = function(){ 
-            input_function(); 
-        };
         
         if(name.length > 0) { this.name_elem.innerHTML = name + ":"; }
         this.input.value = default_val;
@@ -154,15 +148,14 @@ class Input_Slider{
             pauseEvent(e);
             state.active_element = owner.selector;
             var mouse_offset = event.clientY - owner.wrapper.getBoundingClientRect().y;
-            owner.slider.style.display = "block";
             owner.slider.style.top = mouse_offset - 100 + owner.input_to_slider(owner.input.value) + "px";
             owner.update_slider();
+            owner.slider.style.display = "block";
         }
-        window.addEventListener("mousemove", function(){
-            if(state.active_element == owner.selector){
-                owner.update_slider();
-            }
-        })
+        this.selector.mousedrag_actions = function(){
+            owner.update_slider();
+            owner.input_function();
+        }
         window.addEventListener("mouseup", function(){
             if(state.active_element == owner.selector){
                 owner.slider.style.display = "none";

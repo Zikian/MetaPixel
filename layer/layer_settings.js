@@ -11,6 +11,7 @@ class Layer_Settings{
             var opacity = state.layer_settings.opacity_input.input.value / 255;
             state.layer_settings.target.opacity = opacity;
             state.canvas_handler.redraw_layers();
+            state.canvas_handler.render_draw_canvas();
         }
         this.opacity_input = new Input_Slider("opacity-setting", "Opacity", 255, 255, input_function);
         this.ok_button = document.getElementById("layer-settings-ok");
@@ -20,7 +21,7 @@ class Layer_Settings{
         this.ok_button.onclick = this.validate(this);
         this.cancel_button.onclick = this.cancel(this);
         this.header.onmousedown = set_active_element;
-        this.header.active_func  = function(){ drag_element(state.layer_settings.wrapper, state.delta_mouse); }
+        this.header.mousedrag_actions  = function(){ drag_element(state.layer_settings.wrapper, state.delta_mouse); }
     }
 
     open(target){
@@ -58,6 +59,7 @@ class Layer_Settings{
             owner.wrapper.style.display = "none"
             owner.target.opacity = owner.prev_opacity;
             state.canvas_handler.redraw_layers();
+            state.canvas_handler.render_draw_canvas();
         }
     }
 }

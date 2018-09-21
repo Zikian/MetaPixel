@@ -33,7 +33,7 @@
                 <ul>
                     <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="save-as" class="button"><i class="far fa-save"></i></i>Save As</li>
+                    <li id="save-as" class="button"><i class="far fa-save"></i>Save As</li>
                 </ul>
             </div>
 
@@ -73,7 +73,7 @@
                     
                 <div id="document-width-wrapper">
                     <span>Width (px):</span>
-                    <input id="document-width-input" type="number" id="width-input" value="0" min="0">
+                    <input id="document-width-input" type="number" value="0" min="0">
                 </div>
 
                 <div id="document-height-wrapper">
@@ -253,12 +253,10 @@
 
             <div id="website-body-center">
                 <div id="editor">
-                    <canvas id="overlay-canvas"></canvas>
-                    <div id="canvas-wrapper">
-                        <canvas id= "background-canvas"></canvas>
-                        <canvas id= "middleground-canvas"></canvas>
-                        <canvas id= "foreground-canvas"></canvas>
-                        <div id="mouse-indicator"></div>
+                    <div id="tile-placer-rect"></div>
+                    <div id="selection-rect"></div>
+                    <canvas id="draw-canvas"></canvas>
+                    <div id="mouse-indicator"></div>
                     </div>
                 </div>
 
@@ -272,7 +270,122 @@
                         </div>
                     </div>
                 </div> -->
+            
+            <div id="sidebar-right">
+                <div id="sidebar-right-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
+                <div id="sidebar-windows">
+                    <div id="preview" class="sidebar-window">
+                        <div id="preview-header" class="sidebar-window-header">
+                            <div id="preview-zoom">
+                                <span id="preview-zoom-span" class="sidebar-window-span">(1x)</span>
+                            </div>
+                            <span class="sidebar-window-span">Preview</span>
+                            <div id="preview-zoom-buttons">
+                                <div id="preview-zoom-in" class="button sidebar-window-button">
+                                    <i class="fas fa-search-plus sidebar-window-button-icon"></i>
+                                </div>
+                                <div id="preview-zoom-out" class="button sidebar-window-button">
+                                    <i class="fas fa-search-minus sidebar-window-button-icon"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="preview-body" class="sidebar-window-body">
+                            <canvas id="preview-canvas"></canvas>
+                        </div>
+                        <div class="horizontal-resizer sidebar-resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+
+                    <div id="layers" class="sidebar-window">
+                        <div id="layers-header" class="sidebar-window-header">
+                            <span class="sidebar-window-span">Layers</span>
+                            <div id="add-layer" class="button sidebar-window-button">
+                                <i class="fas fa-plus sidebar-window-button-icon"></i>
+                            </div>
+                            <div id="delete-layer" class="button sidebar-window-button">
+                                <i class="far fa-trash-alt sidebar-window-button-icon"></i>
+                            </div>
+                            <div id="move-layer-up" class="button sidebar-window-button">
+                                <i class="fas fa-arrow-up sidebar-window-button-icon"></i>
+                            </div>
+                            <div id="move-layer-down" class="button sidebar-window-button">
+                                <i class="fas fa-arrow-down sidebar-window-button-icon"></i>
+                            </div>
+                        </div>
+                        <div id="layers-body" class="sidebar-window-body"></div>
+                        <div class="horizontal-resizer sidebar-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+
+                    <div id="layer-settings">
+                        <div id="layer-settings-header" class="window-header">
+                            <span class="window-header-title">Layer Settings</span>
+                            <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
+                        </div>
+                        <div id="settings">
+                            <input type="text" id="layer-name-setting">
+                            <div class="input-slider" id="opacity-setting">
+                                <span class="input-slider-name"></span>
+                                <div class="input-slider-wrapper">
+                                    <input type="number">
+                                    <i class="fas fa-caret-down"></i>
+                                    <div class="input-slider-slider">
+                                        <div class="input-slider-selector"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="buttons">
+                                <button id="layer-settings-ok">OK</button>
+                                <button id="layer-settings-cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="window-footer"></div>
+                    </div>
+
+                    <div id="tiles" class="sidebar-window">
+                        <div id="tiles-header" class="sidebar-window-header">
+                            <span class="sidebar-window-span">Tiles</span>
+                            <div id="add-tile" class="button sidebar-window-button">
+                                <i class="fas fa-plus sidebar-window-button-icon"></i>
+                            </div>
+                        </div>
+                        <div id="tiles-body" class="sidebar-window-body">
+                            <div id="tiles-wrapper"></div> 
+                        </div>
+                        <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+
+                    <div id="palette" class="sidebar-window">
+                        <div class="sidebar-window-header">
+                            <span class="sidebar-window-span">Palette</span>
+                            <div id="add-color" class="button sidebar-window-button"><i class="fas fa-plus sidebar-window-button-icon"></i></div>
+                            <div id="remove-color" class="button sidebar-window-button"><i class="far fa-trash-alt sidebar-window-button-icon"></i></div>
+                            <div id="palette-settings-button" class="button sidebar-window-button"><i class="fas fa-cog sidebar-window-button-icon"></i></div>
+                        </div>
+                        <div id="palette-body" class="sidebar-window-body">
+                            <div id="palette-wrapper"></div>
+                        </div>
+                        <div id="palette-settings">
+                            <div id="palette-settings-header" class="window-header">
+                                <span class="window-header-title">Palette Size</span>
+                                <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
+                            </div>
+                            <div id="palette-settings-body">
+                                <span>Width:</span>
+                                <input type="number" id="palette-width-setting">
+                                <span>Height:</span>
+                                <input type="number" id="palette-height-setting">
+                                <div id="palette-settings-buttons">
+                                    <button id="palette-settings-ok">OK</button>
+                                    <button id="palette-settings-cancel">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="window-footer"></div>
+                        </div>
+                        <div class="horizontal-resizer sidebar-resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+                </div>
             </div>
+        </div>
+
 
             <div id="selection-size">
                 <span id="size-span"></span>
@@ -377,121 +490,6 @@
                 </div>
             </div>
 
-            <div id="sidebar-right">
-                <div id="sidebar-right-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
-                <div id="sidebar-windows">
-                    <div id="preview" class="sidebar-window">
-                        <div id="preview-header" class="sidebar-window-header">
-                            <div id="preview-zoom">
-                                <span id="preview-zoom-span" class="sidebar-window-span">(1x)</span>
-                            </div>
-                            <span class="sidebar-window-span">Preview</span>
-                            <div id="preview-zoom-buttons">
-                                <div id="preview-zoom-in" class="button sidebar-window-button">
-                                    <i class="fas fa-search-plus sidebar-window-button-icon"></i>
-                                </div>
-                                <div id="preview-zoom-out" class="button sidebar-window-button">
-                                    <i class="fas fa-search-minus sidebar-window-button-icon"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="preview-body" class="sidebar-window-body">
-                            <canvas id="preview-canvas"></canvas>
-                        </div>
-                        <div class="horizontal-resizer sidebar-resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
-                    </div>
-
-                    <div id="layers" class="sidebar-window">
-                        <div id="layers-header" class="sidebar-window-header">
-                            <span class="sidebar-window-span">Layers</span>
-                            <div id="add-layer" class="button sidebar-window-button"">
-                                <i class="fas fa-plus sidebar-window-button-icon"></i>
-                            </div>
-                            <div id="delete-layer" class="button sidebar-window-button"">
-                                <i class="far fa-trash-alt sidebar-window-button-icon"></i>
-                            </div>
-                            <div id="move-layer-up" class="button sidebar-window-button"">
-                                <i class="fas fa-arrow-up sidebar-window-button-icon"></i>
-                            </div>
-                            <div id="move-layer-down" class="button sidebar-window-button"">
-                                <i class="fas fa-arrow-down sidebar-window-button-icon"></i>
-                            </div>
-                        </div>
-                        <div id="layers-body" class="sidebar-window-body"></div>
-                        <div class="horizontal-resizer sidebar-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
-                    </div>
-
-                    <div id="layer-settings">
-                        <div id="layer-settings-header" class="window-header">
-                            <span class="window-header-title">Layer Settings</span>
-                            <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
-                        </div>
-                        <div id="settings">
-                            <input type="text" id="layer-name-setting">
-                            <div class="input-slider" id="opacity-setting">
-                                <span class="input-slider-name"></span>
-                                <div class="input-slider-wrapper">
-                                    <input type="number">
-                                    <i class="fas fa-caret-down"></i>
-                                    <div class="input-slider-slider">
-                                        <div class="input-slider-selector"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="buttons">
-                                <button id="layer-settings-ok">OK</button>
-                                <button id="layer-settings-cancel">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="window-footer"></div>
-                    </div>
-
-                    <div id="tiles" class="sidebar-window">
-                        <div id="tiles-header" class="sidebar-window-header">
-                            <span class="sidebar-window-span">Tiles</span>
-                            <div id="add-tile" class="button sidebar-window-button"">
-                                <i class="fas fa-plus sidebar-window-button-icon"></i>
-                            </div>
-                        </div>
-                        <div id="tiles-body" class="sidebar-window-body">
-                            <div id="tiles-wrapper"></div> 
-                        </div>
-                        <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
-                    </div>
-
-                    <div id="palette" class="sidebar-window">
-                        <div class="sidebar-window-header">
-                            <span class="sidebar-window-span">Palette</span>
-                            <div id="add-color" class="button sidebar-window-button""><i class="fas fa-plus sidebar-window-button-icon"></i></div>
-                            <div id="remove-color" class="button sidebar-window-button""><i class="far fa-trash-alt sidebar-window-button-icon"></i></div>
-                            <div id="palette-settings-button" class="button sidebar-window-button""><i class="fas fa-cog sidebar-window-button-icon"></i></div>
-                        </div>
-                        <div id="palette-body" class="sidebar-window-body">
-                            <div id="palette-wrapper"></div>
-                        </div>
-                        <div id="palette-settings">
-                            <div id="palette-settings-header" class="window-header">
-                                <span class="window-header-title">Palette Size</span>
-                                <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
-                            </div>
-                            <div id="palette-settings-body">
-                                <span>Width:</span>
-                                <input type="number" id="palette-width-setting">
-                                <span>Height:</span>
-                                <input type="number" id="palette-height-setting">
-                                <div id="palette-settings-buttons">
-                                    <button id="palette-settings-ok">OK</button>
-                                    <button id="palette-settings-cancel">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="window-footer"></div>
-                        </div>
-                        <div class="horizontal-resizer sidebar-resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <script src="utils.js"></script>
         <script src="widgets/widgets.js"></script>
         <script src="canvas_handler.js"></script>
@@ -503,7 +501,6 @@
         <script src="tiles/tiles.js"></script>
         <script src="selection.js"></script>
         <script src="draw_functions.js"></script>
-        <script src="overlay_canvas.js"></script>
         <script src="history.js"></script>
         <script src="animator/animator.js"></script>
         <script src="color_picker/color_operations.js"></script>

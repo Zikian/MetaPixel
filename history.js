@@ -11,8 +11,8 @@ class History_Manager{
         this.redo_history = []
         switch(type){
             case "pen-stroke":
-                var new_data = state.layer_manager.current_layer.render_canvas.toDataURL();
-                this.history.push(new Pen_Stroke(this.prev_data, new_data, state.layer_manager.current_layer.index));
+                var new_data = state.current_layer.render_canvas.toDataURL();
+                this.history.push(new Pen_Stroke(this.prev_data, new_data, state.current_layer.index));
                 break;
             case "selection":
                 if (this.prev_selection == null){ return; }
@@ -82,6 +82,7 @@ class Pen_Stroke{
             layer.clear();
             layer.render_ctx.drawImage(this, 0, 0);
             state.canvas_handler.redraw_layers();
+            state.canvas_handler.render_draw_canvas();
             state.preview_canvas.redraw();
         }
     }
@@ -102,8 +103,8 @@ class Selection_History{
         state.selection.editor_y = this.prev_selection.y + canvas_y();
         state.selection.w = this.prev_selection.w;
         state.selection.h = this.prev_selection.h;
-        state.overlay_canvas.canvas.width = this.prev_selection.w * state.zoom;
-        state.overlay_canvas.canvas.height = this.prev_selection.h * state.zoom;
+        state.selection.selection_rect.style.width = this.prev_selection.w * state.zoom + "px";
+        state.selection.selection_rect.style.height = this.prev_selection.h * state.zoom + "px";
         state.selection.exists = this.prev_selection.exists;
         state.selection.draw_selection((state.selection.editor_x - canvas_x()) / state.zoom,
                                               (state.selection.editor_y - canvas_y()) / state.zoom, 
@@ -120,8 +121,8 @@ class Selection_History{
         state.selection.editor_y = this.new_selection.y + canvas_y();
         state.selection.w = this.new_selection.w;
         state.selection.h = this.new_selection.h;
-        state.overlay_canvas.canvas.width = this.new_selection.w * state.zoom;
-        state.overlay_canvas.canvas.height = this.new_selection.h * state.zoom;
+        state.selection.selection_rect.style.width = this.new_selection.w * state.zoom + "px";
+        state.selection.selection_rect.style.height = this.new_selection.h * state.zoom + "px";
         state.selection.exists = this.new_selection.exists;
         state.selection.draw_selection((state.selection.editor_x - canvas_x()) / state.zoom,
                                                (state.selection.editor_y - canvas_y()) / state.zoom, 
@@ -140,7 +141,7 @@ class Add_Layer{
         state.layer_manager.layers[this.index].delete();
         state.layer_manager.layers.splice(this.index, 1);
         state.layer_manager.update_layer_indices();
-        state.layer_manager.current_layer
+        state.current_layer
     }
 
     redo(){
@@ -165,7 +166,6 @@ class Delete_Layer{
         
         if(!this.layer_state.visible){
             new_layer.visible = false;
-            new_layer.canvas.style.display = "none";
             new_layer.visibility_icon.className = "far fa-circle";
         }
 
@@ -173,6 +173,7 @@ class Delete_Layer{
         img.onload = function(){
             new_layer.render_ctx.drawImage(this, 0, 0);
             state.canvas_handler.redraw_layers();
+            state.canvas_handler.render_draw_canvas();
             state.preview_canvas.redraw();
         }
         img.src = this.layer_state.data;
@@ -184,6 +185,7 @@ class Delete_Layer{
         state.layer_manager.update_layer_indices();
         state.layer_manager.change_layer(0)
         state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
         state.preview_canvas.redraw();
     }
 }
@@ -215,12 +217,14 @@ class Layer_Settings_History{
         this.layer.opacity = this.prev_settings.opacity;
         this.layer.name_elem.innerHTML = this.prev_settings.name;
         state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
     }
     
     redo(){
         this.layer.opacity = this.new_settings.opacity;
         this.layer.name_elem.innerHTML = this.new_settings.name;
         state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
     }
 }
 

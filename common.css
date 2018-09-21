@@ -30,6 +30,7 @@ input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type="number"] {
     -moz-appearance: textfield;
 }
@@ -42,6 +43,7 @@ input::-webkit-inner-spin-button {
 canvas{
     image-rendering: pixelated;
     position: absolute;
+    user-select: none;
 }
 
 span, img{

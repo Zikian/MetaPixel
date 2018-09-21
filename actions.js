@@ -6,7 +6,8 @@ window.addEventListener('mouseup', function(e) {
     if(state.active_element == state.editor){
         state.tool_handler.current_tool.mouseup_actions();
     }
-    state.active_element = null;
+    state.active_element = state.null_active_element;
+    state.mouse_indicator.style.display = "block";
 }, false);
 
 window.addEventListener('mousedown', function(e) {
@@ -15,27 +16,27 @@ window.addEventListener('mousedown', function(e) {
     if(state.active_element == state.editor){
         state.tool_handler.current_tool.mousedown_actions();
     }
+    state.mouse_indicator.style.display = "none";
 }, false);
 
 window.addEventListener("mousemove", function(e){
-    pauseEvent(e);
-    
-    var prev_mouse = state.mouse_pos.slice();
+    state.hovered_tile = state.tile_manager.get_containing_tile(...state.pixel_pos);
+
+    state.delta_mouse = [e.clientX - state.mouse_pos[0], e.clientY - state.mouse_pos[1]]
     state.mouse_pos = [e.clientX, e.clientY];
-    state.delta_mouse = [e.clientX - prev_mouse[0], e.clientY - prev_mouse[1]]
     
     var prev_pixel_pos = state.pixel_pos;
     state.pixel_pos = calc_pixel_pos();
     state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]]
 
     state.mouse_end = state.pixel_pos;
+    
+    update_mouse_indicator();
 
-    state.mouse_indicator.style.left = state.pixel_pos[0] * state.zoom + "px";
-    state.mouse_indicator.style.top = state.pixel_pos[1] * state.zoom + "px";
+    //Calls the function attached to the element that is being dragged
+    state.active_element.mousedrag_actions();
 
-    if(state.active_element != null){
-        state.active_element.active_func();
-    }
+    state.tool_handler.current_tool.mousemove_actions();
 });
 
 document.addEventListener("keydown", function(event){
@@ -43,7 +44,7 @@ document.addEventListener("keydown", function(event){
     switch(event.keyCode){
         case 8: // BACKSPACE
             if(!state.selection.exists){ return; }
-            state.layer_manager.current_layer.clear_selection();
+            state.current_layer.clear_selection();
             break;
         case 32: // SPACE
             if(state.input.space) { return; }
@@ -134,18 +135,15 @@ state.editor.addEventListener("wheel", function(e){
 })
 
 state.editor.onmousedown = set_active_element;
-state.editor.active_func = function(){ state.tool_handler.current_tool.mousemove_actions(); }
+state.editor.mousedrag_actions = function(){ state.tool_handler.current_tool.mousedrag_actions(); }
 
-state.mouse_indicator.style.display = "block";
-state.canvas_wrapper.addEventListener("mouseover", function(){
-    event.stopPropagation();
-    if (state.tool_handler.current_tool.id != "select" && state.tool_handler.current_tool.id != "hand"){
-        state.mouse_indicator.style.display = "block";
+state.editor.addEventListener("dblclick",  function(){
+    if(state.tool_handler.current_tool.id == "select" && !state.selection.prevent_doubleclick){
+        var x1 = state.hovered_tile.x * state.tile_w;
+        var y1 = state.hovered_tile.y * state.tile_h;
+        state.selection.draw_selection(x1, y1, x1 + state.tile_w, y1 + state.tile_w)
     }
-    if (state.tool_handler.current_tool.id != "eraser"){
-        state.mouse_indicator.style.backgroundColor = state.color_picker.color;
-    }
-});
+})
 
 document.getElementById("primary-color-rect").onmousedown = function(){
     state.color_picker.window.style.display = "grid";
@@ -160,9 +158,10 @@ document.getElementById("secondary-color-rect").onmousedown = function(){
 }
 
 document.getElementById("sidebar-right-resizer").onmousedown = set_active_element;
-document.getElementById("sidebar-right-resizer").active_func =  function(){
+document.getElementById("sidebar-right-resizer").mousedrag_actions =  function(){
     document.body.style.cursor = "ew-resize";
     var w = document.body.offsetWidth - event.clientX - 4;
     document.getElementById("sidebar-windows").style.width = clamp(w, 200, 500) + "px";
+    state.canvas_handler.move_canvas(0, 0); //Reset canvas clip because editor is resized
 }
 
