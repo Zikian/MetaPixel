@@ -41,3 +41,20 @@
     top: 84px;
     left: 17px;
 }
+
+#show-tile-indices{
+    font-size: 10pt;
+    color: white;
+    position: absolute;
+    top: 115px;
+    left: 10px;
+}
+
+#tile-indices-input{
+    position: absolute;
+    top: 135px;
+    left: 40px;
+    height: 20px;
+    width: 20px;
+    margin: 0;
+}

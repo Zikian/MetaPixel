@@ -90,12 +90,11 @@ class Layer {
     toggle_visibility() {
         event.stopPropagation();
         if (this.visible) {
-            this.visible = false;
             this.visibility_icon.className = "far fa-circle visibility-icon";
         } else {
-            this.visible = true;
             this.visibility_icon.className = "fas fa-circle visibility-icon";
         }
+        this.visible = !this.visible;
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_draw_canvas();
         state.preview_canvas.redraw();

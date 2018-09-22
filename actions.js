@@ -1,5 +1,5 @@
 window.addEventListener('mouseup', function(e) {
-    if(state.active_element == null) { return }
+    state.drawbuffer = [];
     if(state.active_element.className.includes("resizer")){
         document.body.style.cursor = "default"
     }
@@ -11,6 +11,7 @@ window.addEventListener('mouseup', function(e) {
 }, false);
 
 window.addEventListener('mousedown', function(e) {
+    state.drawbuffer.push(state.pixel_pos);
     state.mouse_start = state.pixel_pos;
     state.mouse_end = state.mouse_start;
     if(state.active_element == state.editor){
@@ -135,7 +136,10 @@ state.editor.addEventListener("wheel", function(e){
 })
 
 state.editor.onmousedown = set_active_element;
-state.editor.mousedrag_actions = function(){ state.tool_handler.current_tool.mousedrag_actions(); }
+state.editor.mousedrag_actions = function(){ 
+    state.drawbuffer.push(state.pixel_pos);
+    state.tool_handler.current_tool.mousedrag_actions(); 
+}
 
 state.editor.addEventListener("dblclick",  function(){
     if(state.tool_handler.current_tool.id == "select" && !state.selection.prevent_doubleclick){

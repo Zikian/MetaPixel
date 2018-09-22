@@ -1,26 +1,22 @@
 function draw_pixel(color, x, y){
     if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
 
-    var selection_canvas_x = (state.selection.editor_x - canvas_x()) / state.zoom;
-    var selection_canvas_y = (state.selection.editor_y - canvas_y()) / state.zoom;
-    var pixel_canvas_x = x;
-    var pixel_canvas_y = y;
-
-    var new_x1 = Math.max(selection_canvas_x, pixel_canvas_x);
-    var new_y1 = Math.max(selection_canvas_y, pixel_canvas_y);
-    var new_x2 = Math.min(selection_canvas_x + state.selection.w, pixel_canvas_x + state.brush_size);
-    var new_y2 = Math.min(selection_canvas_y + state.selection.h, pixel_canvas_y + state.brush_size);
-
+    var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
+    var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
+    var new_x1 = Math.max(selection_x, x);
+    var new_y1 = Math.max(selection_y, y);
+    var new_x2 = Math.min(selection_x + state.selection.w, x + state.brush_size);
+    var new_y2 = Math.min(selection_y + state.selection.h, y + state.brush_size);
     var new_w = new_x2 - new_x1;
     var new_h = new_y2 - new_y1;
 
     if(new_w < 0 || new_h < 0) { return; }
 
     var containing_tile = state.tile_manager.get_containing_tile(new_x1, new_y1);
-    if(containing_tile.x == null || containing_tile.y == null){ return; }
     var target_tile = state.current_layer.painted_tiles[containing_tile.x][containing_tile.y];
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color)
+    state.canvas_handler.draw_ctx.imageSmoothingEnabled = false;
     state.current_layer.render_ctx.fillStyle = rgba(color)
     if(target_tile != null){
         state.tile_manager.tiles[target_tile].painted_positions.forEach(position => {
@@ -36,7 +32,6 @@ function draw_pixel(color, x, y){
         state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom, new_y1 - hidden_y() / state.zoom, new_w, new_h);
     }
 
-
     state.prev_pixel = {
         color: rgba(color),
         x: x,
@@ -45,22 +40,16 @@ function draw_pixel(color, x, y){
 }
 
 function erase_pixel(x, y) {
-    var selection_canvas_x = state.selection.editor_x - canvas_x();
-    var selection_canvas_y = state.selection.editor_y - canvas_y();
-    var pixel_canvas_x = x * state.zoom;
-    var pixel_canvas_y = y * state.zoom;
+    var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
+    var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
 
-    var new_x1 = Math.max(selection_canvas_x, pixel_canvas_x);
-    var new_y1 = Math.max(selection_canvas_y, pixel_canvas_y);
-    var new_x2 = Math.min(selection_canvas_x + state.selection.width(), pixel_canvas_x + state.brush_size * state.zoom);
-    var new_y2 = Math.min(selection_canvas_y + state.selection.height(), pixel_canvas_y + state.brush_size * state.zoom);
-
-    var new_w = new_x2 - new_x1;
-    var new_h = new_y2 - new_y1;
-
+    var new_x1 = Math.max(selection_x, x);
+    var new_y1 = Math.max(selection_y, y);
+    var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
+    var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
     if(new_w < 0 || new_h < 0) { return; }
 
-    state.current_layer.render_ctx.clearRect(new_x1 / state.zoom, new_y1 / state.zoom, new_w / state.zoom, new_h / state.zoom);
+    state.current_layer.render_ctx.clearRect(new_x1, new_y1, new_w, new_h);
 }
 
 function draw_line(x0, y0, x1, y1, erase) {

@@ -3,7 +3,7 @@ var state = {
     editor: document.getElementById("editor"),
     mouse_indicator: document.getElementById("mouse-indicator"),
     selection_size_element: document.getElementById("selection-size"),
-    draw_buffer: [],
+    drawbuffer: [],
 
     input: {
         ctrl: false,
@@ -15,27 +15,39 @@ var state = {
     null_active_element: document.createElement("div")
 };
 
-function init(document_type, w, h, tile_w, tile_h, transparency, name){
-    if(document_type == "single-image"){
-        tile_w = w;
-        tile_h = h;
-    } else {
-        w *= tile_w;
-        h *= tile_h;
+function destroy_prev_document(){
+    state.tile_manager.tiles.forEach(tile => { tile.delete(); });
+
+    for(var x = 0; x < state.tiles_x; x++){
+        for(var y = 0; y < state.tiles_y; y++){
+            state.editor.removeChild(state.tile_manager.tile_indices[x][y]);
+        }
     }
- 
-    state.zoom = 8;
-    state.prev_zoom = 8;
+
+    state.layer_manager.layers.forEach(layer => { layer.delete(); });
+}
+
+function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
+    if(state.document_name != null){ destroy_prev_document(); }
+
+    if(document_type == "single-image"){
+        state.tile_w = doc_w;
+        state.tile_h = doc_h;
+    } else {
+        doc_w *= tile_w;
+        doc_h *= tile_w;
+        state.tile_w = tile_w;
+        state.tile_h = tile_h;
+    }
+
     state.brush_size = 1;
     state.transparency = transparency;
     state.document_name = name;
     state.prev_pixel = {};
-    state.doc_w = w;
-    state.doc_h = h;
-    state.tile_w = tile_w;
-    state.tile_h = tile_h;
-    state.tiles_x = w / tile_w;
-    state.tiles_y = h / tile_h;
+    state.doc_w = doc_w;
+    state.doc_h = doc_h;
+    state.tiles_x = state.doc_w / state.tile_w;
+    state.tiles_y = state.doc_h / state.tile_w;
 
     state.current_layer = null;
 
@@ -64,12 +76,12 @@ function init(document_type, w, h, tile_w, tile_h, transparency, name){
     state.layer_manager = new Layer_Manager();
     state.layer_settings = new Layer_Settings();
     state.selection = new Selection();
-    state.tile_manager = new Tile_Manager(tile_w, tile_h);
+    state.tile_manager = new Tile_Manager();
     
     var eyedropper_canvas = document.createElement("canvas");
     state.eyedropper_ctx = eyedropper_canvas.getContext("2d");
-    eyedropper_canvas.width = w;
-    eyedropper_canvas.height = h;
+    eyedropper_canvas.width = state.doc_h;
+    eyedropper_canvas.height = state.doc_w;
     
     if (!state.transparency){
         state.canvas_handler.draw_canvas.style.background = "none";

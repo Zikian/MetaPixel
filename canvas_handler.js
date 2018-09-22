@@ -1,5 +1,14 @@
 class Canvas_Handler{
     constructor(){
+        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70];
+        var zoom = Math.floor(Math.min(state.editor.offsetWidth / state.doc_w, state.editor.offsetHeight / state.doc_h));
+        for(var i = 0; i < this.zoom_stages.length - 1; i++){
+            if(this.zoom_stages[i] <= zoom && zoom <= this.zoom_stages[i+1]){
+                state.zoom = this.zoom_stages[i];
+                state.prev_zoom = this.zoom_stages[i]
+            }
+        }
+
         this.background_canvas = document.createElement("canvas");
         this.background_canvas.width = state.doc_w;
         this.background_canvas.height = state.doc_h;
@@ -15,18 +24,23 @@ class Canvas_Handler{
         this.foreground_canvas.width = state.doc_w;
         this.foreground_canvas.height = state.doc_h;
         this.foreground_ctx = this.foreground_canvas.getContext("2d");
-        
-        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70];
+
+        this.tile_grid_canvas = document.getElementById("tile-grid-canvas");
+        this.tile_grid_canvas.width = canvas_w();
+        this.tile_grid_canvas.height = canvas_h();
+        this.tile_grid_ctx = this.tile_grid_canvas.getContext("2d");
 
         var canvas_left = (state.editor.offsetWidth - canvas_w())/2
         var canvas_top = (state.editor.offsetHeight - canvas_h())/2
         
         this.draw_canvas.style.left = canvas_left + "px";
         this.draw_canvas.style.top = canvas_top + "px";
+        this.tile_grid_canvas.style.left = canvas_left + "px";
+        this.tile_grid_canvas.style.top = canvas_top + "px";
         state.canvas_x = canvas_left;
         state.canvas_y = canvas_top;
 
-        this.paint_tile_grid();
+        this.render_tile_grid();
     }
 
     editor_w(){
@@ -56,8 +70,8 @@ class Canvas_Handler{
         var delta_x = old_x * old_zoom - old_x * new_zoom;
         var delta_y = old_y * old_zoom - old_y * new_zoom;
         
-        state.canvas_handler.redraw_layers();
         this.move_canvas(delta_x, delta_y);
+        this.render_tile_grid();
         
         update_mouse_indicator();
 
@@ -78,8 +92,10 @@ class Canvas_Handler{
         this.draw_canvas.style.top = y1 + "px";
         this.draw_canvas.width = w;
         this.draw_canvas.height = h;
-        this.draw_ctx.restore()
-        this.draw_ctx.save()
+        this.tile_grid_canvas.style.left = x1 + "px";
+        this.tile_grid_canvas.style.top = y1 + "px";
+        this.tile_grid_canvas.width = w;
+        this.tile_grid_canvas.height = h;
         this.draw_ctx.scale(state.zoom, state.zoom);
 
         state.selection.move(delta_x, delta_y)
@@ -93,10 +109,9 @@ class Canvas_Handler{
         this.background_canvas.width = this.background_canvas.width;
         var background_layers = state.layer_manager.layers.slice(state.current_layer.index, state.layer_manager.layers.length);
         background_layers.reverse().forEach(layer => {
-            if(layer.visible){
-                this.background_ctx.globalAlpha = layer.opacity;
-                this.background_ctx.drawImage(layer.render_canvas, 0, 0);
-            }
+            if(layer.visible){ return; }
+            this.background_ctx.globalAlpha = layer.opacity;
+            this.background_ctx.drawImage(layer.render_canvas, 0, 0);
         });
     }
 
@@ -104,10 +119,9 @@ class Canvas_Handler{
         this.foreground_canvas.width = this.foreground_canvas.width;
         var foreground_layers = state.layer_manager.layers.slice(0, state.current_layer.index);
         foreground_layers.reverse().forEach(layer => {
-            if(layer.visible){
-                this.foreground_ctx.globalAlpha = layer.opacity;
-                this.foreground_ctx.drawImage(layer.render_canvas, 0, 0);
-            }
+            if(!layer.visible){ return; }
+            this.foreground_ctx.globalAlpha = layer.opacity;
+            this.foreground_ctx.drawImage(layer.render_canvas, 0, 0);
         });
     }
     
@@ -121,7 +135,6 @@ class Canvas_Handler{
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
         this.draw_ctx.drawImage(this.foreground_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
-        this.paint_tile_grid();
     }
 
     render_background(){
@@ -133,22 +146,23 @@ class Canvas_Handler{
     render_foreground(){
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.foreground_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
-        this.paint_tile_grid();
     }
 
-    paint_tile_grid(){
-        this.draw_ctx.beginPath()
-        this.draw_ctx.strokeStyle = "black"
-        this.draw_ctx.lineWidth = 1 / state.zoom;
-        var line_offset = 0.5 / state.zoom;
-        for(var x = 0; x < state.doc_w / state.tile_w; x++){
-            this.draw_ctx.moveTo(x * state.tile_w + line_offset - hidden_x() / state.zoom, 0)
-            this.draw_ctx.lineTo(x * state.tile_w + line_offset - hidden_x() / state.zoom, canvas_h())
+    render_tile_grid(){
+        this.tile_grid_ctx.imageSmoothingEnabled = false;
+        this.tile_grid_ctx.beginPath()
+        this.tile_grid_ctx.strokeStyle = "gray"
+        this.tile_grid_ctx.lineWidth = 1;
+        var x = state.tiles_x;
+        var y = state.tiles_y;
+        while(x--){
+            this.tile_grid_ctx.moveTo(x * state.tile_w * state.zoom - hidden_x() + 0.5, 0)
+            this.tile_grid_ctx.lineTo(x * state.tile_w * state.zoom - hidden_x() + 0.5, canvas_h())
         }
-        for(var y = 0; y < state.doc_h / state.tile_h; y++){
-            this.draw_ctx.moveTo(0, y * state.tile_h + line_offset - hidden_y() / state.zoom)
-            this.draw_ctx.lineTo(canvas_w(), y * state.tile_h + line_offset - hidden_y() / state.zoom);
+        while(y--){
+            this.tile_grid_ctx.moveTo(0, y * state.tile_h * state.zoom - hidden_y() + 0.5);
+            this.tile_grid_ctx.lineTo(canvas_w(), y * state.tile_h * state.zoom - hidden_y() + 0.5);
         }
-        this.draw_ctx.stroke();
+        this.tile_grid_ctx.stroke();
     }
 }

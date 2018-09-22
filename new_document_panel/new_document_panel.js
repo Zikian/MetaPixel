@@ -1,6 +1,6 @@
 class New_Document_Panel{
     constructor(){
-        this.document_type = "single-image"
+        this.document_type = "single-image";
 
         this.panel = document.getElementById("new-document-panel");
         this.header = document.getElementById("new-document-header");
@@ -34,7 +34,7 @@ class New_Document_Panel{
 
         this.width_input.oninput = function(){
             state.new_document_panel.input_validation(this);
-            if(state.new_document_panel.document_type = "tiled"){
+            if(state.new_document_panel.document_type == "tiled"){
                 var tile_width = state.new_document_panel.tile_width_input.value;
                 var total_width = this.value * tile_width;
                 if (total_width > 700){
@@ -46,7 +46,7 @@ class New_Document_Panel{
 
         this.height_input.oninput = function(){
             state.new_document_panel.input_validation(this);
-            if(state.new_document_panel.document_type = "tiled"){
+            if(state.new_document_panel.document_type == "tiled"){
                 var tile_height = state.new_document_panel.tile_height_input.value;
                 var total_height = this.value * tile_height;
                 if (total_height > 700){
@@ -149,10 +149,10 @@ class New_Document_Panel{
             state.layer_manager.clear_layers();
             
             var document_type = owner.document_type;
-            var document_width = owner.width_input.value;
-            var document_height = owner.height_input.value;
-            var tile_width = owner.tile_width_input.value;
-            var tile_height = owner.tile_height_input.value;
+            var document_width = parseInt(owner.width_input.value);
+            var document_height = parseInt(owner.height_input.value);
+            var tile_width = parseInt(owner.tile_width_input.value);
+            var tile_height = parseInt(owner.tile_height_input.value);
             var transparency = owner.transparency_input.checked;
             var name = owner.name_input.value;
 

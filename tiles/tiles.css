@@ -34,8 +34,6 @@
     z-index: 1000000;
 }
 
-#tile-placer-rect{
+#tile-grid-canvas{
     position: absolute;
-    outline: 2px solid rgb(34, 255, 185);
-    display: none;
 }

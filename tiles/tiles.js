@@ -25,6 +25,7 @@ class Tile_Manager{
                 state.editor.appendChild(index_elem)
             }
         }
+        this.indices_visible = true;
         this.reposition_indices()
     }
 
@@ -81,6 +82,19 @@ class Tile_Manager{
         }
     }
 
+    toggle_indices(){
+        for(var x = 0; x < state.tiles_x; x++){
+            for(var y = 0; y < state.tiles_y; y++){
+                if(this.indices_visible){
+                    this.tile_indices[x][y].style.display = "none";
+                } else {
+                    this.tile_indices[x][y].style.display = "block";
+                }
+            }
+        }
+        this.indices_visible = !this.indices_visible;
+    }
+
     clear_tile_positions(){
         this.tiles.forEach(tile => { tile.painted_positions = [] });
     }
@@ -107,5 +121,9 @@ class Tile{
 
         //Array containing the positions at which this tile is painted
         this.painted_positions = [];
+    }
+
+    delete(){
+        state.tile_manager.tiles_wrapper.removeChild(this.canvas);
     }
 }

@@ -12,5 +12,10 @@ class Tool_Options{
             state.color_picker.update_color("tool-options-opacity"); 
         }
         this.opacity_input = new Input_Slider("opacity-input", "", 255, 255, input_function);
+
+        this.tile_indices_input = document.getElementById("tile-indices-input");
+        this.tile_indices_input.onchange = function(){
+            state.tile_manager.toggle_indices();
+        }
     }
 }
