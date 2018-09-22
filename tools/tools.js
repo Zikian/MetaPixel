@@ -406,8 +406,10 @@ class tile_painter_Tool extends Tool{
         state.tile_manager.current_tile.painted_positions.push([x, y])
         state.current_layer.painted_tiles[x][y] = new_index;
 
-        paint_tile(x, y);
+        paint_tile(state.tile_manager.current_tile, x, y);
+
         state.canvas_handler.render_foreground();
+        state.preview_canvas.redraw();
         
         state.history_manager.add_history("paint-tile", [[x, y], prev_index]);
     }

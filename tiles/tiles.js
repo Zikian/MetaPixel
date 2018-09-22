@@ -42,6 +42,15 @@ class Tile_Manager{
         }
     }
 
+    get_containing_tiles(x, y, w, h){
+        return {
+            start_x: Math.floor(x / state.tile_w),
+            end_x: Math.floor((x + w) / state.tile_w),
+            start_y: Math.floor(y / state.tile_h),
+            end_y: Math.floor((y + h) / state.tile_h)
+        }
+    }
+
     reposition_indices(){
         var x = this.tile_indices.length;
         var index_elem = null;

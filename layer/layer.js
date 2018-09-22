@@ -50,6 +50,23 @@ class Layer {
         }
     }
 
+    get_painted_tiles(rect){
+        var indices = [];
+        var positions = [];
+        for(var x = rect.start_x; x <= rect.end_x; x++){
+            for(var y = rect.start_y; y <= rect.end_y; y++){
+                var index = this.painted_tiles[x][y];
+                if(indices.includes(index) || index == null){ continue; }
+                indices.push(index);
+                positions.push({x: x, y: y});
+            }
+        }
+        return {
+            indices: indices,
+            positions: positions
+        }
+    }
+
     get_state() {
         return {
             data: this.get_data(),

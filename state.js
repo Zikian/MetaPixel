@@ -96,13 +96,16 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     }
 
     state.tile_manager.add_tile();
+    state.tile_manager.add_tile();
+    state.canvas_handler.render_tile_grid();
 }
 
 init("tiled", 4, 4, 16, 16, true, "Untitled");
 
 
 //Layer test
-// state.brush_size = 20;
+state.brush_size = 10;
+
 // state.current_layer.name_elem.innerHTML = "Blue"
 // draw_pixel([0, 0, 255, 255], 10, 10);
 // state.layer_manager.add_layer();

@@ -39,8 +39,6 @@ class Canvas_Handler{
         this.tile_grid_canvas.style.top = canvas_top + "px";
         state.canvas_x = canvas_left;
         state.canvas_y = canvas_top;
-
-        this.render_tile_grid();
     }
 
     editor_w(){
@@ -71,7 +69,6 @@ class Canvas_Handler{
         var delta_y = old_y * old_zoom - old_y * new_zoom;
         
         this.move_canvas(delta_x, delta_y);
-        this.render_tile_grid();
         
         update_mouse_indicator();
 
@@ -102,6 +99,7 @@ class Canvas_Handler{
 
         state.tile_manager.reposition_indices();
 
+        this.render_tile_grid();
         this.render_draw_canvas();
     }
     
@@ -109,7 +107,7 @@ class Canvas_Handler{
         this.background_canvas.width = this.background_canvas.width;
         var background_layers = state.layer_manager.layers.slice(state.current_layer.index, state.layer_manager.layers.length);
         background_layers.reverse().forEach(layer => {
-            if(layer.visible){ return; }
+            if(!layer.visible){ return; }
             this.background_ctx.globalAlpha = layer.opacity;
             this.background_ctx.drawImage(layer.render_canvas, 0, 0);
         });

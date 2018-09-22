@@ -5,38 +5,34 @@ function draw_pixel(color, x, y){
     var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
     var new_x1 = Math.max(selection_x, x);
     var new_y1 = Math.max(selection_y, y);
-    var new_x2 = Math.min(selection_x + state.selection.w, x + state.brush_size);
-    var new_y2 = Math.min(selection_y + state.selection.h, y + state.brush_size);
-    var new_w = new_x2 - new_x1;
-    var new_h = new_y2 - new_y1;
+    var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
+    var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
 
     if(new_w < 0 || new_h < 0) { return; }
-
-    var containing_tile = state.tile_manager.get_containing_tile(new_x1, new_y1);
-    var target_tile = state.current_layer.painted_tiles[containing_tile.x][containing_tile.y];
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color)
     state.canvas_handler.draw_ctx.imageSmoothingEnabled = false;
     state.current_layer.render_ctx.fillStyle = rgba(color)
-    if(target_tile != null){
-        state.tile_manager.tiles[target_tile].painted_positions.forEach(position => {
-            var offset_x = (position[0] - containing_tile.x) * state.tile_w;
-            var offset_y = (position[1] - containing_tile.y) * state.tile_h;
-            state.current_layer.render_ctx.fillRect(new_x1 + offset_x, new_y1 + offset_y, new_w, new_h);
-            state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom + offset_x, new_y1 - hidden_y() / state.zoom + offset_y, new_w, new_h);
-        })
-        state.tile_manager.tiles[target_tile].ctx.fillStyle = rgba(color);
-        state.tile_manager.tiles[target_tile].ctx.fillRect(new_x1 - containing_tile.x * state.tile_w, new_y1 - containing_tile.y * state.tile_h, new_w, new_h);
+
+    var containing_tiles = state.tile_manager.get_containing_tiles(new_x1, new_y1, new_w, new_h);
+    var target_tiles = state.current_layer.get_painted_tiles(containing_tiles);
+    var target_tile = target_tiles.indices.length;
+
+    if(target_tile){
+        while(target_tile--){
+            var tile = state.tile_manager.tiles[target_tile];
+            var target_position = target_tiles.positions[target_tile];
+            tile.ctx.fillRect(new_x1 - target_position.x * state.tile_w, new_y1 - target_position.y * state.tile_h, new_w, new_h);
+            tile.painted_positions.forEach(position => {
+                paint_tile(tile, ...position);
+            })
+        }
     } else {
         state.current_layer.render_ctx.fillRect(new_x1, new_y1, new_w, new_h);
         state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom, new_y1 - hidden_y() / state.zoom, new_w, new_h);
     }
 
-    state.prev_pixel = {
-        color: rgba(color),
-        x: x,
-        y: y
-    };
+    state.prev_pixel = { color: rgba(color), x: x, y: y };
 }
 
 function erase_pixel(x, y) {
@@ -150,12 +146,11 @@ function clear_selection_contents(){
     state.canvas_handler.render_draw_canvas();
 }
 
-function paint_tile(x, y){
+function paint_tile(tile, x, y){
     state.canvas_handler.draw_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
-    state.canvas_handler.draw_ctx.drawImage(state.tile_manager.current_tile.canvas, x * state.tile_w, y * state.tile_h);
+    state.canvas_handler.draw_ctx.drawImage(tile.canvas, x * state.tile_w, y * state.tile_h);
     state.current_layer.render_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
-    state.current_layer.render_ctx.drawImage(state.tile_manager.current_tile.canvas, x * state.tile_w, y * state.tile_h);
-    state.preview_canvas.redraw();
+    state.current_layer.render_ctx.drawImage(tile.canvas, x * state.tile_w, y * state.tile_h);
 }
 
 function preview_pixel(color, x, y){
