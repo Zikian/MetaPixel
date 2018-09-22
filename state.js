@@ -101,4 +101,4 @@ init("tiled", 4, 4, 16, 16, true, "Untitled");
 // draw_pixel([255, 0, 0, 255], 15, 25);
 // state.layer_manager.change_layer(1);
 // state.brush_size = 1;
-// state.canvas_handler.draw_tile_grid();
+// state.canvas_handler.paint_tile_grid();

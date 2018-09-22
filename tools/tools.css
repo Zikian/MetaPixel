@@ -294,3 +294,12 @@
 #tile-placer-tooltip{
     width: 100px;
 }
+
+#tile_painter{
+    position: relative;
+    content: '';
+    background-image: url(../images/tile_painter.png);
+    background-size: 32px 32px;
+    background-position: 7px 7px;
+    background-repeat: no-repeat;
+}

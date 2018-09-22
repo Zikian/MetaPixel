@@ -44,7 +44,7 @@ document.addEventListener("keydown", function(event){
     switch(event.keyCode){
         case 8: // BACKSPACE
             if(!state.selection.exists){ return; }
-            state.current_layer.clear_selection();
+            clear_selection_contents();
             break;
         case 32: // SPACE
             if(state.input.space) { return; }

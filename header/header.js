@@ -52,9 +52,9 @@ class Header{
                 ctx.fillRect(0, 0, canvas_w(), canvas_h());
             }
 
-            this.ctx.scale(1/state.zoom, 1/state.zoom);
+            ctx.scale(1/state.zoom, 1/state.zoom);
             for(var layer in state.layer_manager.layers){
-                this.ctx.drawImage(layer.canvas, 0, 0);
+                ctx.drawImage(layer.canvas, 0, 0);
             }
 
             state.header.download_img(save_canvas.toDataURL());

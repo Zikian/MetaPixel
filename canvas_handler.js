@@ -26,7 +26,7 @@ class Canvas_Handler{
         state.canvas_x = canvas_left;
         state.canvas_y = canvas_top;
 
-        this.draw_tile_grid();
+        this.paint_tile_grid();
     }
 
     editor_w(){
@@ -61,8 +61,6 @@ class Canvas_Handler{
         
         update_mouse_indicator();
 
-        state.tile_manager.reposition_indices();
-
         state.selection.resize();
     }
 
@@ -85,6 +83,8 @@ class Canvas_Handler{
         this.draw_ctx.scale(state.zoom, state.zoom);
 
         state.selection.move(delta_x, delta_y)
+
+        state.tile_manager.reposition_indices();
 
         this.render_draw_canvas();
     }
@@ -121,7 +121,7 @@ class Canvas_Handler{
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
         this.draw_ctx.drawImage(this.foreground_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
-        this.draw_tile_grid();
+        this.paint_tile_grid();
     }
 
     render_background(){
@@ -133,10 +133,10 @@ class Canvas_Handler{
     render_foreground(){
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.foreground_canvas, -hidden_x() / state.zoom, -hidden_y() / state.zoom);
-        this.draw_tile_grid();
+        this.paint_tile_grid();
     }
 
-    draw_tile_grid(){
+    paint_tile_grid(){
         this.draw_ctx.beginPath()
         this.draw_ctx.strokeStyle = "black"
         this.draw_ctx.lineWidth = 1 / state.zoom;

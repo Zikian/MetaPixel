@@ -22,7 +22,7 @@ class Tool_Handler{
             hand: new Hand_Tool("hand"),
             mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
             mirrory: new Vertical_Mirror_Tool("mirrory"),
-            tile_placer: new Tile_Placer_Tool("tile_placer")
+            tile_painter: new tile_painter_Tool("tile_painter")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -213,13 +213,15 @@ class Fill_Tool extends Tool{
     }
 
     mousedown_actions(){
-        var current_layer = state.current_layer;
-        state.history_manager.prev_data = current_layer.get_data();
-        var old_color = current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
-        current_layer.render_ctx.fillStyle = state.color_picker.color;
+        state.history_manager.prev_data = state.current_layer.get_data();
+
+        var old_color = state.current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
+        state.current_layer.render_ctx.fillStyle = state.color_picker.color;
         fill(...state.pixel_pos, state.color_picker.rgba, old_color);
-        state.preview_canvas.redraw();
+
         state.history_manager.add_history("pen-stroke");
+
+        state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_draw_canvas();
     }
@@ -398,10 +400,10 @@ class Vertical_Mirror_Tool extends Tool{
     }
 }
 
-class Tile_Placer_Tool extends Tool{
+class tile_painter_Tool extends Tool{
     constructor(id) { 
         super(id); 
-        this.prev_hovered_tile = null;
+        this.prev_hovered_tile = {x: 0, y: 0};
     }
 
     on_enter(){
@@ -411,27 +413,28 @@ class Tile_Placer_Tool extends Tool{
     }
 
     mousedown_actions(){
-        if(state.hovered_tile.x == null || state.hovered_tile.y == null) { return; }
-        draw_tile(state.hovered_tile.x, state.hovered_tile.y);
+        var x = state.hovered_tile.x;
+        var y = state.hovered_tile.y;
+        if(x == null || y == null) { return; }
+        
+        state.history_manager.prev_data = state.current_layer.get_data();
+        
+        var prev_index = state.current_layer.painted_tiles[x][y];
+        var new_index = state.tile_manager.current_tile.index; 
+        state.tile_manager.tile_indices[x][y].innerHTML = new_index;
+        state.tile_manager.current_tile.painted_positions.push([x, y])
+        state.current_layer.painted_tiles[x][y] = new_index;
+
+        paint_tile(x, y);
         state.canvas_handler.render_foreground();
-        var index_elem = state.tile_manager.tile_indices[state.hovered_tile.x][state.hovered_tile.y];
-        var tile_index = state.tile_manager.current_tile.index
-        index_elem.index = tile_index;
-        index_elem.innerHTML = tile_index;
-        var position = [state.hovered_tile.x, state.hovered_tile.y];
-        if(!state.current_layer.painted_tiles[tile_index].includes(position)){
-            state.current_layer.painted_tiles[tile_index].push(position);
-        }
+        
+        state.history_manager.add_history("paint-tile", [[x, y], prev_index]);
     }
     
     mousedrag_actions(){
-        this.prev_hovered_tile = state.hovered_tile;
-        if(this.prev_hovered_tile.x == state.hovered_tile.x && this.prev_hovered_tile.y == state.hovered_tile.y){
+        if(this.prev_hovered_tile.x != state.hovered_tile.x && this.prev_hovered_tile.y != state.hovered_tile.y){
             this.mousedown_actions();
         }
-    }
-    
-    on_exit(){
-
+        this.prev_hovered_tile = {x: state.hovered_tile.x, y: state.hovered_tile.y};
     }
 }

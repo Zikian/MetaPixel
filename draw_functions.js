@@ -18,19 +18,18 @@ function draw_pixel(color, x, y){
 
     var containing_tile = state.tile_manager.get_containing_tile(new_x1, new_y1);
     if(containing_tile.x == null || containing_tile.y == null){ return; }
-    var target_tile = state.tile_manager.tile_indices[containing_tile.x][containing_tile.y].index;
+    var target_tile = state.current_layer.painted_tiles[containing_tile.x][containing_tile.y];
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color)
     state.current_layer.render_ctx.fillStyle = rgba(color)
     if(target_tile != null){
-        state.current_layer.painted_tiles[target_tile].forEach(position => {
+        state.tile_manager.tiles[target_tile].painted_positions.forEach(position => {
             var offset_x = (position[0] - containing_tile.x) * state.tile_w;
             var offset_y = (position[1] - containing_tile.y) * state.tile_h;
             state.current_layer.render_ctx.fillRect(new_x1 + offset_x, new_y1 + offset_y, new_w, new_h);
             state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom + offset_x, new_y1 - hidden_y() / state.zoom + offset_y, new_w, new_h);
-        });
+        })
         state.tile_manager.tiles[target_tile].ctx.fillStyle = rgba(color);
-        console.log()
         state.tile_manager.tiles[target_tile].ctx.fillRect(new_x1 - containing_tile.x * state.tile_w, new_y1 - containing_tile.y * state.tile_h, new_w, new_h);
     } else {
         state.current_layer.render_ctx.fillRect(new_x1, new_y1, new_w, new_h);
@@ -149,9 +148,23 @@ function fill(x, y, new_color, old_color) {
     fill(x - 1, y, new_color, old_color); 
 }
 
-function draw_tile(x, y){
+function clear_selection_contents(){
+    var x = state.selection.editor_x - canvas_x();
+    var y = state.selection.editor_y - canvas_y();
+
+    state.history_manager.prev_data = state.current_layer.get_data();
+    state.current_layer.render_ctx.clearRect(x / state.zoom, y / state.zoom, state.selection.w, state.selection.h);
+    state.history_manager.add_history("pen-stroke");
+
+    state.preview_canvas.redraw();
+    state.canvas_handler.redraw_layers()
+    state.canvas_handler.render_draw_canvas();
+}
+
+function paint_tile(x, y){
     state.canvas_handler.draw_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
     state.canvas_handler.draw_ctx.drawImage(state.tile_manager.current_tile.canvas, x * state.tile_w, y * state.tile_h);
+    state.current_layer.render_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
     state.current_layer.render_ctx.drawImage(state.tile_manager.current_tile.canvas, x * state.tile_w, y * state.tile_h);
     state.preview_canvas.redraw();
 }

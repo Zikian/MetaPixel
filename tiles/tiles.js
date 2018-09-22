@@ -21,9 +21,6 @@ class Tile_Manager{
                 var index_elem = document.createElement("span");
                 index_elem.innerHTML = "X";
                 index_elem.className = "tile-index";
-                index_elem.x = x;
-                index_elem.y = y;
-                index_elem.index = null;
                 this.tile_indices[x].push(index_elem);
                 state.editor.appendChild(index_elem)
             }
@@ -46,11 +43,14 @@ class Tile_Manager{
 
     reposition_indices(){
         var x = this.tile_indices.length;
+        var index_elem = null;
         while(x--){
-            this.tile_indices[x].forEach(index_elem => {
-                index_elem.style.left = index_elem.x * state.tile_w * state.zoom + canvas_x() + 4 + "px";
-                index_elem.style.top = index_elem.y * state.tile_h * state.zoom + canvas_y() + "px";
-            });
+            var y = this.tile_indices[x].length;
+            while(y--){
+                index_elem = this.tile_indices[x][y];
+                index_elem.style.left = x * state.tile_w * state.zoom + canvas_x() + 4 + "px";
+                index_elem.style.top = y * state.tile_h * state.zoom + canvas_y() + "px";
+            }
         }
     }
 
@@ -58,11 +58,6 @@ class Tile_Manager{
         var new_tile = new Tile(this.tiles.length);
         this.current_tile = new_tile;
         this.tiles.push(new_tile);
-
-        var layer = state.layer_manager.layers.length;
-        while(layer--){
-            state.layer_manager.layers[layer].painted_tiles.push([])
-        }
     }
 
     change_tile(index){
@@ -71,29 +66,23 @@ class Tile_Manager{
         this.current_tile.canvas.style.outline = "2px solid black";
     }
 
-    clear_tile_mappings(){
-        var x = this.tile_indices.length;
-        var y = null
-        while(x--){
-            y = this.tile_indices[x].length;
-            while(y--){
-                this.tile_indices[x][y].index = null;
-                this.tile_indices[x][y].innerHTML = "X";
+    update_tile_mappings(layer){
+        this.clear_tile_positions();
+        for(var x = 0; x < state.tiles_x; x++){
+            for(var y = 0; y < state.tiles_y; y++){
+                var index = layer.painted_tiles[x][y];
+                if(index != null){
+                    this.tile_indices[x][y].innerHTML = index;
+                    this.tiles[index].painted_positions.push([x, y]);
+                } else {
+                    this.tile_indices[x][y].innerHTML = "X"
+                }
             }
         }
     }
 
-    update_tile_mappings(layer){
-        var tile = layer.painted_tiles.length;
-        var position_index = null;
-        while(tile--){
-            position_index = layer.painted_tiles[tile].length;
-            while(position_index--){
-                var position = layer.painted_tiles[tile][position_index];
-                this.tile_indices[position[0]][position[1]].index = tile;
-                this.tile_indices[position[0]][position[1]].innerHTML = tile;
-            }
-        }
+    clear_tile_positions(){
+        this.tiles.forEach(tile => { tile.painted_positions = [] });
     }
 }
 
@@ -111,17 +100,12 @@ class Tile{
         var this_instance = this;
         this.canvas.onclick = function(){
             state.tile_manager.change_tile(this_instance.index);
-            state.tool_handler.change_tool("tile_placer")
+            state.tool_handler.change_tool("tile_painter")
         }
 
         state.tile_manager.tiles_wrapper.appendChild(this.canvas);
-    }
 
-    test(){
-        console.log(this.index)
+        //Array containing the positions at which this tile is painted
+        this.painted_positions = [];
     }
 }
-
-
-
-

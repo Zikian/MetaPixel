@@ -74,7 +74,6 @@ class Layer_Manager{
 
     change_layer(index){
         state.current_layer.set_inactive();
-        state.tile_manager.clear_tile_mappings();
         state.current_layer = this.layers[index];
         state.tile_manager.update_tile_mappings(state.current_layer);
         state.current_layer.set_active();

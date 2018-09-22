@@ -43,10 +43,11 @@ class Layer {
         this.wrapper.appendChild(this.settings_button);
         document.getElementById("layers-body").appendChild(this.wrapper);
 
-        //Each element of painted tiles is an array containing
-        //the positions of the tiles painted onto the document
-        //corresponding to the index of the array in painted tiles.
-        this.painted_tiles = [];
+        //2D array containing tile mappings for this layer
+        this.painted_tiles = new Array(state.tiles_x);
+        for(var x = 0; x < state.tiles_x; x++){
+            this.painted_tiles[x] = new Array(state.tiles_y);
+        }
     }
 
     get_state() {
@@ -79,18 +80,6 @@ class Layer {
         this.opacity = settings.opacity;
         this.name_elem.innerHTML = settings.name;
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
-    }
-
-    clear_selection(){
-        var x = state.selection.editor_x - canvas_x();
-        var y = state.selection.editor_y - canvas_y();
-        state.history_manager.prev_data = this.get_data();
-        this.render_ctx.clearRect(x / state.zoom, y / state.zoom, state.selection.w, state.selection.h);
-        state.history_manager.new_data = this.get_data();
-        state.history_manager.add_history("pen-stroke")
-        state.preview_canvas.redraw();
-        state.canvas_handler.redraw_layers()
         state.canvas_handler.render_draw_canvas();
     }
 

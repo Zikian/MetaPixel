@@ -10,11 +10,11 @@ class History_Manager{
         this.redo_history = []
         switch(type){
             case "pen-stroke":
-                this.history.push(new Pen_Stroke(this.prev_data, state.current_layer.get_data(), state.current_layer.index));
+                this.history.push(new Pen_Stroke(this.prev_data));
                 break;
             case "selection":
                 if (this.prev_selection_state == null){ return; }
-                this.history.push(new Selection_History(this.prev_selection_state, state.selection.get_state()));
+                this.history.push(new Selection_History(this.prev_selection_state));
                 this.prev_selection_state = null;
                 break;
             case "add-layer":
@@ -38,7 +38,11 @@ class History_Manager{
             case "delete-palette-color":
                 this.history.push(new Delete_Palette_Color(...args));
                 break;
-        }
+                case "paint-tile":
+                this.history.push(new Paint_Tile(...args));
+                this.prev_painted_tiles = null;
+                break;
+            }
     }
 
     undo_last(){
@@ -55,10 +59,10 @@ class History_Manager{
 }
 
 class Pen_Stroke{
-    constructor(prev_data, new_data, layer_index){
+    constructor(prev_data){
         this.prev_data = prev_data;
-        this.new_data = new_data;
-        this.layer_index = layer_index;
+        this.new_data = state.current_layer.get_data();
+        this.layer_index = state.current_layer.index;
     }
 
     undo(){
@@ -71,9 +75,9 @@ class Pen_Stroke{
 }
 
 class Selection_History{
-    constructor(prev_selection_state, new_selection_state){
+    constructor(prev_selection_state){
         this.prev_selection_state = prev_selection_state;
-        this.new_selection_state = new_selection_state;
+        this.new_selection_state = state.selection.get_state();
     }
 
     undo(){
@@ -183,5 +187,27 @@ class Delete_Palette_Color{
 
     redo(){
         state.palette.remove_color(this.elem);
+    }
+}
+
+class Paint_Tile{
+    constructor(position, prev_index){
+        this.position = position;
+        this.prev_index = prev_index;
+        this.new_index = state.current_layer.painted_tiles[position[0]][position[1]];
+        this.layer_index = state.current_layer.index;
+        this.pen_stroke = new Pen_Stroke(state.history_manager.prev_data);
+    }
+
+    undo(){
+        this.pen_stroke.undo();
+        state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.prev_index;
+        state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
+    }
+    
+    redo(){
+        this.pen_stroke.redo();
+        state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.new_index;
+        state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
     }
 }
