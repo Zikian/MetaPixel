@@ -96,24 +96,64 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     }
 
     state.tile_manager.add_tile();
-    state.tile_manager.add_tile();
     state.canvas_handler.render_tile_grid();
 }
 
 init("tiled", 4, 4, 16, 16, true, "Untitled");
 
+function tile_test(){
+    state.brush_size = 10;
+    state.tile_manager.add_tile();
+    state.tile_manager.add_tile();
+    state.tile_manager.add_tile();
+    state.tile_manager.place_tile(state.tile_manager.tiles[0], 0, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[1], 0, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[2], 1, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[3], 1, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[0], 2, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[1], 2, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[2], 3, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[3], 3, 1);
+    draw_pixel([0, 0, 0, 255], 10, 10);
+    state.brush_size = 3;
+    draw_pixel([0, 0, 0, 255], 20, 20);
+}
+tile_test();
 
-//Layer test
-state.brush_size = 10;
+function layer_tile_test(){
+    state.tile_manager.add_tile();
+    state.tile_manager.add_tile();
+    state.tile_manager.add_tile();
+    state.tile_manager.place_tile(state.tile_manager.tiles[0], 0, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[1], 0, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[2], 1, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[3], 1, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[0], 2, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[1], 2, 1);
+    state.tile_manager.place_tile(state.tile_manager.tiles[2], 3, 0);
+    state.tile_manager.place_tile(state.tile_manager.tiles[3], 3, 1);
+    state.brush_size = 20;
+    state.current_layer.name_elem.innerHTML = "Blue"
+    draw_pixel([0, 0, 255, 255], 10, 10);
+    state.layer_manager.add_layer();
+    state.current_layer.name_elem.innerHTML = "Green"
+    draw_pixel([0, 255, 0, 255], 25, 15);
+    state.layer_manager.add_layer();
+    state.current_layer.name_elem.innerHTML = "Red"
+    draw_pixel([255, 0, 0, 255], 15, 25);
+    state.layer_manager.change_layer(1);
+}
 
-// state.current_layer.name_elem.innerHTML = "Blue"
-// draw_pixel([0, 0, 255, 255], 10, 10);
-// state.layer_manager.add_layer();
-// state.current_layer.name_elem.innerHTML = "Green"
-// draw_pixel([0, 255, 0, 255], 25, 15);
-// state.layer_manager.add_layer();
-// state.current_layer.name_elem.innerHTML = "Red"
-// draw_pixel([255, 0, 0, 255], 15, 25);
-// state.layer_manager.change_layer(1);
-// state.brush_size = 1;
-// state.canvas_handler.paint_tile_grid();
+function layer_test(){
+    state.brush_size = 20;
+    state.current_layer.name_elem.innerHTML = "Blue"
+    draw_pixel([0, 0, 255, 255], 10, 10);
+    state.layer_manager.add_layer();
+    state.current_layer.name_elem.innerHTML = "Green"
+    draw_pixel([0, 255, 0, 255], 25, 15);
+    state.layer_manager.add_layer();
+    state.current_layer.name_elem.innerHTML = "Red"
+    draw_pixel([255, 0, 0, 255], 15, 25);
+    state.layer_manager.change_layer(1);
+}
+

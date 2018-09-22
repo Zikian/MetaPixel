@@ -29,6 +29,27 @@ class Tile_Manager{
         this.reposition_indices()
     }
 
+    get_tile_data(){
+        var data = []
+        this.tiles.forEach(tile => {
+            data.push(tile.canvas.toDataURL());
+        })
+        return data;
+    }
+
+    draw_data(data){
+        var index = 0;
+        this.tiles.forEach(tile => {
+            tile.ctx.clearRect(0, 0, state.tile_w, state.tile_h);
+            var img = new Image();
+            img.onload = function(){
+                tile.ctx.drawImage(this, 0, 0);
+            }
+            img.src = data[index];
+            index++;
+        })
+    }
+
     get_containing_tile(x, y){
         //Get the position of the tile containing pixel position (x, y) on the canvas
         x = Math.floor(x / state.tile_w);
@@ -45,9 +66,9 @@ class Tile_Manager{
     get_containing_tiles(x, y, w, h){
         return {
             start_x: Math.floor(x / state.tile_w),
-            end_x: Math.floor((x + w) / state.tile_w),
+            end_x: Math.floor((x + w - 1) / state.tile_w),
             start_y: Math.floor(y / state.tile_h),
-            end_y: Math.floor((y + h) / state.tile_h)
+            end_y: Math.floor((y + h - 1) / state.tile_h)
         }
     }
 
@@ -74,6 +95,13 @@ class Tile_Manager{
         this.current_tile.canvas.style.outline = "none";
         this.current_tile = this.tiles[index];
         this.current_tile.canvas.style.outline = "2px solid black";
+    }
+
+    place_tile(tile, x, y){
+        var new_index = tile.index; 
+        this.tile_indices[x][y].innerHTML = new_index;
+        tile.painted_positions.push([x, y])
+        state.current_layer.painted_tiles[x][y] = new_index;
     }
 
     update_tile_mappings(layer){

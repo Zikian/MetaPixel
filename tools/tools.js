@@ -74,6 +74,7 @@ class Draw_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         if(state.input.shift) { this.draw_type = "line" }
         else {
             draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
@@ -117,6 +118,7 @@ class Eraser_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         erase_pixel(...state.pixel_pos)
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_draw_canvas();
@@ -201,6 +203,7 @@ class Fill_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
 
         var old_color = state.current_layer.render_ctx.getImageData(state.pixel_pos[0], state.pixel_pos[1], 1, 1).data;
         state.current_layer.render_ctx.fillStyle = state.color_picker.color;
@@ -243,6 +246,7 @@ class Rectangle_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
@@ -279,6 +283,7 @@ class Ellipse_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
         var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
         update_rect_size_preview(w, h);
@@ -332,6 +337,7 @@ class Horizontal_Mirror_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         draw_pixel(state.color_picker.rgba, state.doc_w - state.pixel_pos[0], state.pixel_pos[1]); 
         state.canvas_handler.render_foreground();
@@ -359,6 +365,7 @@ class Vertical_Mirror_Tool extends Tool{
 
     mousedown_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
         draw_pixel(state.color_picker.rgba, state.pixel_pos[0], state.doc_h - state.pixel_pos[1]); 
         state.canvas_handler.render_foreground();
@@ -399,12 +406,9 @@ class tile_painter_Tool extends Tool{
         if(x == null || y == null) { return; }
         
         state.history_manager.prev_data = state.current_layer.get_data();
-        
         var prev_index = state.current_layer.painted_tiles[x][y];
-        var new_index = state.tile_manager.current_tile.index; 
-        state.tile_manager.tile_indices[x][y].innerHTML = new_index;
-        state.tile_manager.current_tile.painted_positions.push([x, y])
-        state.current_layer.painted_tiles[x][y] = new_index;
+
+        state.tile_manager.place_tile(state.tile_manager.current_tile, x, y);
 
         paint_tile(state.tile_manager.current_tile, x, y);
 

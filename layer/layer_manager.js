@@ -46,10 +46,6 @@ class Layer_Manager{
         this.layers.splice(state.current_layer.index, 0, new_layer);
         this.update_layer_indices();
         this.change_layer(new_layer.index);
-        new_layer.painted_tiles = []
-        for(var i = 0; i < state.tile_manager.tiles.length; i++){
-            new_layer.painted_tiles.push([])
-        }
     }
 
     delete_layer(index){

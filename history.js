@@ -4,13 +4,14 @@ class History_Manager{
         this.redo_history = [];
         this.prev_data = null;
         this.prev_selection_state = null;
+        this.prev_tile_data = [];
     }
 
     add_history(type, args){
         this.redo_history = []
         switch(type){
             case "pen-stroke":
-                this.history.push(new Pen_Stroke(this.prev_data));
+                this.history.push(new Pen_Stroke(this.prev_data, this.prev_tile_data));
                 break;
             case "selection":
                 if (this.prev_selection_state == null){ return; }
@@ -59,18 +60,22 @@ class History_Manager{
 }
 
 class Pen_Stroke{
-    constructor(prev_data){
+    constructor(prev_data, prev_tile_data){
         this.prev_data = prev_data;
         this.new_data = state.current_layer.get_data();
         this.layer_index = state.current_layer.index;
+        this.prev_tile_data = prev_tile_data;
+        this.new_tile_data = state.tile_manager.get_tile_data();
     }
 
     undo(){
-        state.layer_manager.layers[this.layer_index].draw_data(this.prev_data)
+        state.layer_manager.layers[this.layer_index].draw_data(this.prev_data);
+        state.tile_manager.draw_data(this.prev_tile_data);
     }
     
     redo(){
         state.layer_manager.layers[this.layer_index].draw_data(this.new_data)
+        state.tile_manager.draw_data(this.new_tile_data);
     }
 }
 

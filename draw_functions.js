@@ -1,6 +1,7 @@
 function draw_pixel(color, x, y){
     if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
 
+    //Get intersection rectangle of brush and selection
     var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
     var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
     var new_x1 = Math.max(selection_x, x);
@@ -8,26 +9,38 @@ function draw_pixel(color, x, y){
     var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
     var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
 
+    //If brush is outside selection, return
     if(new_w < 0 || new_h < 0) { return; }
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color)
     state.canvas_handler.draw_ctx.imageSmoothingEnabled = false;
     state.current_layer.render_ctx.fillStyle = rgba(color)
 
+    //Get the tiles and tile positions that will be affected by the brush
     var containing_tiles = state.tile_manager.get_containing_tiles(new_x1, new_y1, new_w, new_h);
     var target_tiles = state.current_layer.get_painted_tiles(containing_tiles);
-    var target_tile = target_tiles.indices.length;
+    var tile_index = target_tiles.indices.length;
 
-    if(target_tile){
-        while(target_tile--){
-            var tile = state.tile_manager.tiles[target_tile];
-            var target_position = target_tiles.positions[target_tile];
+    if(tile_index){
+        //One or more tiles were targeted
+        while(tile_index--){
+            //Tile that is being drawn on
+            var tile = state.tile_manager.tiles[target_tiles.indices[tile_index]];
+
+            // Position of painted tile that is being drawn on
+            var target_position = target_tiles.positions[tile_index];
+
+            //Draw to the tile
+            tile.ctx.fillStyle = rgba(color);
             tile.ctx.fillRect(new_x1 - target_position.x * state.tile_w, new_y1 - target_position.y * state.tile_h, new_w, new_h);
+
+            //Draw the resulting tile at its mapped positions
             tile.painted_positions.forEach(position => {
                 paint_tile(tile, ...position);
             })
         }
     } else {
+        //No specific tile was targeted
         state.current_layer.render_ctx.fillRect(new_x1, new_y1, new_w, new_h);
         state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom, new_y1 - hidden_y() / state.zoom, new_w, new_h);
     }
