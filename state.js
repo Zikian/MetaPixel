@@ -118,7 +118,6 @@ function tile_test(){
     state.brush_size = 3;
     draw_pixel([0, 0, 0, 255], 20, 20);
 }
-tile_test();
 
 function layer_tile_test(){
     state.tile_manager.add_tile();
