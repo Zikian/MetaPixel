@@ -28,14 +28,23 @@ function draw_pixel(color, x, y){
             // Position of painted tile that is being drawn on
             var target_position = target_tiles.positions[tile_index];
 
-            //Draw to the tile
-            tile.ctx.fillStyle = rgba(color);
-            tile.ctx.fillRect(new_x1 - target_position.x * state.tile_w, new_y1 - target_position.y * state.tile_h, new_w, new_h);
+            // Relative position of the brush 
+            var relative_x = new_x1 - target_position.x * state.tile_w;
+            var relative_y = new_y1 - target_position.y * state.tile_h;
+            var tile_clip_x = Math.max(0, relative_x);
+            var tile_clip_y = Math.max(0, relative_y);
+            var tile_clip_w = Math.min(relative_x + new_w, state.tile_w) - tile_clip_x;
+            var tile_clip_h = Math.min(relative_y + new_h, state.tile_h) - tile_clip_y;
 
-            //Draw the resulting tile at its mapped positions
             tile.painted_positions.forEach(position => {
-                paint_tile(tile, ...position);
+                var absolute_x = tile_clip_x + position[0] * state.tile_w;
+                var absolute_y = tile_clip_y + position[1] * state.tile_h;
+                state.current_layer.render_ctx.fillRect(absolute_x, absolute_y, tile_clip_w, tile_clip_h);
+                state.canvas_handler.draw_ctx.fillRect(absolute_x, absolute_y, tile_clip_w, tile_clip_h);
             })
+
+            tile.ctx.fillStyle = rgba(color);
+            tile.ctx.fillRect(relative_x, relative_y, tile_clip_w, tile_clip_h);
         }
     } else {
         //No specific tile was targeted

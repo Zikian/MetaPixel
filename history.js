@@ -40,7 +40,7 @@ class History_Manager{
                 this.history.push(new Delete_Palette_Color(...args));
                 break;
                 case "paint-tile":
-                this.history.push(new Paint_Tile(...args));
+                this.history.push(new Paint_Tile(...args, this.prev_data));
                 this.prev_painted_tiles = null;
                 break;
             }
@@ -196,23 +196,24 @@ class Delete_Palette_Color{
 }
 
 class Paint_Tile{
-    constructor(position, prev_index){
+    constructor(position, prev_index, prev_data){
         this.position = position;
         this.prev_index = prev_index;
         this.new_index = state.current_layer.painted_tiles[position[0]][position[1]];
         this.layer_index = state.current_layer.index;
-        this.pen_stroke = new Pen_Stroke(state.history_manager.prev_data);
+        this.prev_data = prev_data;
+        this.new_data = state.current_layer.get_data();
     }
 
     undo(){
-        this.pen_stroke.undo();
         state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.prev_index;
         state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
+        state.layer_manager.layers[this.layer_index].draw_data(this.prev_data);
     }
     
     redo(){
-        this.pen_stroke.redo();
         state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.new_index;
         state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
+        state.layer_manager.layers[this.layer_index].draw_data(this.new_data);
     }
 }

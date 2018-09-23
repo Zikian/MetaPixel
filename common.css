@@ -53,3 +53,8 @@ span, img{
 .button:hover{
     background-color: rgb(116, 116, 124) !important;
 }
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
