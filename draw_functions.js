@@ -1,5 +1,5 @@
 function draw_pixel(color, x, y){
-    if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
+    // if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
 
     //Get intersection rectangle of brush and selection
     var new_x1 = Math.max(state.selection.x, x);
@@ -31,17 +31,22 @@ function draw_pixel(color, x, y){
             // Relative position of the brush 
             var relative_x = new_x1 - target_position.x * state.tile_w;
             var relative_y = new_y1 - target_position.y * state.tile_h;
+
+            //Get intersection of tile and brush
             var tile_clip_x = Math.max(0, relative_x);
             var tile_clip_y = Math.max(0, relative_y);
             var tile_clip_w = Math.min(relative_x + new_w, state.tile_w) - tile_clip_x;
             var tile_clip_h = Math.min(relative_y + new_h, state.tile_h) - tile_clip_y;
 
-            tile.painted_positions.forEach(position => {
+            //Draw new brush onto each mapped tile
+            var position_index = tile.painted_positions.length;
+            while(position_index--){
+                var position = tile.painted_positions[position_index]
                 var absolute_x = tile_clip_x + position[0] * state.tile_w;
                 var absolute_y = tile_clip_y + position[1] * state.tile_h;
                 state.current_layer.render_ctx.fillRect(absolute_x, absolute_y, tile_clip_w, tile_clip_h);
-                state.canvas_handler.draw_ctx.fillRect(absolute_x, absolute_y, tile_clip_w, tile_clip_h);
-            })
+                state.canvas_handler.draw_ctx.fillRect(absolute_x - state.pixel_hidden_x, absolute_y - state.pixel_hidden_y, tile_clip_w, tile_clip_h);
+            }
 
             tile.ctx.fillStyle = rgba(color);
             tile.ctx.fillRect(relative_x, relative_y, tile_clip_w, tile_clip_h);
@@ -49,10 +54,10 @@ function draw_pixel(color, x, y){
     } else {
         //No specific tile was targeted
         state.current_layer.render_ctx.fillRect(new_x1, new_y1, new_w, new_h);
-        state.canvas_handler.draw_ctx.fillRect(new_x1 - hidden_x() / state.zoom, new_y1 - hidden_y() / state.zoom, new_w, new_h);
+        state.canvas_handler.draw_ctx.fillRect(new_x1 - state.pixel_hidden_x, new_y1 - state.pixel_hidden_y, new_w, new_h);
     }
 
-    state.prev_pixel = { color: rgba(color), x: x, y: y };
+    // state.prev_pixel = { color: rgba(color), x: x, y: y };
 }
 
 function erase_pixel(x, y) {

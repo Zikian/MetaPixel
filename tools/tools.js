@@ -329,6 +329,10 @@ class Hand_Tool extends Tool{
         state.mouse_indicator.style.display = "none";
         document.body.style.cursor = "grab";
     }
+
+    mouseup_actions(){
+        correct_canvas_position();
+    }
     
     mousedrag_actions(){
         state.canvas_handler.move_canvas(...state.delta_mouse);
@@ -337,6 +341,7 @@ class Hand_Tool extends Tool{
     on_exit(){
         document.body.style.cursor = "default";
         state.mouse_indicator.style.display = "block";
+        correct_canvas_position();
     }
 }
 

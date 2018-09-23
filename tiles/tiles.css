@@ -33,7 +33,3 @@
     color: red;
     z-index: 1000000;
 }
-
-#tile-grid-canvas{
-    position: absolute;
-}

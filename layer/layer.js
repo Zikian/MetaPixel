@@ -53,10 +53,12 @@ class Layer {
     get_painted_tiles(rect){
         var indices = [];
         var positions = [];
+        var x = rect.start_x;
+        var y = rect.start_y;
         for(var x = rect.start_x; x <= rect.end_x; x++){
             for(var y = rect.start_y; y <= rect.end_y; y++){
                 var index = this.painted_tiles[x][y];
-                if(indices.includes(index) || index == null){ continue; }
+                if(index == null){ continue; }
                 indices.push(index);
                 positions.push({x: x, y: y});
             }
@@ -77,20 +79,15 @@ class Layer {
     }
 
     get_data(){
-        return this.render_canvas.toDataURL();
+        return this.render_ctx.getImageData(0, 0, state.doc_w, state.doc_h)
     }
 
     draw_data(data){
         this.clear();
-        var img = new Image();
-        var this_instance = this;
-        img.onload = function(){
-            this_instance.render_ctx.drawImage(this, 0, 0);
-            state.canvas_handler.redraw_layers();
-            state.canvas_handler.render_draw_canvas();
-            state.preview_canvas.redraw();
-        }
-        img.src = data;
+        this.render_ctx.putImageData(data, 0, 0);
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_draw_canvas();
+        state.preview_canvas.redraw();
     }
 
     update_settings(settings){

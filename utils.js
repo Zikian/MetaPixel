@@ -119,16 +119,6 @@ function calc_true_pixel_pos(){
     return [x, y];
 }
 
-function hidden_x(){
-    //Portion of canvas that is clipped by editor at the left border
-    return -Math.min(state.canvas_x, 0);
-}
-
-function hidden_y(){
-    //Portion of canvas that is clipped by editor at the top border
-    return -Math.min(state.canvas_y, 0);
-}
-
 function update_mouse_indicator(){
     var mouse_indicator_x = state.pixel_pos[0] * state.zoom + canvas_x();
     var mouse_indicator_y = state.pixel_pos[1] * state.zoom + canvas_y();
@@ -147,4 +137,32 @@ function update_mouse_indicator(){
     state.mouse_indicator.style.top = mouse_indicator_y1 + "px";
     state.mouse_indicator.style.width = mouse_indicator_w + "px";
     state.mouse_indicator.style.height = mouse_indicator_h + "px";
+}
+
+function correct_canvas_position(){
+    state.pixel_hidden_x = Math.round(-Math.min(state.canvas_x, 0) / state.zoom);
+    state.pixel_hidden_y = Math.round(-Math.min(state.canvas_y, 0) / state.zoom);
+    if(state.pixel_hidden_x != 0){
+        state.canvas_x = -state.pixel_hidden_x * state.zoom;
+    }
+    if(state.pixel_hidden_y != 0){
+        state.canvas_y = -state.pixel_hidden_y * state.zoom;
+    }
+    state.hidden_x = state.pixel_hidden_x * state.zoom;
+    state.hidden_y = state.pixel_hidden_y * state.zoom;
+
+    var x1 = Math.max(canvas_x(), 0);
+    var y1 = Math.max(canvas_y(), 0);
+    var w = Math.min(canvas_x() + canvas_w(), state.canvas_handler.editor_w()) - x1;
+    var h = Math.min(canvas_y() + canvas_h(), state.canvas_handler.editor_h()) - y1;
+
+    state.canvas_handler.draw_canvas.style.left = x1 + "px";
+    state.canvas_handler.draw_canvas.style.top = y1 + "px";
+    state.canvas_handler.draw_canvas.width = w;
+    state.canvas_handler.draw_canvas.height = h;
+    state.canvas_handler.draw_ctx.scale(state.zoom, state.zoom);
+
+    state.canvas_handler.render_tile_grid();
+    state.canvas_handler.render_draw_canvas();
+    state.tile_manager.reposition_indices()
 }

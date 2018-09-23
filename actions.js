@@ -114,6 +114,7 @@ document.addEventListener("keyup", function(event){
             state.input.space = false;
             if(state.tool_handler.prev_tool.id != "select"){
                 state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
+                correct_canvas_position();
             }
             break;
         case 18: // ALT

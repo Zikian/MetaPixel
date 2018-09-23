@@ -49,6 +49,11 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.tiles_x = state.doc_w / state.tile_w;
     state.tiles_y = state.doc_h / state.tile_h;
 
+    state.hidden_x = 0;
+    state.hidden_y = 0;
+    state.pixel_hidden_x = 0;
+    state.pixel_hidden_y = 0;
+
     state.current_layer = null;
 
     state.null_active_element.mousedrag_actions = function(){};
@@ -156,5 +161,14 @@ function layer_test(){
     state.layer_manager.change_layer(1);
 }
 
+function tile_efficiency_test(){
+    init("tiled", 30, 30, 16, 16, true, "Untitled");
+    for(var x = 0; x < state.tiles_x; x++){
+        for(var y = 0; y < state.tiles_y; y++){
+            state.tile_manager.place_tile(state.tile_manager.tiles[0], x, y);
+        }
+    }
+}
+// tile_efficiency_test();
 
 
