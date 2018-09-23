@@ -87,12 +87,14 @@ class Tile_Manager{
 
     add_tile(){
         var new_tile = new Tile(this.tiles.length);
-        this.current_tile = new_tile;
         this.tiles.push(new_tile);
+        this.change_tile(new_tile.index)
     }
 
     change_tile(index){
-        this.current_tile.canvas.style.outline = "none";
+        if(this.current_tile != null){
+            this.current_tile.canvas.style.outline = "none";
+        }
         this.current_tile = this.tiles[index];
         this.current_tile.canvas.style.outline = "2px solid black";
     }

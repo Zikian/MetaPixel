@@ -1,6 +1,6 @@
 class Canvas_Handler{
     constructor(){
-        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70];
+        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 200];
         var zoom = Math.floor(Math.min(state.editor.offsetWidth / state.doc_w, state.editor.offsetHeight / state.doc_h));
         for(var i = 0; i < this.zoom_stages.length - 1; i++){
             if(this.zoom_stages[i] <= zoom && zoom <= this.zoom_stages[i+1]){

@@ -4,6 +4,8 @@ class Selection{
         this.editor_y = 0;
         this.w = 0;
         this.h = 0;
+        this.x = 0;
+        this.y = 0;
 
         this.prevent_doubleclick = false;
 
@@ -87,6 +89,8 @@ class Selection{
         this.editor_y = y1 * state.zoom + canvas_y();
         this.w = w;
         this.h = h;
+        this.x = x1;
+        this.y = y1;
         this.exists = true;
 
         this.selection_rect.style.left = this.editor_x + "px";
@@ -124,6 +128,8 @@ class Selection{
         this.editor_y = canvas_y();
         this.w = state.doc_w;
         this.h = state.doc_h;
+        this.x = 0;
+        this.y = 0;
     }
 
     contains_pixel(x, y){

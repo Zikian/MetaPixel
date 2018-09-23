@@ -35,11 +35,11 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
         state.tile_h = doc_h;
     } else {
         doc_w *= tile_w;
-        doc_h *= tile_w;
+        doc_h *= tile_h;
         state.tile_w = tile_w;
         state.tile_h = tile_h;
     }
-
+    
     state.brush_size = 1;
     state.transparency = transparency;
     state.document_name = name;
@@ -47,7 +47,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.doc_w = doc_w;
     state.doc_h = doc_h;
     state.tiles_x = state.doc_w / state.tile_w;
-    state.tiles_y = state.doc_h / state.tile_w;
+    state.tiles_y = state.doc_h / state.tile_h;
 
     state.current_layer = null;
 
@@ -155,4 +155,6 @@ function layer_test(){
     draw_pixel([255, 0, 0, 255], 15, 25);
     state.layer_manager.change_layer(1);
 }
+
+
 

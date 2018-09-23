@@ -2,12 +2,10 @@ function draw_pixel(color, x, y){
     if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
 
     //Get intersection rectangle of brush and selection
-    var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
-    var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
-    var new_x1 = Math.max(selection_x, x);
-    var new_y1 = Math.max(selection_y, y);
-    var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
-    var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
+    var new_x1 = Math.max(state.selection.x, x);
+    var new_y1 = Math.max(state.selection.y, y);
+    var new_w = Math.min(state.selection.x + state.selection.w, x + state.brush_size) - new_x1;
+    var new_h = Math.min(state.selection.y + state.selection.h, y + state.brush_size) - new_y1;
 
     //If brush is outside selection, return
     if(new_w < 0 || new_h < 0) { return; }
@@ -128,22 +126,123 @@ function rectangle(x1, y1, x2, y2){
 }
 
 function fill(x, y, new_color, old_color) {
-    if(!state.selection.contains_pixel(x, y)){ return; }
-
-    var layer = state.current_layer;
-    var data = layer.render_ctx.getImageData(x, y, 1, 1).data;
-
-    var is_old_color = compare_colors(data, old_color);
-    var is_new_color = compare_colors(data, new_color);
-    if(is_new_color) { return; }
-    if(!is_old_color) { return; }
+    if(rgba(new_color) == rgba(old_color)){return}
     
-    layer.render_ctx.fillRect(x, y, 1, 1);
+    pixel_stack = [[x, y]];
+    
+    selection_x = state.selection.x;
+    selection_y = state.selection.y;
+    
+    var colorLayer = state.current_layer.render_ctx.getImageData(0, 0, state.doc_w, state.doc_h);
 
-    fill(x, y + 1, new_color, old_color);
-    fill(x, y - 1, new_color, old_color);
-    fill(x + 1, y, new_color, old_color);
-    fill(x - 1, y, new_color, old_color); 
+    while(pixel_stack.length) {
+        var new_pos, pixel_pos, reach_left, reach_right;
+        new_pos = pixel_stack.pop();
+        x = new_pos[0];
+        y = new_pos[1];
+        
+        pixel_pos = (y * state.doc_w + x) * 4;
+        while(y-- >= selection_y && matchStartColor(pixel_pos)) {
+            pixel_pos -= state.doc_w * 4;
+        }
+        
+        //Increment pixel pos back into selection bounds
+        pixel_pos += state.doc_w * 4;
+        ++y;
+        reach_left = false;
+        reach_right = false;
+        while(y++ < selection_y + state.selection.h - 1 && matchStartColor(pixel_pos)){
+            var containing_tile = state.tile_manager.get_containing_tile(x, y);
+            var target_tile = state.current_layer.painted_tiles[containing_tile.x][containing_tile.y];
+            if(target_tile != null){
+                state.tile_manager.tiles[target_tile].ctx.fillRect(x - containing_tile.x * state.tile_w, y - containing_tile.y * state.tile_h, 1, 1);
+            }   
+            colorPixel(pixel_pos)
+            if(x > selection_x){
+                if(matchStartColor(pixel_pos - 4)){
+                    if(!reach_left){
+                        pixel_stack.push([x - 1, y]);
+                        reach_left = true;
+                    }
+                }   else if(reach_left){
+                    reach_left = false;
+                }
+            }
+            if(x < selection_x + state.selection.w - 1){
+                if(matchStartColor(pixel_pos + 4)) {
+                    if(!reach_right){
+                        pixel_stack.push([x + 1, y]);
+                        reach_right = true;
+                    }
+                } else if(reach_right){
+                    reach_right = false;
+                }
+            }
+                    
+            pixel_pos += state.doc_w * 4;
+        }
+    }
+    state.current_layer.render_ctx.putImageData(colorLayer, 0, 0);
+    
+    function matchStartColor(pixel_pos){
+        var r = colorLayer.data[pixel_pos];	
+        var g = colorLayer.data[pixel_pos+1];	
+        var b = colorLayer.data[pixel_pos+2];
+        var a = colorLayer.data[pixel_pos+3];
+
+        return (r == old_color[0] && g == old_color[1] && b == old_color[2] && a == old_color[3]);
+    }
+
+    function colorPixel(pixelPos){
+        colorLayer.data[pixelPos] = new_color[0];
+        colorLayer.data[pixelPos+1] = new_color[1];
+        colorLayer.data[pixelPos+2] = new_color[2];
+        colorLayer.data[pixelPos+3] = 255;
+    }
+
+
+
+
+
+
+    // if(!state.selection.contains_pixel(x, y)){ return; }
+
+    // var layer = state.current_layer;
+    // var data = layer.render_ctx.getImageData(x, y, 1, 1).data;
+
+    // var is_old_color = compare_colors(data, old_color);
+    // var is_new_color = compare_colors(data, new_color);
+    // if(is_new_color) { return; }
+    // if(!is_old_color) { return; }
+
+    // var target_position = state.tile_manager.get_containing_tile(x, y);
+    // var target_index = state.current_layer.painted_tiles[target_position.x][target_position.y];
+    // if(target_index != null){
+    //     var tile = state.tile_manager.tiles[target_index];
+    //     var offset_x = x - target_position.x;
+    //     var offset_y = y - target_position.y;
+    //     tile.painted_positions.forEach(position => {
+    //         layer.render_ctx.fillRect(position.x + offset_x, position.y + offset_y, 1, 1);
+    //     })
+    //     tile.ctx.fillRect(offset_x, offset_y, 1, 1);
+    // } else {
+    //     layer.render_ctx.fillRect(x, y, 1, 1);
+    // }
+    
+    // fill(x, y + 1, new_color, old_color);
+    // fill(x, y - 1, new_color, old_color);
+    // fill(x + 1, y, new_color, old_color);
+    // fill(x - 1, y, new_color, old_color); 
+}
+
+const trampoline = fn => (...args) => {
+    let result = fn(...args)
+    
+    while (typeof result === 'function') {
+      result = result()
+    }
+    
+    return result
 }
 
 function clear_selection_contents(){
@@ -246,4 +345,9 @@ function preview_rectangle(x1, y1, x2, y2){
     preview_line(x1, y1, x1, y2);
     preview_line(x1, y2, x2, y2);
     preview_line(x2, y1, x2, y2);
+}
+
+function sumBelowRec(number, sum = 9){
+    if(number == 0){ return sum; }
+    return sumBelowRec(number - 1, sum + number)
 }

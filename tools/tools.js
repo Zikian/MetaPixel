@@ -22,7 +22,7 @@ class Tool_Handler{
             hand: new Hand_Tool("hand"),
             mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
             mirrory: new Vertical_Mirror_Tool("mirrory"),
-            tile_painter: new tile_painter_Tool("tile_painter")
+            tile_painter: new Tile_painter_Tool("tile_painter")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -209,6 +209,14 @@ class Fill_Tool extends Tool{
         state.current_layer.render_ctx.fillStyle = state.color_picker.color;
         fill(...state.pixel_pos, state.color_picker.rgba, old_color);
 
+        state.tile_manager.tiles.forEach(tile => {
+            var i = tile.painted_positions.length;
+            while(i--){
+                var position = tile.painted_positions[i];
+                paint_tile(tile, ...position);
+            }
+        })
+
         state.history_manager.add_history("pen-stroke");
 
         state.preview_canvas.redraw();
@@ -388,7 +396,7 @@ class Vertical_Mirror_Tool extends Tool{
     }
 }
 
-class tile_painter_Tool extends Tool{
+class Tile_painter_Tool extends Tool{
     constructor(id) { 
         super(id); 
         this.prev_hovered_tile = {x: 0, y: 0};
