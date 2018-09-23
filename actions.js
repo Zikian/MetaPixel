@@ -170,3 +170,7 @@ document.getElementById("sidebar-right-resizer").mousedrag_actions =  function()
     state.canvas_handler.move_canvas(0, 0); //Reset canvas clip because editor is resized
 }
 
+editor.onresize = function(){
+    correct_canvas_position();
+}
+

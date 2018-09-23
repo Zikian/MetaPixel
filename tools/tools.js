@@ -22,7 +22,8 @@ class Tool_Handler{
             hand: new Hand_Tool("hand"),
             mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
             mirrory: new Vertical_Mirror_Tool("mirrory"),
-            tile_painter: new Tile_painter_Tool("tile_painter")
+            tile_painter: new Tile_Painter_Tool("tile_painter"),
+            tile_remover: new Tile_Remover_Tool("tile_remover")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -401,7 +402,7 @@ class Vertical_Mirror_Tool extends Tool{
     }
 }
 
-class Tile_painter_Tool extends Tool{
+class Tile_Painter_Tool extends Tool{
     constructor(id) { 
         super(id); 
         this.prev_hovered_tile = {x: 0, y: 0};
@@ -420,7 +421,7 @@ class Tile_painter_Tool extends Tool{
         
         state.history_manager.prev_data = state.current_layer.get_data();
         var prev_index = state.current_layer.painted_tiles[x][y];
-
+        
         state.tile_manager.place_tile(state.tile_manager.current_tile, x, y);
 
         paint_tile(state.tile_manager.current_tile, x, y);
@@ -437,4 +438,37 @@ class Tile_painter_Tool extends Tool{
         }
         this.prev_hovered_tile = state.tile_manager.get_containing_tile(...state.pixel_pos);
     }
+}
+
+class Tile_Remover_Tool extends Tool{
+    constructor(id) { 
+        super(id); 
+        this.prev_hovered_tile = {x: 0, y: 0};
+    }   
+
+    mousedown_actions(){
+        var x = state.hovered_tile.x;
+        var y = state.hovered_tile.y;
+        if(x == null || y == null) { return; }
+        
+        state.history_manager.prev_data = state.current_layer.get_data();
+        var prev_index = state.current_layer.painted_tiles[x][y];
+
+        state.tile_manager.place_tile(state.tile_manager.empty_tile, x, y);
+
+        paint_tile(state.tile_manager.empty_tile, x, y);
+
+        state.canvas_handler.render_foreground();
+        state.preview_canvas.redraw();
+        
+        state.history_manager.add_history("paint-tile", [[x, y], prev_index]);
+    }
+    
+    mousedrag_actions(){
+        if(this.prev_hovered_tile[0] != state.hovered_tile.x && this.prev_hovered_tile[1] != state.hovered_tile.y){
+            this.mousedown_actions();
+        }
+        this.prev_hovered_tile = state.tile_manager.get_containing_tile(...state.pixel_pos);
+    }
+
 }

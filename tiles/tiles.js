@@ -25,6 +25,9 @@ class Tile_Manager{
                 state.editor.appendChild(index_elem)
             }
         }
+
+        this.empty_tile = new Tile(null);
+
         this.indices_visible = true;
         this.reposition_indices()
     }
@@ -100,10 +103,15 @@ class Tile_Manager{
     }
 
     place_tile(tile, x, y){
-        var new_index = tile.index; 
-        this.tile_indices[x][y].innerHTML = new_index;
-        tile.painted_positions.push([x, y])
-        state.current_layer.painted_tiles[x][y] = new_index;
+        var prev_index = state.current_layer.painted_tiles[x][y];
+        if(tile.index == null && prev_index != null){
+            this.tile_indices[x][y].innerHTML = "X";
+            this.tiles[prev_index].remove_position(x, y);
+        } else {
+            this.tile_indices[x][y].innerHTML = tile.index;
+            tile.painted_positions.push([x, y])
+        }
+        state.current_layer.painted_tiles[x][y] = tile.index;
     }
 
     update_tile_mappings(layer){
@@ -146,6 +154,10 @@ class Tile{
         this.canvas.width = state.tile_w;
         this.canvas.height = state.tile_h;
         this.ctx = this.canvas.getContext("2d");
+
+        //Accounting for empty_tile 
+        if(this.index == null) { return; }
+
         this.canvas.className = "tile";
         this.canvas.style.position = "relative";
         this.canvas.style.display = "inline-block"
@@ -162,7 +174,18 @@ class Tile{
         this.painted_positions = [];
     }
 
+    remove_position(x, y){
+        var position_index = this.painted_positions.length;
+        while(position_index--){
+            var position = this.painted_positions[position_index];
+            if(position[0] == x && position[1] == y){
+                this.painted_positions.splice(position_index, 1);
+            }
+        }
+    }
+
     delete(){
+        if(this.index == null) { return; }
         state.tile_manager.tiles_wrapper.removeChild(this.canvas);
     }
 }

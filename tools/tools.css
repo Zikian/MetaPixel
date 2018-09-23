@@ -292,13 +292,24 @@
 /* TILE PLACER TOOL */
 
 #tile-placer-tooltip{
-    width: 100px;
+    width: 82px;
 }
 
 #tile_painter{
-    position: relative;
-    content: '';
     background-image: url(../images/tile_painter.png);
+    background-size: 32px 32px;
+    background-position: 7px 7px;
+    background-repeat: no-repeat;
+}
+
+/* TILE REMOVER TOOL */
+
+#tile-remover-tooltip{
+    width: 100px;
+}
+
+#tile_remover{
+    background-image: url(../images/tile_remover.svg.svgz);
     background-size: 32px 32px;
     background-position: 7px 7px;
     background-repeat: no-repeat;
