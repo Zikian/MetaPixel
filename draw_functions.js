@@ -49,7 +49,7 @@ function draw_pixel(color, x, y){
             }
 
             tile.ctx.fillStyle = rgba(color);
-            tile.ctx.fillRect(relative_x, relative_y, tile_clip_w, tile_clip_h);
+            tile.ctx.fillRect(relative_x, relative_y, new_w, new_h);
         }
     } else {
         //No specific tile was targeted
@@ -69,6 +69,46 @@ function erase_pixel(x, y) {
     var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
     var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
     if(new_w < 0 || new_h < 0) { return; }
+
+    //Get the tiles and tile positions that will be affected by the brush
+    var containing_tiles = state.tile_manager.get_containing_tiles(new_x1, new_y1, new_w, new_h);
+    var target_tiles = state.current_layer.get_painted_tiles(containing_tiles);
+    var tile_index = target_tiles.indices.length;
+
+    if(tile_index){
+        //One or more tiles were targeted
+        while(tile_index--){
+            //Tile that is being drawn on
+            var tile = state.tile_manager.tiles[target_tiles.indices[tile_index]];
+
+            // Position of painted tile that is being drawn on
+            var target_position = target_tiles.positions[tile_index];
+
+            // Relative position of the brush 
+            var relative_x = new_x1 - target_position[0] * state.tile_w;
+            var relative_y = new_y1 - target_position[1] * state.tile_h;
+        
+            //Get intersection of tile and brush
+            var tile_clip_x = Math.max(0, relative_x);
+            var tile_clip_y = Math.max(0, relative_y);
+            var tile_clip_w = Math.min(relative_x + new_w, state.tile_w) - tile_clip_x;
+            var tile_clip_h = Math.min(relative_y + new_h, state.tile_h) - tile_clip_y;
+
+            //Draw new brush onto each mapped tile
+            var position_index = tile.painted_positions.length;
+            while(position_index--){
+                var position = tile.painted_positions[position_index]
+                var absolute_x = tile_clip_x + position[0] * state.tile_w;
+                var absolute_y = tile_clip_y + position[1] * state.tile_h;
+                state.current_layer.render_ctx.clearRect(absolute_x, absolute_y, tile_clip_w, tile_clip_h);
+            }
+
+            tile.ctx.clearRect(relative_x, relative_y, new_w, new_h);
+        }
+    } else {
+        //No specific tile was targeted
+        state.current_layer.render_ctx.clearRect(new_x1, new_y1, new_w, new_h);
+    }
 
     state.current_layer.render_ctx.clearRect(new_x1, new_y1, new_w, new_h);
 }

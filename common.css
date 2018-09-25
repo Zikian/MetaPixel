@@ -62,3 +62,7 @@ span, img{
     width: 0px;
     background: transparent;
 }
+
+button{
+    user-select: none;
+}

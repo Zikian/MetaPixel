@@ -11,8 +11,6 @@ class Tile_Manager{
 
         this.tiles_body = document.getElementById("tiles-body");
 
-        this.target_swap_tile = null;
-
         var resizer = document.getElementById("tiles-resizer");
         resizer.onmousedown = set_active_element;
         resizer.mousedrag_actions = resize_sidebar_window(document.getElementById("tiles-body"));
@@ -39,6 +37,13 @@ class Tile_Manager{
             if(owner.tiles.length == 0) { return; }
             owner.delete_tile(owner.current_tile); 
         }
+
+        this.duplicate_tile_button = document.getElementById("duplicate-tile");
+        this.duplicate_tile_button.onclick = function(){
+            if(state.tile_manager.current_tile != null){
+                state.tile_manager.duplicate_tile(state.tile_manager.current_tile)    
+            }
+        }
         
         this.tile_indices = new Array(state.tiles_x);
         for(var x = 0; x < state.tiles_x; x++){
@@ -61,9 +66,10 @@ class Tile_Manager{
     get_target_swap_tile(mouse_x, mouse_y){
         var relative_x = mouse_x - this.tiles_body.getBoundingClientRect().x;
         var relative_y = mouse_y - this.tiles_body.getBoundingClientRect().y;
-        for(var i in this.tiles){
+        for(var i = 0; i < this.tiles.length; i++){
             var tile = this.tiles[i];
             if(tile.canvas != state.active_element) {
+                console.log(tile)
                 var tile_x = tile.canvas.offsetLeft;
                 var tile_y = tile.canvas.offsetTop;
                 if(tile_x <= relative_x && 
@@ -208,6 +214,14 @@ class Tile_Manager{
         state.history_manager.add_history("delete-tile", [prev_painted_tiles, tile]);
     }
 
+    duplicate_tile(tile){
+        var new_tile = new Tile(this.tiles.length, this.zoom);
+        new_tile.ctx.drawImage(tile.canvas, 0, 0);
+        this.tiles.push(new_tile);
+        this.change_tile(new_tile.index);
+        state.history_manager.add_history("add-tile", [this.tiles.slice(-1)[0]]);
+    }
+
     reposition_tiles(){
         this.tiles.forEach(tile => {
             tile.update_tileset_position();
@@ -279,6 +293,7 @@ class Tile_Manager{
         this.tiles.forEach(tile => {
             tile.canvas.style.width = state.tile_w * this.zoom + "px";
             tile.canvas.style.height = state.tile_h * this.zoom + "px";
+            tile.update_tileset_position();
         })
     }
 

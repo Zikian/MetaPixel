@@ -50,3 +50,7 @@
     z-index: 10;
     display: none;
 }
+
+#duplicate-tile{
+    left: 60px;
+}

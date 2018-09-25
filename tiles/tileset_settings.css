@@ -1,0 +1,65 @@
+#tileset-settings{
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: -220px;
+    width: 200px;
+    height: auto;
+    background-color: white;
+    z-index: 100;
+    border-radius: 4px;
+}
+
+#tileset-settings-body{
+    height:76px;
+}
+
+#tileset-settings-body span{
+    font-size: 10pt;
+    float:left;
+    color: black;
+    line-height: 30px;
+    margin-top: 6px;
+    margin-left: 6px;
+    margin-bottom: 6px;
+}
+
+#tileset-width-setting{
+    border: 1px solid gray;
+    width: 85px;
+    height: 30px;
+    border-radius: 4px;
+    outline: none;
+    color: black;
+    font-size: 10pt;
+    padding-left: 10px;
+    box-sizing: border-box;
+    margin: 6px 6px 6px 5%;
+    float:right;
+}
+
+#tileset-settings-buttons{
+    bottom: 19px;
+    left: 7px;
+    width: 164px;
+    height: 30px;
+    margin: 0 auto 0 auto;
+}
+
+#tileset-settings button{
+    height: 28px;
+    width: 80px;
+    border-radius: 14px;
+    outline: none;
+    color: black;
+    font-family: Montserrat-Regular;
+    border: 1px solid black;
+    font-size: 10pt;
+    background-color: transparent;
+}
+
+#tileset-settings button:active{
+    border: 1px solid rgb(64, 64, 202);
+    background-color: rgb(64, 64, 202);
+    color: white;
+}

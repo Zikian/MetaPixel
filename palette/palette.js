@@ -8,6 +8,11 @@ class Palette{
         this.wrapper.style.width = this.width * 28 + "px";
         this.wrapper.style.height = this.height * 28 + "px";
 
+        this.palette_settings_wrapper = document.getElementById("palette-settings")
+        this.palette_settings_header = document.getElementById("palette-settings-header");
+        this.palette_settings_header.onmousedown = set_active_element;
+        this.palette_settings_header.mousedrag_actions  = function(){ drag_element(state.palette.palette_settings_wrapper, state.delta_mouse); }
+
         document.getElementById("add-color").onclick = function(){
             state.palette.add_color(state.color_picker.rgb);
             state.history_manager.add_history("add-palette-color", [state.palette.colors[state.palette.colors.length - 1]]);
@@ -23,7 +28,7 @@ class Palette{
             state.palette.validate_settings();
         }
         document.getElementById("palette-settings-cancel").onclick = function(){
-            
+            document.getElementById("palette-settings").style.display = "none";
         }
         this.width_input = document.getElementById("palette-width-setting");
         this.height_input = document.getElementById("palette-height-setting");

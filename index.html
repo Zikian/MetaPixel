@@ -325,32 +325,33 @@
                         </div>
                         <div id="layers-body" class="sidebar-window-body"></div>
                         <div class="horizontal-resizer sidebar-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
-                    </div>
 
-                    <div id="layer-settings">
-                        <div id="layer-settings-header" class="window-header">
-                            <span class="window-header-title">Layer Settings</span>
-                            <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
-                        </div>
-                        <div id="settings">
-                            <input type="text" id="layer-name-setting">
-                            <div class="input-slider" id="opacity-setting">
-                                <span class="input-slider-name"></span>
-                                <div class="input-slider-wrapper">
-                                    <input type="number">
-                                    <i class="fas fa-caret-down"></i>
-                                    <div class="input-slider-slider">
-                                        <div class="input-slider-selector"></div>
+                        <div id="layer-settings">
+                            <div id="layer-settings-header" class="window-header">
+                                <span class="window-header-title">Layer Settings</span>
+                                <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
+                            </div>
+                            <div id="settings">
+                                <input type="text" id="layer-name-setting">
+                                <div class="input-slider" id="opacity-setting">
+                                    <span class="input-slider-name"></span>
+                                    <div class="input-slider-wrapper">
+                                        <input type="number">
+                                        <i class="fas fa-caret-down"></i>
+                                        <div class="input-slider-slider">
+                                            <div class="input-slider-selector"></div>
+                                        </div>
                                     </div>
                                 </div>
+                                <div id="buttons">
+                                    <button id="layer-settings-ok">OK</button>
+                                    <button id="layer-settings-cancel">Cancel</button>
+                                </div>
                             </div>
-                            <div id="buttons">
-                                <button id="layer-settings-ok">OK</button>
-                                <button id="layer-settings-cancel">Cancel</button>
-                            </div>
+                            <div class="window-footer"></div>
                         </div>
-                        <div class="window-footer"></div>
                     </div>
+
 
                     <div id="tiles" class="sidebar-window">
                         <div id="tiles-header" class="sidebar-window-header">
@@ -361,14 +362,12 @@
                             <div id="remove-tile" class="button sidebar-window-button">
                                 <i class="far fa-trash-alt sidebar-window-button-icon"></i>
                             </div>
-
-
-
-                            <div id="tileset-settings-button" class="button sidebar-window-button">
-
+                            <div id="duplicate-tile" class="button sidebar-window-button">
+                                <i class="far fa-clone sidebar-window-button-icon"></i>
                             </div>
-
-
+                            <div id="tileset-settings-button" class="button sidebar-window-button">
+                                <i class="fas fa-cog sidebar-window-button-icon"></i>   
+                            </div>
                             <div id="zoom-tileset-in" class="button sidebar-window-button">
                                 <i class="fas fa-search-plus sidebar-window-button-icon"></i>
                             </div>
@@ -379,15 +378,13 @@
                         <div id="tiles-body" class="sidebar-window-body"></div>
                         <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
                         
-                    </div>
-
-                    <div id="tileset-settings">
-                        <div id="tileset-settings-header" class="window-header">
-                                <span class="window-header-title">Palette Size</span>
-                                <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
+                        <div id="tileset-settings">
+                            <div id="tileset-settings-header" class="window-header">
+                                <span class="window-header-title">Tileset Size</span>
+                                <i id="tileset-settings-cross" class="fas fa-times window-cross"></i>
                             </div>
                             <div id="tileset-settings-body">
-                                <span>Width:</span>
+                                <span>Tileset Width:</span>
                                 <input type="number" id="tileset-width-setting">
                                 <div id="tileset-settings-buttons">
                                     <button id="tileset-settings-ok">OK</button>
@@ -395,7 +392,9 @@
                                 </div>
                             </div>
                             <div class="window-footer"></div>
+                        </div>
                     </div>
+
 
                     <div id="palette" class="sidebar-window">
                         <div class="sidebar-window-header">
@@ -542,7 +541,8 @@
         <script src="layer/layer.js"></script>
         <script src="layer/layer_settings.js"></script>
         <script src="palette/palette.js"></script>
-        <script src="tiles/tiles.js"></script>
+        <script src="tiles/tile_manager.js"></script>
+        <script src="tiles/tileset_settings.js"></script>
         <script src="selection.js"></script>
         <script src="draw_functions.js"></script>
         <script src="history.js"></script>

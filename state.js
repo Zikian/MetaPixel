@@ -83,6 +83,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.layer_settings = new Layer_Settings();
     state.selection = new Selection();
     state.tile_manager = new Tile_Manager();
+    state.tileset_settings = new Tileset_Settings();
     
     var eyedropper_canvas = document.createElement("canvas");
     state.eyedropper_ctx = eyedropper_canvas.getContext("2d");
@@ -165,7 +166,7 @@ function layer_test(){
 }
 
 function tile_efficiency_test(){
-    init("tiled", 30, 0, 16, 16, true, "Untitled");
+    init("tiled", 30, 30, 16, 16, true, "Untitled");
     for(var x = 0; x < state.tiles_x; x++){
         for(var y = 0; y < state.tiles_y; y++){
             state.tile_manager.place_tile(state.tile_manager.tiles[0], x, y);
@@ -203,5 +204,4 @@ function swap_tiles_test(){
     state.tile_manager.place_tile(state.tile_manager.current_tile, 1, 0);
     draw_pixel([0,0,0,255], 20, 10)
 }
-swap_tiles_test();
 

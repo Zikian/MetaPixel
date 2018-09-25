@@ -59,6 +59,9 @@ class History_Manager{
             case "swap-tiles":
                 this.history.push(new Swap_Tiles(...args));
                 break;
+            case "tileset-settings":
+                this.history.push(new Tileset_Settings_History(...args));
+                break;
             }
 
     }
@@ -287,11 +290,13 @@ class Add_Tile{
     undo(){
         this.added_tile.delete();
         state.tile_manager.tiles.pop();
+        state.tile_manager.change_tile(0);
     }
-
+    
     redo(){
         state.tile_manager.tiles.push(this.added_tile);
         state.tile_manager.tiles_body.appendChild(this.added_tile.canvas);
+        state.tile_manager.change_tile(state.tile_manager.tiles.length - 1);
     }
 }
 
@@ -303,5 +308,26 @@ class Swap_Tiles{
         this.undo = this.redo = function(){
             state.tile_manager.swap_tiles(this.index_a, this.index_b)
         }
+    }
+}
+
+class Tileset_Settings_History{
+    constructor(prev_tileset_w){
+        this.prev_tileset_w = prev_tileset_w;
+        this.new_tileset_w = state.tile_manager.tileset_w;
+    }
+
+    undo(){
+        state.tile_manager.tileset_w = this.prev_tileset_w;
+        state.tile_manager.tiles.forEach(tile => {
+            tile.update_tileset_position();
+        });
+    }
+    
+    redo(){
+        state.tile_manager.tileset_w = this.new_tileset_w;
+        state.tile_manager.tiles.forEach(tile => {
+            tile.update_tileset_position();
+        });
     }
 }
