@@ -4,11 +4,17 @@ class History_Manager{
         this.redo_history = [];
         this.prev_data = null;
         this.prev_selection_state = null;
+        
         this.prev_tile_data = [];
+        this.prev_tile_indices = [];
+        this.prev_tile_positions = [];
     }
 
     add_history(type, args){
         this.redo_history = []
+        if(this.history.length > 30){
+            this.history.shift();
+        }
         switch(type){
             case "pen-stroke":
                 this.history.push(new Pen_Stroke(this.prev_data, this.prev_tile_data));
@@ -39,11 +45,22 @@ class History_Manager{
             case "delete-palette-color":
                 this.history.push(new Delete_Palette_Color(...args));
                 break;
-                case "paint-tile":
-                this.history.push(new Paint_Tile(...args, this.prev_data));
-                this.prev_painted_tiles = null;
+            case "paint-tile":
+                this.history.push(new Paint_Tile(...args, this.prev_data, this.prev_tile_positions, this.prev_tile_indices));
+                this.prev_tile_indices = [];
+                this.prev_tile_positions = [];
+                break;
+            case "delete-tile":
+                this.history.push(new Delete_Tile(...args))
+                break;
+            case "add-tile":
+                this.history.push(new Add_Tile(...args))
+                break;
+            case "swap-tiles":
+                this.history.push(new Swap_Tiles(...args));
                 break;
             }
+
     }
 
     undo_last(){
@@ -109,14 +126,16 @@ class Add_Layer{
 }
 
 class Delete_Layer{
-    constructor(layer_state){
+    constructor(layer_state, painted_tiles){
         this.layer_state = layer_state;
+        this.painted_tiles = painted_tiles;
     }
 
     undo(){
         var new_layer = new Layer(this.layer_state.index);
         new_layer.index = this.layer_state.index;
         new_layer.name_elem.innerHTML = this.layer_state.name;
+        new_layer.painted_tiles = this.painted_tiles;
         
         state.layer_manager.layers.splice(new_layer.index, 0, new_layer);
         state.layer_manager.update_layer_indices();
@@ -196,24 +215,93 @@ class Delete_Palette_Color{
 }
 
 class Paint_Tile{
-    constructor(position, prev_index, prev_data){
-        this.position = position;
-        this.prev_index = prev_index;
-        this.new_index = state.current_layer.painted_tiles[position[0]][position[1]];
+    constructor(prev_data, positions, prev_indices){
+        this.positions = positions;
+        this.prev_indices = prev_indices;
+        this.new_indices = this.positions.map(position => state.current_layer.painted_tiles[position[0] + position[1] * state.tiles_x]);
         this.layer_index = state.current_layer.index;
         this.prev_data = prev_data;
         this.new_data = state.current_layer.get_data();
     }
 
     undo(){
-        state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.prev_index;
-        state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
-        state.layer_manager.layers[this.layer_index].draw_data(this.prev_data);
+        var layer = state.layer_manager.layers[this.layer_index];
+        for(var i = 0; i < this.positions.length; i++){
+            var position = this.positions[i];
+            layer.painted_tiles[position[0] + position[1] * state.tiles_x] = this.prev_indices[i];
+        }
+        state.tile_manager.update_tile_mappings(layer);
+        layer.draw_data(this.prev_data);
     }
     
     redo(){
-        state.layer_manager.layers[this.layer_index].painted_tiles[this.position[0]][this.position[1]] = this.new_index;
-        state.tile_manager.update_tile_mappings(state.layer_manager.layers[this.layer_index]);
-        state.layer_manager.layers[this.layer_index].draw_data(this.new_data);
+        var layer = state.layer_manager.layers[this.layer_index];
+        for(var i = 0; i < this.positions.length; i++){
+            var position = this.positions[i];
+            layer.painted_tiles[position[0] + position[1 * state.tiles_x]] = this.new_indices[i];
+        }
+        state.tile_manager.update_tile_mappings(layer);
+        layer.draw_data(this.new_data);
+    }
+}
+
+class Delete_Tile{
+    constructor(prev_painted_tiles, deleted_tile){
+        this.prev_painted_tiles = prev_painted_tiles;
+        this.new_painted_tiles = state.layer_manager.layers.map(layer => {
+            return layer.painted_tiles.slice();
+        })
+        this.deleted_tile = deleted_tile;
+    }
+
+    undo(){
+        state.tile_manager.tiles_body.appendChild(this.deleted_tile.canvas);
+        state.tile_manager.tiles.splice(this.deleted_tile.index, 0, this.deleted_tile);
+        state.tile_manager.update_tile_indices();
+        state.layer_manager.layers.forEach((layer, i) => {
+            layer.painted_tiles = this.prev_painted_tiles[i];
+        });
+        state.tile_manager.update_tile_mappings(state.current_layer);
+        state.tile_manager.change_tile(this.deleted_tile.index);
+        state.tile_manager.reposition_tiles();
+    }
+    
+    redo(){
+        this.deleted_tile.delete();
+        state.tile_manager.tiles.splice(this.deleted_tile.index, 1);
+        state.tile_manager.update_tile_indices();
+        state.layer_manager.layers.forEach((layer, i) => {
+            layer.painted_tiles = this.new_painted_tiles[i];
+        });
+        state.tile_manager.update_tile_mappings(state.current_layer);
+        state.tile_manager.change_tile(0);
+        state.tile_manager.reposition_tiles();
+    }
+}
+
+class Add_Tile{
+    constructor(added_tile){
+        this.added_tile = added_tile;
+    }
+
+    undo(){
+        this.added_tile.delete();
+        state.tile_manager.tiles.pop();
+    }
+
+    redo(){
+        state.tile_manager.tiles.push(this.added_tile);
+        state.tile_manager.tiles_body.appendChild(this.added_tile.canvas);
+    }
+}
+
+class Swap_Tiles{
+    constructor(index_a, index_b){
+        this.index_a = index_a;
+        this.index_b = index_b;
+
+        this.undo = this.redo = function(){
+            state.tile_manager.swap_tiles(this.index_a, this.index_b)
+        }
     }
 }

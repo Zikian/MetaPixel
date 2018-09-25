@@ -1,5 +1,5 @@
 class Layer_Manager{
-    constructor(w, h){
+    constructor(){
         this.layers = []
         this.layers.push(new Layer(0));
         state.current_layer = this.layers[0]
@@ -12,7 +12,7 @@ class Layer_Manager{
         }
         
         document.getElementById("delete-layer").onclick = function(){
-            state.history_manager.add_history("delete-layer", [state.current_layer.get_state()]);
+            state.history_manager.add_history("delete-layer", [state.current_layer.get_state(), state.current_layer.painted_tiles]);
             layer_manager.delete_layer(state.current_layer.index);
         }
 

@@ -5,18 +5,34 @@ window.addEventListener('mouseup', function(e) {
     }
     if(state.active_element == state.editor){
         state.tool_handler.current_tool.mouseup_actions();
+    } else if (state.active_element.className == "tile") {
+        var index_a = state.active_element.owner_tile_index;
+        var index_b = state.tile_manager.get_target_swap_tile(event.clientX, event.clientY)
+        state.tile_manager.swap_tiles(index_a, index_b);
+        state.history_manager.add_history("swap-tiles", [index_a, index_b]);
     }
     state.active_element = state.null_active_element;
     state.mouse_indicator.style.display = "block";
 }, false);
 
 window.addEventListener('mousedown', function(e) {
-    state.drawbuffer.push(state.pixel_pos);
-    state.mouse_start = state.pixel_pos;
-    state.mouse_end = state.mouse_start;
-    if(state.active_element == state.editor){
-        state.tool_handler.current_tool.mousedown_actions();
+    // Right Click
+    if(e.button == 2){
+        if(state.active_element == state.editor){
+            state.tool_handler.current_tool.mouseright_actions();
+        }
+    } 
+    // Left Click
+    else if (e.button == 0){
+        state.drawbuffer.push(state.pixel_pos);
+        state.mouse_start = state.pixel_pos;
+        state.mouse_end = state.mouse_start;
+        if(state.active_element == state.editor){
+            state.tool_handler.current_tool.mouseleft_actions();
+        }
     }
+    
+
     state.mouse_indicator.style.display = "none";
 }, false);
 
@@ -144,8 +160,8 @@ state.editor.mousedrag_actions = function(){
 
 state.editor.addEventListener("dblclick",  function(){
     if(state.tool_handler.current_tool.id == "select" && !state.selection.prevent_doubleclick){
-        var x1 = state.hovered_tile.x * state.tile_w;
-        var y1 = state.hovered_tile.y * state.tile_h;
+        var x1 = state.hovered_tile[0] * state.tile_w;
+        var y1 = state.hovered_tile[1] * state.tile_h;
         state.selection.draw_selection(x1, y1, x1 + state.tile_w, y1 + state.tile_w)
     }
 })

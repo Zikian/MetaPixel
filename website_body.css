@@ -75,7 +75,7 @@
     grid-template-rows: 1fr auto;
     grid-column: 2;
     align-self: center;
-    z-index: 2;
+    z-index: 0;
     height: 100%;
     background-color: rgb(26, 27, 32);
 }
@@ -85,13 +85,12 @@
     grid-row: 1;
     height: 100%;
     overflow: hidden;
-    z-index: -1;
+    box-shadow: inset 0px 0px 0px 2px black;
 }
 
 #draw-canvas{
     background:
         repeating-linear-gradient(135deg,#ffffff,#ffffff 2.5px,#dbdbdb 2.5px,#dbdbdb 5px);
-    z-index: -1;
 }
 
 #mouse-indicator{

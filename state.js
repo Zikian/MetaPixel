@@ -3,6 +3,7 @@ var state = {
     editor: document.getElementById("editor"),
     mouse_indicator: document.getElementById("mouse-indicator"),
     selection_size_element: document.getElementById("selection-size"),
+    tile_placer_rect: document.getElementById("tile-placer-rect"),
     drawbuffer: [],
 
     input: {
@@ -48,14 +49,14 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.doc_h = doc_h;
     state.tiles_x = state.doc_w / state.tile_w;
     state.tiles_y = state.doc_h / state.tile_h;
-
+    
     state.hidden_x = 0;
     state.hidden_y = 0;
     state.pixel_hidden_x = 0;
     state.pixel_hidden_y = 0;
-
+    
     state.current_layer = null;
-
+    
     state.null_active_element.mousedrag_actions = function(){};
     state.active_element = state.null_active_element;
 
@@ -68,7 +69,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.delta_mouse = null;
     state.mouse_start = null;
     state.mouse_end = null;
-
+    
     state.color_picker = new Color_Picker();
     state.new_document_panel = new New_Document_Panel();
     state.history_manager = new History_Manager();
@@ -99,7 +100,9 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
         state.preview_canvas.canvas.style.background = "repeating-linear-gradient(135deg, #ffffff, #ffffff 2.5px, #dbdbdb 2.5px, #dbdbdb 5px );";
         state.preview_canvas.canvas.style.backgroundColor = "transparent"
     }
-
+    
+    state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
+    state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
     state.tile_manager.add_tile();
     state.canvas_handler.render_tile_grid();
 }
@@ -162,13 +165,43 @@ function layer_test(){
 }
 
 function tile_efficiency_test(){
-    init("tiled", 30, 30, 16, 16, true, "Untitled");
+    init("tiled", 30, 0, 16, 16, true, "Untitled");
     for(var x = 0; x < state.tiles_x; x++){
         for(var y = 0; y < state.tiles_y; y++){
             state.tile_manager.place_tile(state.tile_manager.tiles[0], x, y);
         }
     }
 }
-// tile_efficiency_test();
 
+function delete_tile_test(){
+    var current_tile = state.tile_manager.current_tile
+    state.tile_manager.place_tile(current_tile, 0, 0)
+    state.tile_manager.place_tile(current_tile, 1, 0)
+    state.tile_manager.place_tile(current_tile, 2, 0)
+    state.tile_manager.add_tile();
+    current_tile = state.tile_manager.current_tile;
+    state.tile_manager.place_tile(current_tile, 0, 1)
+    state.tile_manager.place_tile(current_tile, 1, 1)
+    state.tile_manager.place_tile(current_tile, 2, 1)
+    state.layer_manager.add_layer();
+    state.tile_manager.place_tile(current_tile, 0, 0)
+    state.tile_manager.place_tile(current_tile, 1, 0)
+    state.tile_manager.place_tile(current_tile, 2, 0)
+    state.tile_manager.change_tile(0);
+    current_tile = state.tile_manager.current_tile;
+    state.tile_manager.place_tile(current_tile, 0, 1)
+    state.tile_manager.place_tile(current_tile, 1, 1)
+    state.tile_manager.place_tile(current_tile, 2, 1)
+    state.tile_manager.delete_tile(current_tile);
+}
+
+function swap_tiles_test(){
+    state.brush_size = 10;
+    state.tile_manager.place_tile(state.tile_manager.current_tile, 0, 0);
+    draw_pixel([0,0,0,255], 0, 0)
+    state.tile_manager.add_tile();
+    state.tile_manager.place_tile(state.tile_manager.current_tile, 1, 0);
+    draw_pixel([0,0,0,255], 20, 10)
+}
+swap_tiles_test();
 

@@ -17,12 +17,14 @@
         <link rel="stylesheet" href="layer/layer.css">
         <link rel="stylesheet" href="layer/layer_settings.css">
         <link rel="stylesheet" href="tiles/tiles.css">
+        <link rel="stylesheet" href="tiles/tileset_settings.css">
         <link rel="stylesheet" href="palette/palette.css">
         <link rel="stylesheet" href="palette/palette_settings.css">
         <link rel="stylesheet" href="preview/preview.css">
         <link rel="stylesheet" href="widgets/widgets.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
+    <!-- <body oncontextmenu="return false;"> -->
     <body>
         <div id="toolbar">
             <div id="file" class="button">
@@ -263,6 +265,7 @@
 
             <div id="website-body-center">
                 <div id="editor">
+                    <div id="tile-placer-rect"></div>
                     <div id="selection-rect"></div>
                     <canvas id="draw-canvas"></canvas>
                     <div id="mouse-indicator"></div>
@@ -355,11 +358,43 @@
                             <div id="add-tile" class="button sidebar-window-button">
                                 <i class="fas fa-plus sidebar-window-button-icon"></i>
                             </div>
+                            <div id="remove-tile" class="button sidebar-window-button">
+                                <i class="far fa-trash-alt sidebar-window-button-icon"></i>
+                            </div>
+
+
+
+                            <div id="tileset-settings-button" class="button sidebar-window-button">
+
+                            </div>
+
+
+                            <div id="zoom-tileset-in" class="button sidebar-window-button">
+                                <i class="fas fa-search-plus sidebar-window-button-icon"></i>
+                            </div>
+                            <div id="zoom-tileset-out" class="button sidebar-window-button">
+                                <i class="fas fa-search-minus sidebar-window-button-icon"></i>
+                            </div>
                         </div>
-                        <div id="tiles-body" class="sidebar-window-body">
-                            <div id="tiles-wrapper"></div> 
-                        </div>
+                        <div id="tiles-body" class="sidebar-window-body"></div>
                         <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
+                        
+                    </div>
+
+                    <div id="tileset-settings">
+                        <div id="tileset-settings-header" class="window-header">
+                                <span class="window-header-title">Palette Size</span>
+                                <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
+                            </div>
+                            <div id="tileset-settings-body">
+                                <span>Width:</span>
+                                <input type="number" id="tileset-width-setting">
+                                <div id="tileset-settings-buttons">
+                                    <button id="tileset-settings-ok">OK</button>
+                                    <button id="tileset-settings-cancel">Cancel</button>
+                                </div>
+                            </div>
+                            <div class="window-footer"></div>
                     </div>
 
                     <div id="palette" class="sidebar-window">

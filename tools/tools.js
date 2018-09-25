@@ -60,7 +60,8 @@ class Tool{
         }
     }
     on_enter(){}
-    mousedown_actions(){}
+    mouseleft_actions(){}
+    mouseright_actions(){}
     mousemove_actions(){}
     mousedrag_actions(){}
     mouseup_actions(){}
@@ -73,7 +74,7 @@ class Draw_Tool extends Tool{
         this.draw_type = "draw"; // free draw or line
     }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         if(state.input.shift) { this.draw_type = "line" }
@@ -117,7 +118,7 @@ class Eraser_Tool extends Tool{
         state.mouse_indicator.style.backgroundColor = rgba([255, 255, 255, 0.5]);
     }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         erase_pixel(...state.pixel_pos)
@@ -152,7 +153,7 @@ class Selection_Tool extends Tool{
         document.body.style.cursor = "crosshair";
     }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_selection_state = state.selection.get_state();
         state.selection_start = calc_true_pixel_pos();
         if(state.active_element == state.editor && !state.selection.contains_pixel(...state.pixel_pos)){
@@ -202,7 +203,7 @@ class Fill_Tool extends Tool{
         state.mouse_indicator.style.height = state.zoom + "px";
     }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
 
@@ -234,7 +235,7 @@ class Fill_Tool extends Tool{
 class Eyedropper_Tool extends Tool{
     constructor(id){ super(id); }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         for(var i = state.layer_manager.layers.length - 1; i >= 0; i--){
             state.eyedropper_ctx.drawImage(state.layer_manager.layers[i].render_canvas, 0, 0)
         }
@@ -253,7 +254,7 @@ class Eyedropper_Tool extends Tool{
 class Rectangle_Tool extends Tool{
     constructor(id){ super(id); }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
@@ -290,7 +291,7 @@ class Ellipse_Tool extends Tool{
         super(id); 
     }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
@@ -349,7 +350,7 @@ class Hand_Tool extends Tool{
 class Horizontal_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
@@ -377,7 +378,7 @@ class Horizontal_Mirror_Tool extends Tool{
 class Vertical_Mirror_Tool extends Tool{
     constructor(id){ super(id); }
 
-    mousedown_actions(){
+    mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         draw_pixel(state.color_picker.rgba, ...state.pixel_pos); 
@@ -405,70 +406,146 @@ class Vertical_Mirror_Tool extends Tool{
 class Tile_Painter_Tool extends Tool{
     constructor(id) { 
         super(id); 
-        this.prev_hovered_tile = {x: 0, y: 0};
+        this.prev_hovered_tile = [];
     }
 
     on_enter(){
         if(state.tile_manager.current_tile == null){
             state.tile_manager.current_tile = state.tile_manager.tiles[0]
         }
+        if(state.hovered_tile != null){
+            state.tile_placer_rect.style.display = "block";
+        }
     }
+    
+    mouseleft_actions(){
+        if(state.hovered_tile == null) { return; }
+        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        if(prev_index == state.tile_manager.current_tile.index) { return; }
 
-    mousedown_actions(){
-        var x = state.hovered_tile.x;
-        var y = state.hovered_tile.y;
-        if(x == null || y == null) { return; }
-        
         state.history_manager.prev_data = state.current_layer.get_data();
-        var prev_index = state.current_layer.painted_tiles[x][y];
+        state.history_manager.prev_tile_indices.push(prev_index);
+        state.history_manager.prev_tile_positions.push(state.hovered_tile);
         
-        state.tile_manager.place_tile(state.tile_manager.current_tile, x, y);
-
-        paint_tile(state.tile_manager.current_tile, x, y);
+        state.tile_manager.place_tile(state.tile_manager.current_tile, ...state.hovered_tile);
+        paint_tile(state.tile_manager.current_tile, ...state.hovered_tile);
 
         state.canvas_handler.render_foreground();
-        state.preview_canvas.redraw();
-        
-        state.history_manager.add_history("paint-tile", [[x, y], prev_index]);
+    }
+    
+    mouseright_actions(){
+        if(state.hovered_tile == null) { return; }
+        var index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        if(index == null){
+            state.tool_handler.change_tool("tile_remover")
+        } else {
+            state.tile_manager.change_tile(index);
+        }
     }
     
     mousedrag_actions(){
-        if(this.prev_hovered_tile[0] != state.hovered_tile.x && this.prev_hovered_tile[1] != state.hovered_tile.y){
-            this.mousedown_actions();
+        //Make sure the same tile isn't drawn twice
+        if(state.hovered_tile == null) { return; }
+
+        if(this.prev_hovered_tile[0] == state.hovered_tile[0] && this.prev_hovered_tile[1] == state.hovered_tile[1]){ return }
+
+        //Index before the tile was painted
+        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        if(prev_index == state.tile_manager.current_tile.index) { return; }
+
+        state.history_manager.prev_tile_indices.push(prev_index);
+        state.history_manager.prev_tile_positions.push(state.hovered_tile);
+        
+        state.tile_manager.place_tile(state.tile_manager.current_tile, ...state.hovered_tile);
+        paint_tile(state.tile_manager.current_tile, ...state.hovered_tile);
+        
+        state.canvas_handler.render_foreground();
+        
+        this.prev_hovered_tile = state.hovered_tile;
+    }
+
+    mousemove_actions(){
+        if(state.hovered_tile == null) { 
+            state.tile_placer_rect.style.display = "none";
+            return; 
         }
-        this.prev_hovered_tile = state.tile_manager.get_containing_tile(...state.pixel_pos);
+        state.tile_placer_rect.style.display = "block";
+        state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
+        state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
+    }
+    
+    mouseup_actions(){
+        state.preview_canvas.redraw();
+        state.history_manager.add_history("paint-tile", []);
+    }
+
+    on_exit(){
+        state.tile_placer_rect.style.display = "none";
     }
 }
 
 class Tile_Remover_Tool extends Tool{
     constructor(id) { 
         super(id); 
-        this.prev_hovered_tile = {x: 0, y: 0};
+        this.prev_hovered_tile = [];
     }   
 
-    mousedown_actions(){
-        var x = state.hovered_tile.x;
-        var y = state.hovered_tile.y;
-        if(x == null || y == null) { return; }
+    on_enter(){
+        if(state.hovered_tile != null){
+            state.tile_placer_rect.style.display = "block";
+        }
+    }
+
+    mouseleft_actions(){
+        if(state.hovered_tile == null) { return; }
+        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        if(prev_index == null) { return; }
         
         state.history_manager.prev_data = state.current_layer.get_data();
-        var prev_index = state.current_layer.painted_tiles[x][y];
-
-        state.tile_manager.place_tile(state.tile_manager.empty_tile, x, y);
-
-        paint_tile(state.tile_manager.empty_tile, x, y);
+        state.history_manager.prev_tile_indices.push(prev_index);
+        state.history_manager.prev_tile_positions.push(state.hovered_tile);
+        
+        state.tile_manager.place_tile(state.tile_manager.empty_tile, ...state.hovered_tile);
+        paint_tile(state.tile_manager.empty_tile, ...state.hovered_tile);
 
         state.canvas_handler.render_foreground();
-        state.preview_canvas.redraw();
-        
-        state.history_manager.add_history("paint-tile", [[x, y], prev_index]);
     }
     
     mousedrag_actions(){
-        if(this.prev_hovered_tile[0] != state.hovered_tile.x && this.prev_hovered_tile[1] != state.hovered_tile.y){
-            this.mousedown_actions();
+        if(state.hovered_tile == null) { return; }
+        if(this.prev_hovered_tile[0] == state.hovered_tile[0] && this.prev_hovered_tile[1] == state.hovered_tile[1]){ return }
+
+        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        if(prev_index == null) { return; }
+        
+        state.history_manager.prev_tile_indices.push(prev_index);
+        state.history_manager.prev_tile_positions.push(state.hovered_tile);
+        
+        state.tile_manager.place_tile(state.tile_manager.empty_tile, ...state.hovered_tile);
+        paint_tile(state.tile_manager.empty_tile, ...state.hovered_tile);
+
+        state.canvas_handler.render_foreground();
+
+        this.prev_hovered_tile = state.hovered_tile;
+    }
+
+    mousemove_actions(){
+        if(state.hovered_tile == null) { 
+            state.tile_placer_rect.style.display = "none";
+            return; 
         }
-        this.prev_hovered_tile = state.tile_manager.get_containing_tile(...state.pixel_pos);
+        state.tile_placer_rect.style.display = "block";
+        state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
+        state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
+    }
+
+    mouseup_actions(){
+        state.history_manager.add_history("paint-tile", []);
+        state.preview_canvas.redraw();
+    }
+
+    on_exit(){
+        state.tile_placer_rect.style.display = "none";
     }
 
 }

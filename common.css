@@ -50,6 +50,10 @@ span, img{
     user-select: none;
 }
 
+.button{
+    user-select: none;
+}
+
 .button:hover{
     background-color: rgb(116, 116, 124) !important;
 }

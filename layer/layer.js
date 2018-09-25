@@ -17,8 +17,8 @@ class Layer {
         this.wrapper = document.createElement("div");
         this.wrapper.className = "layer";
         this.wrapper.style.top = 30 * this.index + "px";
-        var this_instance = this;
-        this.wrapper.onclick = function(){ state.layer_manager.change_layer(this_instance.index); };
+        var owner = this;
+        this.wrapper.onclick = function(){ state.layer_manager.change_layer(owner.index); };
         
         this.name_elem = document.createElement("span");
         this.name_elem.className = "sidebar-window-span";
@@ -27,13 +27,13 @@ class Layer {
         this.visibility_icon = document.createElement("i");
         this.visibility_icon.className = "fas fa-circle visibility-icon";
         this.visibility_icon.onclick = function(){
-            this_instance.toggle_visibility();
+            owner.toggle_visibility();
             state.history_manager.add_history("layer-visibility", [owner.index]);
         }
 
         this.settings_button = document.createElement("div");
         this.settings_button.className = "button sidebar-window-button layer-settings-button"
-        this.settings_button.onclick = function(){ state.layer_settings.open(this_instance) };
+        this.settings_button.onclick = function(){ state.layer_settings.open(owner) };
         var settings_icon = document.createElement("i");
         settings_icon.className = "fas fa-cog sidebar-window-button-icon";
         this.settings_button.appendChild(settings_icon);
@@ -43,11 +43,8 @@ class Layer {
         this.wrapper.appendChild(this.settings_button);
         document.getElementById("layers-body").appendChild(this.wrapper);
 
-        //2D array containing tile mappings for this layer
-        this.painted_tiles = new Array(state.tiles_x);
-        for(var x = 0; x < state.tiles_x; x++){
-            this.painted_tiles[x] = new Array(state.tiles_y);
-        }
+        //array containing tile mappings for this layer
+        this.painted_tiles = new Array(state.tiles_x * state.tiles_y);
     }
 
     get_painted_tiles(rect){
@@ -57,10 +54,10 @@ class Layer {
         var y = rect.start_y;
         for(var x = rect.start_x; x <= rect.end_x; x++){
             for(var y = rect.start_y; y <= rect.end_y; y++){
-                var index = this.painted_tiles[x][y];
+                var index = this.painted_tiles[x + y * state.tiles_x];
                 if(index == null){ continue; }
                 indices.push(index);
-                positions.push({x: x, y: y});
+                positions.push([x, y]);
             }
         }
         return {

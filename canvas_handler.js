@@ -69,6 +69,11 @@ class Canvas_Handler{
         correct_canvas_position();
 
         update_mouse_indicator();
+
+        state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
+        state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
+        state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
+        state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
     }
 
     move_canvas(delta_x, delta_y){

@@ -1,17 +1,11 @@
 #tiles-body{
-    display: grid;
-    overflow: scroll;
-}
 
-#tiles-wrapper{
     position: relative;
-    justify-self: center;
-    border: 1px solid black;
-    width: 230px;
-    height: 150px;
 }
 
 .tile{
+    user-select: none;
+    position: absolute;
     width: 40px;
     height: 40px;
     margin: 1px;
@@ -32,4 +26,27 @@
     font-size: 10pt;
     color: red;
     z-index: 1000000;
+}
+
+#remove-tile{
+    left: 30px;
+}
+
+#zoom-tileset-in{
+    right: 60px;
+}
+
+#zoom-tileset-out{
+    right: 30px;
+}
+
+#tileset-settings-button{
+    right: 0px;
+}
+
+#tile-placer-rect{
+    box-shadow: inset 0px 0px 0px 2px black;
+    position: absolute;
+    z-index: 10;
+    display: none;
 }

@@ -29,9 +29,9 @@ function draw_pixel(color, x, y){
             var target_position = target_tiles.positions[tile_index];
 
             // Relative position of the brush 
-            var relative_x = new_x1 - target_position.x * state.tile_w;
-            var relative_y = new_y1 - target_position.y * state.tile_h;
-
+            var relative_x = new_x1 - target_position[0] * state.tile_w;
+            var relative_y = new_y1 - target_position[1] * state.tile_h;
+        
             //Get intersection of tile and brush
             var tile_clip_x = Math.max(0, relative_x);
             var tile_clip_y = Math.max(0, relative_y);
@@ -167,9 +167,10 @@ function fill(x, y, new_color, old_color) {
         reach_right = false;
         while(y++ < selection_y + state.selection.h - 1 && matchStartColor(pixel_pos)){
             var containing_tile = state.tile_manager.get_containing_tile(x, y);
-            var target_tile = state.current_layer.painted_tiles[containing_tile.x][containing_tile.y];
+            var target_tile = state.current_layer.painted_tiles[containing_tile[0] + containing_tile[1] * state.tiles_x];
             if(target_tile != null){
-                state.tile_manager.tiles[target_tile].ctx.fillRect(x - containing_tile.x * state.tile_w, y - containing_tile.y * state.tile_h, 1, 1);
+                state.tile_manager.tiles[target_tile].ctx.fillStyle = state.color_picker.color;
+                state.tile_manager.tiles[target_tile].ctx.fillRect(x - containing_tile[0] * state.tile_w, y - containing_tile[1] * state.tile_h, 1, 1);
             }   
             colorPixel(pixel_pos)
             if(x > selection_x){
@@ -213,40 +214,6 @@ function fill(x, y, new_color, old_color) {
         colorLayer.data[pixelPos+2] = new_color[2];
         colorLayer.data[pixelPos+3] = 255;
     }
-
-
-
-
-
-
-    // if(!state.selection.contains_pixel(x, y)){ return; }
-
-    // var layer = state.current_layer;
-    // var data = layer.render_ctx.getImageData(x, y, 1, 1).data;
-
-    // var is_old_color = compare_colors(data, old_color);
-    // var is_new_color = compare_colors(data, new_color);
-    // if(is_new_color) { return; }
-    // if(!is_old_color) { return; }
-
-    // var target_position = state.tile_manager.get_containing_tile(x, y);
-    // var target_index = state.current_layer.painted_tiles[target_position.x][target_position.y];
-    // if(target_index != null){
-    //     var tile = state.tile_manager.tiles[target_index];
-    //     var offset_x = x - target_position.x;
-    //     var offset_y = y - target_position.y;
-    //     tile.painted_positions.forEach(position => {
-    //         layer.render_ctx.fillRect(position.x + offset_x, position.y + offset_y, 1, 1);
-    //     })
-    //     tile.ctx.fillRect(offset_x, offset_y, 1, 1);
-    // } else {
-    //     layer.render_ctx.fillRect(x, y, 1, 1);
-    // }
-    
-    // fill(x, y + 1, new_color, old_color);
-    // fill(x, y - 1, new_color, old_color);
-    // fill(x + 1, y, new_color, old_color);
-    // fill(x - 1, y, new_color, old_color); 
 }
 
 const trampoline = fn => (...args) => {
