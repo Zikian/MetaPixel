@@ -22,6 +22,7 @@
         <link rel="stylesheet" href="palette/palette_settings.css">
         <link rel="stylesheet" href="preview/preview.css">
         <link rel="stylesheet" href="widgets/widgets.css">
+        <link rel="stylesheet" href="export_window/export_window.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
     <!-- <body oncontextmenu="return false;"> -->
@@ -58,7 +59,7 @@
             </div>
         </div>
 
-        <div id="new-document-panel">
+        <div id="new-document-panel" class="window">
             <header id="new-document-header" class="window-header">
                 <span class="window-header-title">New Document</span>
                 <i id="new-document-cross" class="fas fa-times window-cross"></i>
@@ -101,6 +102,20 @@
                 <div id="submit-buttons-wrapper">
                     <button id="new-document-ok">OK</button>
                     <button id="new-document-cancel">Cancel</button>
+                </div>
+            </div>
+            <div class="window-footer"></div>
+        </div>
+
+        <div id="export-window" class="window">
+            <div id="export-window-header" class="window-header">
+                <span class="window-header-title">Export</span>
+                <i id="new-document-cross" class="fas fa-times window-cross"></i>
+            </div>
+            <div id="export-window-body">
+                <div id="pixel-size-wrapper">
+                        <span>Pixel Size:</span>
+                        <input type="text" id="pixel-size-input">
                 </div>
             </div>
             <div class="window-footer"></div>
@@ -230,6 +245,13 @@
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
+
+                <div id="frame_setter" class="tool">
+                    <div id="frame-setter-tooltip" class="tooltip">
+                        <span>Frame Setter</span>
+                        <i class="fas fa-caret-left" style="color: black;"></i>
+                    </div>
+                </div>
                 
                 <div id="toolbox-footer"></div>
 
@@ -265,23 +287,84 @@
 
             <div id="website-body-center">
                 <div id="editor">
+                    <div id="current-frame-indicator"></div>
+                    <div id="anim-start-rect"></div>
+                    <div id="anim-end-rect"></div>
                     <div id="tile-placer-rect"></div>
                     <div id="selection-rect"></div>
                     <canvas id="draw-canvas"></canvas>
                     <div id="mouse-indicator"></div>
-                    </div>
                 </div>
 
-                <!-- <div id="animator">
+                <div id="animator">
                     <div id="animator-resizer" class="horizontal-resizer"><i class="fas fa-bars"></i></div>
                     <div id="animator-body">
                         <div id="animations-window">
                             <div id="animations-window-header"><span>Animations</span></div>
                             <div id="animations-window-body"></div>
                             <div id="animations-window-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
+                            <div id="animations-window-footer">
+                                <div id="animations-window-buttons">
+                                    <div id="add-animation" class="button sidebar-window-button">
+                                        <i class="fas fa-plus sidebar-window-button-icon"></i>
+                                    </div>
+                                    <div id="delete-animation" class="button sidebar-window-button">
+                                        <i class="far fa-trash-alt sidebar-window-button-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="frames-window">
+                            <div id="frames-window-header"><span>Frame Editor</span></div>
+                            <div id="frames-window-body">
+                                <div id="frame-canvas-wrapper">
+                                    <div id="frame-mouse-indicator"></div>
+                                    <div id="frame-selection-rect"></div>
+                                    <canvas id="anim-frame-canvas"></canvas>
+                                </div>
+                            </div>
+                            <div id="frames-window-footer">
+                                <div id="frames-window-buttons">
+                                    <div id="next-frame" class="button sidebar-window-button">
+                                        <i class="fas fa-arrow-right sidebar-window-button-icon"></i>
+                                    </div>
+                                    <div id="prev-frame" class="button sidebar-window-button">
+                                        <i class="fas fa-arrow-left sidebar-window-button-icon"></i>
+                                    </div>
+                                    <div id="frame-zoom-in" class="button sidebar-window-button">
+                                            <i class="fas fa-search-plus sidebar-window-button-icon"></i>
+                                    </div>
+                                    <div id="frame-zoom-out" class="button sidebar-window-button">
+                                        <i class="fas fa-search-minus sidebar-window-button-icon"></i>
+                                    </div>
+                                </div>
+                                <div id="frame-delay-input" class="input">
+                                    <span class="input-name"></span>
+                                    <input type="number">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="anim-preview-window">
+                            <div id="anim-preview-header"><span>Animation Preview</span></div>
+                            <div id="anim-preview-body">
+                                <canvas id="anim-preview-canvas"></canvas>
+                            </div>
+                            <div id="anim-preview-footer">
+                                <div id="anim-preview-play" class="button sidebar-window-button">
+                                    <i class="fas fa-caret-right sidebar-window-button-icon"></i>
+                                    <i class="fas fa-pause sidebar-window-button-icon"></i>
+                                </div>
+                                <div id="anim-preview-repeat" class="button sidebar-window-button">
+                                    <i class="fas fa-redo sidebar-window-button-icon"></i>
+                                </div>
+                            </div>
+                            <div id="anim-preview-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
                         </div>
                     </div>
-                </div> -->
+                </div>
+            </div>
             
             <div id="sidebar-right">
                 <div id="sidebar-right-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
@@ -303,6 +386,7 @@
                         </div>
                         <div id="preview-body" class="sidebar-window-body">
                             <canvas id="preview-canvas"></canvas>
+                            <div id="canvas-visible-rect"></div>
                         </div>
                         <div class="horizontal-resizer sidebar-resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
                     </div>
@@ -533,6 +617,10 @@
                 </div>
             </div>
 
+        <script type="text/javascript" src="gif_encoder/GIFEncoder.js"></script>
+        <script type="text/javascript" src="gif_encoder/NeuQuant.js"></script>
+        <script type="text/javascript" src="gif_encoder/LZWEncoder.js"></script>
+        <script type="text/javascript" src="gif_encoder/b64.js"></script>
         <script src="utils.js"></script>
         <script src="widgets/widgets.js"></script>
         <script src="canvas_handler.js"></script>
@@ -550,6 +638,7 @@
         <script src="color_picker/color_operations.js"></script>
         <script src="color_picker/color_picker.js"></script>
         <script src="new_document_panel/new_document_panel.js"></script>
+        <script src="export_window/export_window.js"></script>
         <script src="tools/tools.js"></script>
         <script src="tool_options/tool_options.js"></script>
         <script src="header/header.js"></script>

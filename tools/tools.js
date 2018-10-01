@@ -23,7 +23,8 @@ class Tool_Handler{
             mirrorx: new Horizontal_Mirror_Tool("mirrorx"),
             mirrory: new Vertical_Mirror_Tool("mirrory"),
             tile_painter: new Tile_Painter_Tool("tile_painter"),
-            tile_remover: new Tile_Remover_Tool("tile_remover")
+            tile_remover: new Tile_Remover_Tool("tile_remover"),
+            frame_setter: new Frame_Setter_Tool("frame_setter")
         }
         
         this.current_tool = this.tools.drawtool;
@@ -155,26 +156,26 @@ class Selection_Tool extends Tool{
 
     mouseleft_actions(){
         state.history_manager.prev_selection_state = state.selection.get_state();
-        state.selection_start = calc_true_pixel_pos();
-        if(state.active_element == state.editor && !state.selection.contains_pixel(...state.pixel_pos)){
-            state.selection.prevent_doubleclick = false;
+        if((state.active_element == state.editor || state.active_element == state.frame_canvas.wrapper) && !state.selection.contains_mouse()){
+            state.input.prevent_doubleclick = false;
             state.selection.clear();
         }
-        if (!state.selection.contains_pixel(...state.pixel_pos) || !state.selection.exists){
+        if (!state.selection.contains_mouse() || !state.selection.exists){
             state.selection.forming = true;
         }
     }
     
     mousedrag_actions(){
         if(state.selection.forming){
-            state.selection.prevent_doubleclick = true;
-            state.selection_end = calc_true_pixel_pos()
-            state.selection.draw();
-            var w = calc_distance(state.selection_start[0], state.selection_end[0]);
-            var h = calc_distance(state.selection_start[1], state.selection_end[1]);
-            update_rect_size_preview(w, h)
+            state.input.prevent_doubleclick = true;
+            state.selection_end = calc_true_pixel_pos();
+            if(state.input.shift){
+                state.selection_end = rect_to_square(state.selection_end);
+            }
+            state.selection.form_selection();
+            update_rect_size_preview(state.selection.w, state.selection.h)
         } 
-        if (state.selection.exists && state.selection.contains_pixel(...state.pixel_pos) && !state.selection.forming || state.selection.being_dragged){
+        if (state.selection.exists && state.selection.contains_mouse() && !state.selection.forming || state.selection.being_dragged){
             state.selection.being_dragged = true;
             state.selection.drag();
         }
@@ -224,6 +225,8 @@ class Fill_Tool extends Tool{
         state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_draw_canvas();
+
+        state.frame_canvas.render();
     }
 
     on_exit(){
@@ -257,9 +260,7 @@ class Rectangle_Tool extends Tool{
     mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
-        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
-        update_rect_size_preview(w, h);
+        update_rect_size_preview(...state.rect_size);
     }
     
     mousedrag_actions(){
@@ -271,9 +272,7 @@ class Rectangle_Tool extends Tool{
             preview_rectangle(...state.mouse_start, ...state.mouse_end);
         }
         state.canvas_handler.render_foreground();
-        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
-        update_rect_size_preview(w, h);
+        update_rect_size_preview(...state.rect_size);
     }
     
     mouseup_actions(){
@@ -294,9 +293,7 @@ class Ellipse_Tool extends Tool{
     mouseleft_actions(){
         state.history_manager.prev_data = state.current_layer.get_data();
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
-        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
-        update_rect_size_preview(w, h);
+        update_rect_size_preview(...state.rect_size);
     }
 
     mousedrag_actions(){
@@ -308,9 +305,7 @@ class Ellipse_Tool extends Tool{
             preview_ellipse(...state.mouse_start, ...state.mouse_end);
         }
         state.canvas_handler.render_foreground();
-        var w = calc_distance(state.mouse_start[0], state.mouse_end[0]);
-        var h = calc_distance(state.mouse_start[1], state.mouse_end[1]);
-        update_rect_size_preview(w, h);
+        update_rect_size_preview(...state.rect_size);
     }
 
     mouseup_actions(){
@@ -547,5 +542,43 @@ class Tile_Remover_Tool extends Tool{
     on_exit(){
         state.tile_placer_rect.style.display = "none";
     }
+}
 
+class Frame_Setter_Tool extends Tool{
+    constructor(id) { 
+        super(id); 
+        this.start_pos = null;
+        this.end_pos = null;
+    }
+
+    mouseleft_actions(){
+        if(state.hovered_tile == null || state.current_anim == null) { return; }
+        state.anim_start_rect.style.left = tile_x(state.hovered_tile[0]) - 2 + "px";
+        state.anim_start_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
+        state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 1) + state.tile_w * state.zoom / 2 - 2 + "px";
+        state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
+        this.start_pos = state.hovered_tile;
+        this.end_pos = [state.hovered_tile[0], state.hovered_tile[1] + 1];
+        state.current_frame_indicator.style.left = tile_x(state.hovered_tile[0]) - 1 + "px";
+        state.current_frame_indicator.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
+    }
+    
+    mousedrag_actions(){
+        if(state.hovered_tile == null || state.current_anim == null ){ return; } 
+        if(state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x > this.start_pos[0] + this.start_pos[1] * state.tiles_x){
+            state.anim_end_rect.style.left = tile_x(state.hovered_tile[0]) + state.tile_w * state.zoom / 2 - 2 + "px";
+            state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
+            this.end_pos = state.hovered_tile;
+        }
+    }
+
+    mouseup_actions(){
+        if(this.start_pos == null){ return; }
+        var start_index = this.start_pos[0] + this.start_pos[1] * state.tiles_x;
+        var end_index = this.end_pos[0] + this.end_pos[1] * state.tiles_x
+        state.current_anim.populate_frames(start_index, end_index - start_index + 1);
+        state.current_anim.update_frame_pos();
+        state.frame_canvas.render()
+        this.start_pos = null;
+    }
 }

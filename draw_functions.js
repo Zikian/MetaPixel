@@ -57,17 +57,18 @@ function draw_pixel(color, x, y){
         state.canvas_handler.draw_ctx.fillRect(new_x1 - state.pixel_hidden_x, new_y1 - state.pixel_hidden_y, new_w, new_h);
     }
 
+    if(state.frame_pos == null) { return; }
+    state.frame_canvas.ctx.fillStyle = rgba(color);
+    state.frame_canvas.ctx.fillRect(new_x1 - state.frame_pos[0], new_y1 - state.frame_pos[1], new_w, new_h);
+
     // state.prev_pixel = { color: rgba(color), x: x, y: y };
 }
 
 function erase_pixel(x, y) {
-    var selection_x = (state.selection.editor_x - canvas_x()) / state.zoom;
-    var selection_y = (state.selection.editor_y - canvas_y()) / state.zoom;
-
-    var new_x1 = Math.max(selection_x, x);
-    var new_y1 = Math.max(selection_y, y);
-    var new_w = Math.min(selection_x + state.selection.w, x + state.brush_size) - new_x1;
-    var new_h = Math.min(selection_y + state.selection.h, y + state.brush_size) - new_y1;
+    var new_x1 = Math.max(state.selection.x, x);
+    var new_y1 = Math.max(state.selection.y, y);
+    var new_w = Math.min(state.selection.x + state.selection.w, x + state.brush_size) - new_x1;
+    var new_h = Math.min(state.selection.y + state.selection.h, y + state.brush_size) - new_y1;
     if(new_w < 0 || new_h < 0) { return; }
 
     //Get the tiles and tile positions that will be affected by the brush
@@ -256,27 +257,16 @@ function fill(x, y, new_color, old_color) {
     }
 }
 
-const trampoline = fn => (...args) => {
-    let result = fn(...args)
-    
-    while (typeof result === 'function') {
-      result = result()
-    }
-    
-    return result
-}
-
 function clear_selection_contents(){
-    var x = state.selection.editor_x - canvas_x();
-    var y = state.selection.editor_y - canvas_y();
-
     state.history_manager.prev_data = state.current_layer.get_data();
-    state.current_layer.render_ctx.clearRect(x / state.zoom, y / state.zoom, state.selection.w, state.selection.h);
+    state.current_layer.render_ctx.clearRect(state.selection.x, state.selection.y, state.selection.w, state.selection.h);
     state.history_manager.add_history("pen-stroke");
 
     state.preview_canvas.redraw();
     state.canvas_handler.redraw_layers()
     state.canvas_handler.render_draw_canvas();
+
+    state.frame_canvas.render();
 }
 
 function paint_tile(tile, x, y){
@@ -287,23 +277,19 @@ function paint_tile(tile, x, y){
 }
 
 function preview_pixel(color, x, y){
-    var selection_canvas_x = (state.selection.editor_x - canvas_x()) / state.zoom;
-    var selection_canvas_y = (state.selection.editor_y - canvas_y()) / state.zoom;
-    var pixel_canvas_x = x;
-    var pixel_canvas_y = y;
+    var x = Math.max(state.selection.x, x);
+    var y = Math.max(state.selection.y, y);
+    var w = Math.min(state.selection.x + state.selection.w, x + state.brush_size) - x;
+    var h = Math.min(state.selection.y + state.selection.h, y + state.brush_size) - y;
 
-    var new_x1 = Math.max(selection_canvas_x, pixel_canvas_x);
-    var new_y1 = Math.max(selection_canvas_y, pixel_canvas_y);
-    var new_x2 = Math.min(selection_canvas_x + state.selection.w, pixel_canvas_x + state.brush_size);
-    var new_y2 = Math.min(selection_canvas_y + state.selection.h, pixel_canvas_y + state.brush_size);
-
-    var new_w = new_x2 - new_x1;
-    var new_h = new_y2 - new_y1;
-
-    if(new_w < 0 || new_h < 0) { return; }
+    if(w < 0 || h < 0) { return; }
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color);
-    state.canvas_handler.draw_ctx.fillRect(new_x1, new_y1, new_w, new_h);
+    state.canvas_handler.draw_ctx.fillRect(x, y, w, h);
+
+    if(state.frame_pos == null) { return; }
+    state.frame_canvas.ctx.fillStyle = rgba(color);
+    state.frame_canvas.ctx.fillRect(x - state.frame_pos[0], y - state.frame_pos[1], w, h);
 }
 
 function preview_line(x0, y0, x1, y1) {
@@ -366,9 +352,4 @@ function preview_rectangle(x1, y1, x2, y2){
     preview_line(x1, y1, x1, y2);
     preview_line(x1, y2, x2, y2);
     preview_line(x2, y1, x2, y2);
-}
-
-function sumBelowRec(number, sum = 9){
-    if(number == 0){ return sum; }
-    return sumBelowRec(number - 1, sum + number)
 }

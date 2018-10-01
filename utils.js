@@ -49,16 +49,6 @@ function drag_element(elem, delta_pos){
     elem.style.top = elem.offsetTop + delta_pos[1] + "px";
 }
 
-function calc_distance(x1, x2){
-    if(x1 < x2){
-        return x2 - x1 + 1
-    } else if (x2 < x1){
-        return x1 - x2 + 1
-    } else {
-        return 1
-    }
-}
-
 function rect_to_square(x1, y1, x2, y2){
     var dx = x2 - x1;   
     var dy = y2 - y1;
@@ -114,29 +104,69 @@ function calc_pixel_pos(){
 }
 
 function calc_true_pixel_pos(){
-    var x = Math.round((event.clientX - 101 - state.canvas_x) / state.zoom);
-    var y = Math.round((event.clientY - 30 - state.canvas_y) / state.zoom); 
+    var x = state.pixel_pos[0] + Math.floor(state.brush_size / 2);
+    var y = state.pixel_pos[1] + Math.floor(state.brush_size / 2); 
     return [x, y];
+}
+
+function calc_frame_pixel_pos(){
+    var x = Math.floor((event.clientX - state.frame_canvas.wrapper.getBoundingClientRect().x) / state.frame_canvas.zoom);
+    var y = Math.floor((event.clientY - state.frame_canvas.wrapper.getBoundingClientRect().y) / state.frame_canvas.zoom);
+    return [x, y];
+}
+
+function tile_x(x){
+    return canvas_x() + x * state.tile_w * state.zoom;
+}
+
+function tile_y(y){
+    return canvas_y() + y * state.tile_h * state.zoom;
 }
 
 function update_mouse_indicator(){
     var mouse_indicator_x = state.pixel_pos[0] * state.zoom + canvas_x();
     var mouse_indicator_y = state.pixel_pos[1] * state.zoom + canvas_y();
-    var mouse_indicator_x1 = Math.max(mouse_indicator_x, canvas_x());
-    var mouse_indicator_y1 = Math.max(mouse_indicator_y, canvas_y());
-    var mouse_indicator_x2 = Math.min(mouse_indicator_x + state.brush_size * state.zoom, canvas_x() + canvas_w());
-    var mouse_indicator_y2 = Math.min(mouse_indicator_y + state.brush_size * state.zoom, canvas_y() + canvas_h());
-    var mouse_indicator_w = mouse_indicator_x2 - mouse_indicator_x1;
-    var mouse_indicator_h = mouse_indicator_y2 - mouse_indicator_y1;
-    if(mouse_indicator_w < 0 || mouse_indicator_h < 0){
-        state.mouse_indicator.style.width = 0;
-        state.mouse_indicator.style.height = 0;
+    var x = Math.max(mouse_indicator_x, canvas_x());
+    var y = Math.max(mouse_indicator_y, canvas_y());
+    var w = Math.min(mouse_indicator_x + state.brush_size * state.zoom, canvas_x() + canvas_w()) - x;
+    var h = Math.min(mouse_indicator_y + state.brush_size * state.zoom, canvas_y() + canvas_h()) - y;
+
+    if(w < 0 || h < 0){
+        state.mouse_indicator.style.display = "none";
+        return;
     }
-    
-    state.mouse_indicator.style.left = mouse_indicator_x1 + "px";
-    state.mouse_indicator.style.top = mouse_indicator_y1 + "px";
-    state.mouse_indicator.style.width = mouse_indicator_w + "px";
-    state.mouse_indicator.style.height = mouse_indicator_h + "px";
+    state.mouse_indicator.style.display = "block";
+
+    state.mouse_indicator.style.left = x + "px";
+    state.mouse_indicator.style.top = y + "px";
+    state.mouse_indicator.style.width = w + "px";
+    state.mouse_indicator.style.height = h + "px";
+}
+
+function mouse_indicator_from_anim_frame(){
+    if(state.frame_pos == null) { return; }
+    var mouse_indicator_x = canvas_x() + (state.frame_pos[0] + state.frame_pixel_pos[0] - Math.floor(state.brush_size / 2)) * state.zoom;
+    var mouse_indicator_y = canvas_y() + (state.frame_pos[1] + state.frame_pixel_pos[1] - Math.floor(state.brush_size / 2)) * state.zoom;
+    var x = Math.max(mouse_indicator_x, canvas_x());
+    var y = Math.max(mouse_indicator_y, canvas_y());
+    var w = Math.min(mouse_indicator_x + state.brush_size * state.zoom, canvas_x() + canvas_w()) - x;
+    var h = Math.min(mouse_indicator_y + state.brush_size * state.zoom, canvas_y() + canvas_h()) - y;
+    state.mouse_indicator.style.left = x + "px";
+    state.mouse_indicator.style.top = y + "px";
+    state.mouse_indicator.style.width = w + "px";
+    state.mouse_indicator.style.height = h + "px";
+    state.mouse_indicator.style.display = "block";
+}
+
+function frame_mouse_indicator_from_anim_frame(){
+    if(state.frame_pos == null) { return; }
+    state.frame_canvas.mouse_indicator.style.left = (state.pixel_pos[0] - state.frame_pos[0]) * state.frame_canvas.zoom + "px";
+    state.frame_canvas.mouse_indicator.style.top = (state.pixel_pos[1] - state.frame_pos[1]) * state.frame_canvas.zoom + "px";
+}
+
+function pixel_pos_from_frame(){
+    state.pixel_pos[0] = state.frame_pixel_pos[0] + state.frame_pos[0] - Math.floor(state.brush_size / 2);
+    state.pixel_pos[1] = state.frame_pixel_pos[1] + state.frame_pos[1] - Math.floor(state.brush_size / 2);
 }
 
 function correct_canvas_position(){
@@ -153,8 +183,8 @@ function correct_canvas_position(){
 
     var x1 = Math.max(canvas_x(), 0);
     var y1 = Math.max(canvas_y(), 0);
-    var w = Math.min(canvas_x() + canvas_w(), state.canvas_handler.editor_w()) - x1;
-    var h = Math.min(canvas_y() + canvas_h(), state.canvas_handler.editor_h()) - y1;
+    var w = Math.min(canvas_x() + canvas_w(), state.editor.offsetWidth) - x1;
+    var h = Math.min(canvas_y() + canvas_h(), state.editor.offsetHeight) - y1;
 
     state.canvas_handler.draw_canvas.style.left = x1 + "px";
     state.canvas_handler.draw_canvas.style.top = y1 + "px";
@@ -165,4 +195,7 @@ function correct_canvas_position(){
     state.canvas_handler.render_tile_grid();
     state.canvas_handler.render_draw_canvas();
     state.tile_manager.reposition_indices()
+    state.animator.reposition_anim_bounds(state.current_anim);
+    state.animator.update_current_frame_indicator();
+    state.selection.update();
 }

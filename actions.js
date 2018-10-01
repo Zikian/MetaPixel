@@ -1,37 +1,40 @@
 window.addEventListener('mouseup', function(e) {
     state.drawbuffer = [];
-    if(state.active_element.className.includes("resizer")){
-        document.body.style.cursor = "default"
-    }
-    if(state.active_element == state.editor){
-        state.tool_handler.current_tool.mouseup_actions();
-    } else if (state.active_element.className == "tile") {
+
+    state.tool_handler.current_tool.mouseup_actions();
+    if (state.active_element.className == "tile") {
         var index_a = state.active_element.owner_tile_index;
         var index_b = state.tile_manager.get_target_swap_tile(event.clientX, event.clientY)
         state.tile_manager.swap_tiles(index_a, index_b);
         state.history_manager.add_history("swap-tiles", [index_a, index_b]);
+    } else if(state.active_element.className.includes("resizer")){
+        document.body.style.cursor = "default"
+    } else if(state.active_element == state.frame_canvas.wrapper && state.tool_handler.current_tool.id != "select"){
+        state.selection.restore()
     }
+    
     state.active_element = state.null_active_element;
     state.mouse_indicator.style.display = "block";
 }, false);
 
 window.addEventListener('mousedown', function(e) {
+    if (state.active_element == state.frame_canvas.wrapper) {
+        pixel_pos_from_frame();
+    }
+
     // Right Click
     if(e.button == 2){
-        if(state.active_element == state.editor){
-            state.tool_handler.current_tool.mouseright_actions();
-        }
+        state.tool_handler.current_tool.mouseright_actions();
     } 
     // Left Click
     else if (e.button == 0){
         state.drawbuffer.push(state.pixel_pos);
         state.mouse_start = state.pixel_pos;
         state.mouse_end = state.mouse_start;
-        if(state.active_element == state.editor){
-            state.tool_handler.current_tool.mouseleft_actions();
-        }
+        state.rect_size = [0, 0];
+        state.selection_start = calc_true_pixel_pos();
+        state.tool_handler.current_tool.mouseleft_actions();
     }
-    
 
     state.mouse_indicator.style.display = "none";
 }, false);
@@ -44,11 +47,24 @@ window.addEventListener("mousemove", function(e){
     
     var prev_pixel_pos = state.pixel_pos;
     state.pixel_pos = calc_pixel_pos();
-    state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]]
+    
+    state.frame_pixel_pos = calc_frame_pixel_pos();
+    state.frame_canvas.update_mouse_indicator();  
+    
+    if(state.active_element == state.frame_canvas.wrapper) {
+        pixel_pos_from_frame();
+    }
+    state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
+
+    if(state.frame_canvas.contains_mouse()){
+        mouse_indicator_from_anim_frame();
+    } else {
+        update_mouse_indicator();
+        frame_mouse_indicator_from_anim_frame();
+    }
 
     state.mouse_end = state.pixel_pos;
-    
-    update_mouse_indicator();
+    state.rect_size = [Math.abs(state.mouse_start[0] - state.mouse_end[0]), Math.abs(state.mouse_start[1] - state.mouse_end[1])]
 
     //Calls the function attached to the element that is being dragged
     state.active_element.mousedrag_actions();
@@ -159,10 +175,10 @@ state.editor.mousedrag_actions = function(){
 }
 
 state.editor.addEventListener("dblclick",  function(){
-    if(state.tool_handler.current_tool.id == "select" && !state.selection.prevent_doubleclick){
+    if(state.tool_handler.current_tool.id == "select" && !state.input.prevent_doubleclick){
         var x1 = state.hovered_tile[0] * state.tile_w;
         var y1 = state.hovered_tile[1] * state.tile_h;
-        state.selection.draw_selection(x1, y1, x1 + state.tile_w, y1 + state.tile_w)
+        state.selection.draw_selection(x1, y1, state.tile_w, state.tile_w)
     }
 })
 
@@ -184,6 +200,7 @@ document.getElementById("sidebar-right-resizer").mousedrag_actions =  function()
     var w = document.body.offsetWidth - event.clientX - 4;
     document.getElementById("sidebar-windows").style.width = clamp(w, 200, 500) + "px";
     state.canvas_handler.move_canvas(0, 0); //Reset canvas clip because editor is resized
+    state.preview_canvas.update_visible_rect();
 }
 
 editor.onresize = function(){

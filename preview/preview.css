@@ -41,11 +41,10 @@
     background-color: white;
     image-rendering: pixelated;
 
-    background: repeating-linear-gradient(
-    135deg,
-    #ffffff,
-    #ffffff 2px,
-    #dbdbdb 2px,
-    #dbdbdb 4px
-    );
+    background: repeating-linear-gradient(135deg,#ffffff,#ffffff 3px,#ededed 3px,#ededed 6px);
+}
+
+#canvas-visible-rect{
+    position: absolute;
+    border: 1px solid red;
 }

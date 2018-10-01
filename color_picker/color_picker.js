@@ -184,6 +184,7 @@ class Color_Picker{
 
         this.color_slider.selector.style.backgroundColor = this.color;
         state.mouse_indicator.style.backgroundColor = this.color;
+        state.frame_canvas.mouse_indicator.style.backgroundColor = this.color;
         this.new_color_rect.style.backgroundColor = this.color;
         this.hue_slider.selector.style.backgroundColor = hsl(this.hue, 100, 50);
         document.getElementById("primary-color-rect").style.backgroundColor = rgba(this.primary_color);

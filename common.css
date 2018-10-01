@@ -46,23 +46,19 @@ canvas{
     user-select: none;
 }
 
-span, img{
-    user-select: none;
-}
-
-.button{
+span, img, .button, button, div{
     user-select: none;
 }
 
 .button:hover{
-    background-color: rgb(116, 116, 124) !important;
+    background-color: rgb(82, 82, 87) !important;
+}
+
+.button:active{
+    background-color: transparent !important;
 }
 
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
-}
-
-button{
-    user-select: none;
 }

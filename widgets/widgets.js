@@ -86,6 +86,13 @@ class Input{
             this.input.oninput = function(){
                 this.value = this.value.replace(/([^a-f0-9A-F])/g, '')
             };
+        } else {
+            this.input.oninput = function(){
+                if(this.value < 0){
+                    this.value = 0;
+                }
+                input_function();
+            }
         }
 
         this.input_function = input_function;

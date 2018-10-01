@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: 101px 1fr auto;
     grid-row: 2;
+    overflow: hidden;
 }
 
 #sidebar-left{
@@ -16,6 +17,7 @@
     grid-column: 3;
     grid-row: 1;
     grid-template-columns: 10px 1fr;
+    overflow: hidden;
 }
 
 #sidebar-windows{
@@ -89,8 +91,7 @@
 }
 
 #draw-canvas{
-    background:
-        repeating-linear-gradient(135deg,#ffffff,#ffffff 2.5px,#dbdbdb 2.5px,#dbdbdb 5px);
+    background: repeating-linear-gradient(135deg,#ffffff,#ffffff 3px,#ededed 3px,#ededed 6px);
 }
 
 #mouse-indicator{

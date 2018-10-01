@@ -62,6 +62,12 @@ class History_Manager{
             case "tileset-settings":
                 this.history.push(new Tileset_Settings_History(...args));
                 break;
+            case "add-animation":
+                this.history.push(new Add_Animation());
+                break;
+            case "delete-animation":
+                this.history.push(new Delete_Animation(...args));
+                break;
             }
 
     }
@@ -91,11 +97,13 @@ class Pen_Stroke{
     undo(){
         state.layer_manager.layers[this.layer_index].draw_data(this.prev_data);
         state.tile_manager.draw_data(this.prev_tile_data);
+        state.frame_canvas.render();
     }
     
     redo(){
         state.layer_manager.layers[this.layer_index].draw_data(this.new_data)
         state.tile_manager.draw_data(this.new_tile_data);
+        state.frame_canvas.render();
     }
 }
 
@@ -329,5 +337,32 @@ class Tileset_Settings_History{
         state.tile_manager.tiles.forEach(tile => {
             tile.update_tileset_position();
         });
+    }
+}
+
+class Add_Animation{
+    undo(){
+        state.animator.delete_animation(state.animator.animations.length - 1);
+    }
+
+    redo(){
+        state.animator.add_animation();
+    }
+}
+
+class Delete_Animation{
+    constructor(deleted_animation){
+        this.deleted_animation = deleted_animation;
+    }
+
+    undo(){
+        state.animator.animations.splice(this.deleted_animation.index, 0, this.deleted_animation);
+        state.animator.animations_window_body.appendChild(this.deleted_animation.wrapper);
+        state.animator.change_animation(this.deleted_animation.index);
+        state.animator.reposition_animations();
+    }
+
+    redo(){
+        state.animator.delete_animation(this.deleted_animation.index);
     }
 }

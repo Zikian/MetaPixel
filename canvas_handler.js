@@ -5,9 +5,9 @@ class Canvas_Handler{
         for(var i = 0; i < this.zoom_stages.length - 1; i++){
             if(this.zoom_stages[i] <= zoom && zoom <= this.zoom_stages[i+1]){
                 state.zoom = this.zoom_stages[i];
-                state.prev_zoom = this.zoom_stages[i]
             }
         }
+        state.prev_zoom = state.zoom;
 
         this.background_canvas = document.createElement("canvas");
         this.background_canvas.width = state.doc_w;
@@ -34,48 +34,29 @@ class Canvas_Handler{
         state.canvas_y = canvas_top;
     }
 
-    editor_w(){
-        return state.editor.offsetWidth;
-    }
-
-    editor_h(){
-        return state.editor.offsetHeight;
-    }
-
     zoom(direction){
-        this.redraw_layers();
-        
-        state.prev_zoom = state.zoom;
+        var prev_zoom = state.zoom;
         var zoom_stage_index = this.zoom_stages.indexOf(state.zoom);
         if (direction == "in" && zoom_stage_index < this.zoom_stages.length - 1){
             state.zoom = this.zoom_stages[zoom_stage_index + 1]; 
         } else if (direction == "out" && zoom_stage_index > 0) {
             state.zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }
-        
-        var old_zoom = state.prev_zoom;
-        var old_x = state.pixel_pos[0];
-        var old_y = state.pixel_pos[1];
-        var new_zoom = state.zoom;
-        
-        var delta_x = old_x * old_zoom - old_x * new_zoom;
-        var delta_y = old_y * old_zoom - old_y * new_zoom;
 
-        state.canvas_x += delta_x;
-        state.canvas_y += delta_y;
-
-        state.selection.resize();
+        state.canvas_x += state.pixel_pos[0] * (prev_zoom - state.zoom);
+        state.canvas_y += state.pixel_pos[1] * (prev_zoom - state.zoom);
 
         correct_canvas_position();
-
         update_mouse_indicator();
+        state.preview_canvas.update_visible_rect();
+        state.animator.update_anim_bounds_size();
 
         state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
         state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
         state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
         state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
     }
-
+    
     move_canvas(delta_x, delta_y){
         state.canvas_x += delta_x;
         state.canvas_y += delta_y;
@@ -83,35 +64,36 @@ class Canvas_Handler{
         // Get intersection between canvas area rect and canvas rect
         var x1 = Math.max(canvas_x(), 0);
         var y1 = Math.max(canvas_y(), 0);
-        var w = Math.min(canvas_x() + canvas_w(), this.editor_w()) - x1;
-        var h = Math.min(canvas_y() + canvas_h(), this.editor_h()) - y1;
-
+        var w = Math.min(canvas_x() + canvas_w(), state.editor.offsetWidth) - x1;
+        var h = Math.min(canvas_y() + canvas_h(), state.editor.offsetHeight) - y1;
+        
         this.draw_canvas.style.left = x1 + "px";
         this.draw_canvas.style.top = y1 + "px";
         this.draw_canvas.width = w;
         this.draw_canvas.height = h;
         this.draw_ctx.scale(state.zoom, state.zoom);
-
+        
         state.hidden_x = -Math.min(state.canvas_x, 0);
         state.hidden_y = -Math.min(state.canvas_y, 0);
         state.pixel_hidden_x = state.hidden_x / state.zoom;
         state.pixel_hidden_y = state.hidden_y / state.zoom;
-
-        state.selection.move(delta_x, delta_y)
-
+        
+        state.selection.update();
+        state.preview_canvas.update_visible_rect();
+        state.animator.update_current_frame_indicator();
         state.tile_manager.reposition_indices();
-
-        this.render_tile_grid();
         this.render_draw_canvas();
+        state.animator.reposition_anim_bounds(state.current_anim);
     }
     
     redraw_background(){
         this.background_canvas.width = this.background_canvas.width;
         var background_layers = state.layer_manager.layers.slice(state.current_layer.index, state.layer_manager.layers.length);
         background_layers.reverse().forEach(layer => {
-            if(!layer.visible){ return; }
-            this.background_ctx.globalAlpha = layer.opacity;
-            this.background_ctx.drawImage(layer.render_canvas, 0, 0);
+            if(layer.visible){
+                this.background_ctx.globalAlpha = layer.opacity;
+                this.background_ctx.drawImage(layer.render_canvas, 0, 0);
+            }
         });
     }
 
@@ -119,9 +101,10 @@ class Canvas_Handler{
         this.foreground_canvas.width = this.foreground_canvas.width;
         var foreground_layers = state.layer_manager.layers.slice(0, state.current_layer.index);
         foreground_layers.reverse().forEach(layer => {
-            if(!layer.visible){ return; }
-            this.foreground_ctx.globalAlpha = layer.opacity;
-            this.foreground_ctx.drawImage(layer.render_canvas, 0, 0);
+            if(layer.visible){
+                this.foreground_ctx.globalAlpha = layer.opacity;
+                this.foreground_ctx.drawImage(layer.render_canvas, 0, 0);
+            }
         });
     }
     
@@ -142,18 +125,23 @@ class Canvas_Handler{
         this.draw_ctx.clearRect(0, 0, this.draw_canvas.width, this.draw_canvas.height)
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
+
+        state.frame_canvas.clear();
+        state.frame_canvas.render_background();
     }
     
     render_foreground(){
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.foreground_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
         this.render_tile_grid();
+
+        state.frame_canvas.render_foreground();
     }
 
     render_tile_grid(){
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.beginPath()
-        this.draw_ctx.strokeStyle = "gray"
+        this.draw_ctx.strokeStyle = "rgb(160, 160, 160)"
         this.draw_ctx.lineWidth = 1 / state.zoom;
         var x = state.tiles_x;
         var y = state.tiles_y;

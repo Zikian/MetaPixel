@@ -69,7 +69,6 @@ class Tile_Manager{
         for(var i = 0; i < this.tiles.length; i++){
             var tile = this.tiles[i];
             if(tile.canvas != state.active_element) {
-                console.log(tile)
                 var tile_x = tile.canvas.offsetLeft;
                 var tile_y = tile.canvas.offsetTop;
                 if(tile_x <= relative_x && 
@@ -189,7 +188,7 @@ class Tile_Manager{
         })
 
         var prev_painted_tiles = [];
-        //For each of the layers, add layer's previous painted tiles to prev_painted_tiles
+        //For each of the layers, add layer's painted tiles to prev_painted_tiles
         //and delete the reference to the tile's index in painted tiles
         state.layer_manager.layers.forEach(layer => {
             prev_painted_tiles.push(layer.painted_tiles);

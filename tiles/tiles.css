@@ -10,13 +10,7 @@
     height: 40px;
     margin: 1px;
 
-    background: repeating-linear-gradient(
-    135deg,
-    #ffffff,
-    #ffffff 2.5px,
-    #dbdbdb 2.5px,
-    #dbdbdb 5px
-    );
+    background: repeating-linear-gradient(135deg,#ffffff,#ffffff 3px,#ededed 3px,#ededed 6px);
 
     outline-offset: -4px;
 }

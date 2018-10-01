@@ -146,20 +146,3 @@
 #new-document-ok{
     margin-right: 10px;
 }
-
-/* Input Styling */
-
-#new-document-body input[type=number], input[type=text]{
-    border: 1px solid gray;
-    height: 30px;
-    border-radius: 4px;
-    outline: none;
-    color: black;
-    font-size: 10pt;
-    padding-left: 10px;
-    box-sizing: border-box;
-}
-
-#new-document-body input:focus{
-    border-bottom: 2px solid rgb(64, 64, 202);
-}
