@@ -94,7 +94,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.anim_preview = new Anim_Preview();
     state.frame_canvas = new Frame_Canvas();
     state.color_picker = new Color_Picker();
-    state.export_image_window = new Export_Image_Window();
+    // state.export_image_window = new Export_Image_Window();
     
     var eyedropper_canvas = document.createElement("canvas");
     state.eyedropper_ctx = eyedropper_canvas.getContext("2d");
