@@ -156,4 +156,4 @@ class Canvas_Handler{
         }
         this.draw_ctx.stroke();
     }
-}
+}                 
