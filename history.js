@@ -137,16 +137,16 @@ class Add_Layer{
 }
 
 class Delete_Layer{
-    constructor(layer_state, painted_tiles){
+    constructor(layer_state, tilemap){
         this.layer_state = layer_state;
-        this.painted_tiles = painted_tiles;
+        this.tilemap = tilemap;
     }
 
     undo(){
         var new_layer = new Layer(this.layer_state.index);
         new_layer.index = this.layer_state.index;
         new_layer.name_elem.innerHTML = this.layer_state.name;
-        new_layer.painted_tiles = this.painted_tiles;
+        new_layer.tilemap = this.tilemap;
         
         state.layer_manager.layers.splice(new_layer.index, 0, new_layer);
         state.layer_manager.update_layer_indices();
@@ -229,7 +229,7 @@ class Paint_Tile{
     constructor(prev_data, positions, prev_indices){
         this.positions = positions;
         this.prev_indices = prev_indices;
-        this.new_indices = this.positions.map(position => state.current_layer.painted_tiles[position[0] + position[1] * state.tiles_x]);
+        this.new_indices = this.positions.map(position => state.current_layer.tilemap[position[0] + position[1] * state.tiles_x]);
         this.layer_index = state.current_layer.index;
         this.prev_data = prev_data;
         this.new_data = state.current_layer.get_data();
@@ -239,7 +239,7 @@ class Paint_Tile{
         var layer = state.layer_manager.layers[this.layer_index];
         for(var i = 0; i < this.positions.length; i++){
             var position = this.positions[i];
-            layer.painted_tiles[position[0] + position[1] * state.tiles_x] = this.prev_indices[i];
+            layer.tilemap[position[0] + position[1] * state.tiles_x] = this.prev_indices[i];
         }
         state.tile_manager.update_tile_mappings(layer);
         layer.draw_data(this.prev_data);
@@ -249,7 +249,7 @@ class Paint_Tile{
         var layer = state.layer_manager.layers[this.layer_index];
         for(var i = 0; i < this.positions.length; i++){
             var position = this.positions[i];
-            layer.painted_tiles[position[0] + position[1 * state.tiles_x]] = this.new_indices[i];
+            layer.tilemap[position[0] + position[1 * state.tiles_x]] = this.new_indices[i];
         }
         state.tile_manager.update_tile_mappings(layer);
         layer.draw_data(this.new_data);
@@ -260,7 +260,7 @@ class Delete_Tile{
     constructor(prev_painted_tiles, deleted_tile){
         this.prev_painted_tiles = prev_painted_tiles;
         this.new_painted_tiles = state.layer_manager.layers.map(layer => {
-            return layer.painted_tiles.slice();
+            return layer.tilemap.slice();
         })
         this.deleted_tile = deleted_tile;
     }
@@ -270,7 +270,7 @@ class Delete_Tile{
         state.tile_manager.tiles.splice(this.deleted_tile.index, 0, this.deleted_tile);
         state.tile_manager.update_tile_indices();
         state.layer_manager.layers.forEach((layer, i) => {
-            layer.painted_tiles = this.prev_painted_tiles[i];
+            layer.tilemap = this.prev_painted_tiles[i];
         });
         state.tile_manager.update_tile_mappings(state.current_layer);
         state.tile_manager.change_tile(this.deleted_tile.index);
@@ -282,7 +282,7 @@ class Delete_Tile{
         state.tile_manager.tiles.splice(this.deleted_tile.index, 1);
         state.tile_manager.update_tile_indices();
         state.layer_manager.layers.forEach((layer, i) => {
-            layer.painted_tiles = this.new_painted_tiles[i];
+            layer.tilemap = this.new_painted_tiles[i];
         });
         state.tile_manager.update_tile_mappings(state.current_layer);
         state.tile_manager.change_tile(0);

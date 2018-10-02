@@ -22,6 +22,8 @@ window.addEventListener('mousedown', function(e) {
         pixel_pos_from_frame();
     }
 
+    if(state.active_element != state.editor && state.active_element != state.frame_canvas.wrapper) { return; }
+
     // Right Click
     if(e.button == 2){
         state.tool_handler.current_tool.mouseright_actions();

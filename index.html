@@ -36,7 +36,7 @@
                 <ul>
                     <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="save-as" class="button"><i class="far fa-save"></i>Save As</li>
+                    <li id="export-button" class="button"><i class="far fa-save"></i>Export Image</li>
                 </ul>
             </div>
 
@@ -71,27 +71,27 @@
 
                 <div id="document-name-wrapper">
                     <span>Document Name:</span>
-                    <input type="text" id="name-input" class="text-input" value="Untitled">
+                    <input type="text" id="name-input" class="window-input" value="Untitled">
                 </div>
                     
                 <div id="document-width-wrapper">
                     <span>Width (px):</span>
-                    <input id="document-width-input" type="number" value="0" min="0">
+                    <input id="document-width-input" class="window-input" type="number" value="0" min="0">
                 </div>
 
                 <div id="document-height-wrapper">
                     <span>Height (px):</span>
-                    <input type="number" id="document-height-input" value="0" min="0">
+                    <input type="number" id="document-height-input" class="window-input" value="0" min="0">
                 </div>
 
                 <div id="tile-width-wrapper">
                     <span>Tile Width (px):</span>
-                    <input type="number" id="tile-width" value="0" min="0">
+                    <input type="number" id="tile-width" class="window-input" value="0" min="0">
                 </div>
 
                 <div id="tile-height-wrapper">
                     <span>Tile Height (px):</span>
-                    <input type="number" id="tile-height" value="0" min="0">
+                    <input type="number" id="tile-height" class="window-input" value="0" min="0">
                 </div>
 
                 <div id="transparency-wrapper">
@@ -107,19 +107,38 @@
             <div class="window-footer"></div>
         </div>
 
-        <!-- <div id="export-window" class="window">
+        <div id="export-window" class="window">
             <div id="export-window-header" class="window-header">
-                <span class="window-header-title">Export</span>
-                <i id="new-document-cross" class="fas fa-times window-cross"></i>
+                <span class="window-header-title">Export Image</span>
+                <i id="export-window-cross" class="fas fa-times window-cross"></i>
             </div>
-            <div id="export-window-body">
+
+            <form name="export-image-form" id="export-window-body" autocomplete="off" onsubmit="return false">
                 <div id="pixel-size-wrapper">
-                        <span>Pixel Size:</span>
-                        <input type="text" id="pixel-size-input">
+                    <span>Pixel Scale:</span>
+                    <input name="pixel-scale" type="text" id="pixel-size-input" class="window-input" value="1">
                 </div>
-            </div>
+                
+                <div id="file-name-wrapper">
+                    <span>File Name:</span>
+                    <input name="file-name" type="text" id="file-name-input" class="window-input">
+                </div>
+
+                <div id="download-layers-wrapper">
+                    <input name="download-layers" type="checkbox" id="download-layers-checkbox">
+                    <span>Layers as separate files</span>
+                </div>
+
+                <div id="download-current-layer-wrapper">
+                    <input name="download-current-layer" type="checkbox" >
+                    <span>Only current layer</span>
+                </div>
+
+                <button name="download-image" id="image-download-button">Download</button>
+            </form>
+
             <div class="window-footer"></div>
-        </div> -->
+        </div>
 
         <div id="website-body">
             <div id="sidebar-left">
@@ -410,30 +429,31 @@
                         <div id="layers-body" class="sidebar-window-body"></div>
                         <div class="horizontal-resizer sidebar-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
 
-                        <div id="layer-settings">
-                            <div id="layer-settings-header" class="window-header">
-                                <span class="window-header-title">Layer Settings</span>
-                                <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
-                            </div>
-                            <div id="settings">
-                                <input type="text" id="layer-name-setting">
-                                <div class="input-slider" id="opacity-setting">
-                                    <span class="input-slider-name"></span>
-                                    <div class="input-slider-wrapper">
-                                        <input type="number">
-                                        <i class="fas fa-caret-down"></i>
-                                        <div class="input-slider-slider">
-                                            <div class="input-slider-selector"></div>
-                                        </div>
+                    </div>
+
+                    <div id="layer-settings" class="window">
+                        <div id="layer-settings-header" class="window-header">
+                            <span class="window-header-title">Layer Settings</span>
+                            <i id="layer-settings-cross" class="fas fa-times window-cross"></i>
+                        </div>
+                        <div id="settings">
+                            <input type="text" id="layer-name-setting" class="window-input">
+                            <div class="input-slider" id="opacity-setting">
+                                <span class="input-slider-name"></span>
+                                <div class="input-slider-wrapper">
+                                    <input type="number">
+                                    <i class="fas fa-caret-down"></i>
+                                    <div class="input-slider-slider">
+                                        <div class="input-slider-selector"></div>
                                     </div>
                                 </div>
-                                <div id="buttons">
-                                    <button id="layer-settings-ok">OK</button>
-                                    <button id="layer-settings-cancel">Cancel</button>
-                                </div>
                             </div>
-                            <div class="window-footer"></div>
+                            <div id="buttons">
+                                <button id="layer-settings-ok">OK</button>
+                                <button id="layer-settings-cancel">Cancel</button>
+                            </div>
                         </div>
+                        <div class="window-footer"></div>
                     </div>
 
 
@@ -462,23 +482,23 @@
                         <div id="tiles-body" class="sidebar-window-body"></div>
                         <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
                         
-                        <div id="tileset-settings">
-                            <div id="tileset-settings-header" class="window-header">
-                                <span class="window-header-title">Tileset Size</span>
-                                <i id="tileset-settings-cross" class="fas fa-times window-cross"></i>
-                            </div>
-                            <div id="tileset-settings-body">
-                                <span>Tileset Width:</span>
-                                <input type="number" id="tileset-width-setting">
-                                <div id="tileset-settings-buttons">
-                                    <button id="tileset-settings-ok">OK</button>
-                                    <button id="tileset-settings-cancel">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="window-footer"></div>
-                        </div>
                     </div>
 
+                    <div id="tileset-settings" class="window">
+                        <div id="tileset-settings-header" class="window-header">
+                            <span class="window-header-title">Tileset Size</span>
+                            <i id="tileset-settings-cross" class="fas fa-times window-cross"></i>
+                        </div>
+                        <div id="tileset-settings-body">
+                            <span>Tileset Width:</span>
+                            <input type="number" id="tileset-width-setting" class="window-input">
+                            <div id="tileset-settings-buttons">
+                                <button id="tileset-settings-ok">OK</button>
+                                <button id="tileset-settings-cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="window-footer"></div>
+                    </div>
 
                     <div id="palette" class="sidebar-window">
                         <div class="sidebar-window-header">
@@ -490,24 +510,25 @@
                         <div id="palette-body" class="sidebar-window-body">
                             <div id="palette-wrapper"></div>
                         </div>
-                        <div id="palette-settings">
-                            <div id="palette-settings-header" class="window-header">
-                                <span class="window-header-title">Palette Size</span>
-                                <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
-                            </div>
-                            <div id="palette-settings-body">
-                                <span>Width:</span>
-                                <input type="number" id="palette-width-setting">
-                                <span>Height:</span>
-                                <input type="number" id="palette-height-setting">
-                                <div id="palette-settings-buttons">
-                                    <button id="palette-settings-ok">OK</button>
-                                    <button id="palette-settings-cancel">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="window-footer"></div>
-                        </div>
                         <div class="horizontal-resizer sidebar-resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
+                    </div>
+                    
+                    <div id="palette-settings" class="window">
+                        <div id="palette-settings-header" class="window-header">
+                            <span class="window-header-title">Palette Size</span>
+                            <i id="palette-settings-cross" class="fas fa-times window-cross"></i>
+                        </div>
+                        <div id="palette-settings-body">
+                            <span>Width:</span>
+                            <input type="number" id="palette-width-setting" class="window-input">
+                            <span>Height:</span>
+                            <input type="number" id="palette-height-setting" class="window-input">
+                            <div id="palette-settings-buttons">
+                                <button id="palette-settings-ok">OK</button>
+                                <button id="palette-settings-cancel">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="window-footer"></div>
                     </div>
                 </div>
             </div>

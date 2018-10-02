@@ -199,3 +199,66 @@ function correct_canvas_position(){
     state.animator.update_current_frame_indicator();
     state.selection.update();
 }
+
+function download_drawing(name, pixel_scale){
+    reset_download_canvas(pixel_scale);
+
+    if(!state.transparency){
+        state.download_ctx.fillStyle = "white";
+        state.download_ctx.fillRect(0, 0, state.doc_w, state.doc_h);
+    }
+
+    for(var i = state.layer_manager.layers.length - 1; i >= 0; i--){
+        var layer = state.layer_manager.layers[i];
+        state.download_ctx.globalAlpha = layer.opacity;
+        state.download_ctx.drawImage(layer.render_canvas, 0, 0);
+    }
+
+    download_img(name, state.download_canvas.toDataURL());
+}
+
+function download_all_layers(name, pixel_scale){
+    reset_download_canvas(pixel_scale);
+
+    state.layer_manager.layers.forEach(layer => {
+        state.download_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
+        
+        if(!state.transparency){
+            state.download_ctx.fillStyle = "white";
+            state.download_ctx.fillRect(0, 0, state.doc_w, state.doc_h);
+        }
+
+        state.download_ctx.globalAlpha = layer.opacity;
+        state.download_ctx.drawImage(layer.render_canvas, 0, 0);
+        download_img(name, state.download_canvas.toDataURL());
+    })
+}
+
+function download_current_layer(name, pixel_scale){
+    reset_download_canvas(pixel_scale);
+
+    if(!state.transparency){
+        state.download_ctx.fillStyle = "white";
+        state.download_ctx.fillRect(0, 0, state.doc_w, state.doc_h);
+    }
+
+    state.download_ctx.globalAlpha = state.current_layer.opacity;
+    state.download_ctx.drawImage(state.current_layer.render_canvas, 0, 0);
+    download_img(name, state.download_canvas.toDataURL());
+}
+
+function download_img(name, url){
+    var link = document.createElement("a");
+    link.download = name;
+    link.href = url;
+    link.click();
+}
+
+function reset_download_canvas(pixel_scale){
+    state.download_canvas.width = state.doc_w * pixel_scale;
+    state.download_canvas.height = state.doc_h * pixel_scale;
+    state.download_ctx.mozImageSmoothingEnabled = false;
+    state.download_ctx.webkitImageSmoothingEnabled = false;
+    state.download_ctx.imageSmoothingEnabled = false;
+    state.download_ctx.scale(pixel_scale, pixel_scale);
+}

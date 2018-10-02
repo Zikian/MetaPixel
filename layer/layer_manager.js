@@ -5,6 +5,8 @@ class Layer_Manager{
         state.current_layer = this.layers[0]
         state.current_layer.set_active();
 
+        this.layers_body = document.getElementById("layers-body");
+
         var layer_manager = this;
         document.getElementById("add-layer").onclick = function(){
             layer_manager.add_layer();
@@ -12,7 +14,7 @@ class Layer_Manager{
         }
         
         document.getElementById("delete-layer").onclick = function(){
-            state.history_manager.add_history("delete-layer", [state.current_layer.get_state(), state.current_layer.painted_tiles]);
+            state.history_manager.add_history("delete-layer", [state.current_layer.get_state(), state.current_layer.tilemap]);
             layer_manager.delete_layer(state.current_layer.index);
         }
 
@@ -38,7 +40,7 @@ class Layer_Manager{
 
         //Attach function to resize window to resizer
         document.getElementById("layers-resizer").onmousedown = set_active_element;
-        document.getElementById("layers-resizer").mousedrag_actions = resize_sidebar_window(document.getElementById("layers-body"));
+        document.getElementById("layers-resizer").mousedrag_actions = resize_sidebar_window(this.layers_body);
     }
 
     add_layer(){

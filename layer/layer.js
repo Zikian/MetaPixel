@@ -44,7 +44,7 @@ class Layer {
         document.getElementById("layers-body").appendChild(this.wrapper);
 
         //array containing tile mappings for this layer
-        this.painted_tiles = new Array(state.tiles_x * state.tiles_y);
+        this.tilemap = new Array(state.tiles_x * state.tiles_y);
     }
 
     get_painted_tiles(rect){
@@ -54,7 +54,7 @@ class Layer {
         var y = rect.start_y;
         for(var x = rect.start_x; x <= rect.end_x; x++){
             for(var y = rect.start_y; y <= rect.end_y; y++){
-                var index = this.painted_tiles[x + y * state.tiles_x];
+                var index = this.tilemap[x + y * state.tiles_x];
                 if(index == null){ continue; }
                 indices.push(index);
                 positions.push([x, y]);

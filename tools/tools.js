@@ -415,7 +415,7 @@ class Tile_Painter_Tool extends Tool{
     
     mouseleft_actions(){
         if(state.hovered_tile == null) { return; }
-        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        var prev_index = state.current_layer.tilemap[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
         if(prev_index == state.tile_manager.current_tile.index) { return; }
 
         state.history_manager.prev_data = state.current_layer.get_data();
@@ -430,7 +430,7 @@ class Tile_Painter_Tool extends Tool{
     
     mouseright_actions(){
         if(state.hovered_tile == null) { return; }
-        var index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        var index = state.current_layer.tilemap[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
         if(index == null){
             state.tool_handler.change_tool("tile_remover")
         } else {
@@ -445,7 +445,7 @@ class Tile_Painter_Tool extends Tool{
         if(this.prev_hovered_tile[0] == state.hovered_tile[0] && this.prev_hovered_tile[1] == state.hovered_tile[1]){ return }
 
         //Index before the tile was painted
-        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        var prev_index = state.current_layer.tilemap[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
         if(prev_index == state.tile_manager.current_tile.index) { return; }
 
         state.history_manager.prev_tile_indices.push(prev_index);
@@ -493,7 +493,7 @@ class Tile_Remover_Tool extends Tool{
 
     mouseleft_actions(){
         if(state.hovered_tile == null) { return; }
-        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        var prev_index = state.current_layer.tilemap[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
         if(prev_index == null) { return; }
         
         state.history_manager.prev_data = state.current_layer.get_data();
@@ -510,7 +510,7 @@ class Tile_Remover_Tool extends Tool{
         if(state.hovered_tile == null) { return; }
         if(this.prev_hovered_tile[0] == state.hovered_tile[0] && this.prev_hovered_tile[1] == state.hovered_tile[1]){ return }
 
-        var prev_index = state.current_layer.painted_tiles[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
+        var prev_index = state.current_layer.tilemap[state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x];
         if(prev_index == null) { return; }
         
         state.history_manager.prev_tile_indices.push(prev_index);

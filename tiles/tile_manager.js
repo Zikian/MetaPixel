@@ -91,14 +91,14 @@ class Tile_Manager{
 
         var layers_where_painted = [];
         state.layer_manager.layers.forEach(layer => {
-            if(layer.painted_tiles.includes(index_a) || layer.painted_tiles.includes(index_b)){
+            if(layer.tilemap.includes(index_a) || layer.tilemap.includes(index_b)){
                 layers_where_painted.push(layer.index);
             }
         })
 
         layers_where_painted.forEach(layer_index => {
             var layer = state.layer_manager.layers[layer_index];
-            layer.painted_tiles = layer.painted_tiles.map(painted_tile => {
+            layer.tilemap = layer.tilemap.map(painted_tile => {
                 if(painted_tile == index_a){
                     return index_b;
                 } else if (painted_tile == index_b){
@@ -182,7 +182,7 @@ class Tile_Manager{
         //Array containing indices of each layer where the tile is painted
         var layers_where_painted = [];
         state.layer_manager.layers.forEach(layer => {
-            if(layer.painted_tiles.includes(tile.index)){
+            if(layer.tilemap.includes(tile.index)){
                 layers_where_painted.push(layer.index);
             }
         })
@@ -191,8 +191,8 @@ class Tile_Manager{
         //For each of the layers, add layer's painted tiles to prev_painted_tiles
         //and delete the reference to the tile's index in painted tiles
         state.layer_manager.layers.forEach(layer => {
-            prev_painted_tiles.push(layer.painted_tiles);
-            layer.painted_tiles = layer.painted_tiles.map(painted_tile => {
+            prev_painted_tiles.push(layer.tilemap);
+            layer.tilemap = layer.tilemap.map(painted_tile => {
                 if(painted_tile == tile.index){
                     return null;
                 } else if (painted_tile > tile.index) {
@@ -236,7 +236,7 @@ class Tile_Manager{
     }
 
     place_tile(tile, x, y){
-        var prev_index = state.current_layer.painted_tiles[x + y * state.tiles_x];
+        var prev_index = state.current_layer.tilemap[x + y * state.tiles_x];
         if(tile.index == null){
             this.tile_indices[x][y].innerHTML = "X";
             this.tiles[prev_index].remove_position(x, y);
@@ -244,14 +244,14 @@ class Tile_Manager{
             this.tile_indices[x][y].innerHTML = tile.index;
             tile.painted_positions.push([x, y])
         }
-        state.current_layer.painted_tiles[x + y * state.tiles_x] = tile.index;
+        state.current_layer.tilemap[x + y * state.tiles_x] = tile.index;
     }
 
     update_tile_mappings(layer){
         this.clear_tile_positions();
         for(var x = 0; x < state.tiles_x; x++){
             for(var y = 0; y < state.tiles_y; y++){
-                var index = layer.painted_tiles[x + y * state.tiles_x];
+                var index = layer.tilemap[x + y * state.tiles_x];
                 if(index != null){
                     this.tile_indices[x][y].innerHTML = index;
                     this.tiles[index].painted_positions.push([x, y]);

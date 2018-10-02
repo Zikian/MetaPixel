@@ -174,7 +174,7 @@
 #anim-preview-window{
     display: grid;
     grid-column: 3;
-    grid-template-rows: 20px 1fr 30px;
+    grid-template-rows: 20px auto 30px;
     grid-template-columns: 8px auto;
 }
 
@@ -196,6 +196,7 @@
     grid-row: 2;
     display: grid;
     background-color: rgb(85, 85, 92);
+    overflow: hidden;
 }
 
 #anim-preview-canvas{

@@ -4,6 +4,8 @@ class Palette{
         this.width = 8;
         this.height = 4;
 
+        this.palette_body = document.getElementById("palette-body");
+
         this.wrapper = document.getElementById("palette-wrapper");
         this.wrapper.style.width = this.width * 28 + "px";
         this.wrapper.style.height = this.height * 28 + "px";
@@ -60,10 +62,12 @@ class Palette{
               this.value = parseInt(this.value, 10);
             }
         }
+
         document.getElementById("palette-settings-button").onclick = function(){
             state.palette.width_input.value = state.palette.width;
             state.palette.height_input.value = state.palette.height;
             document.getElementById("palette-settings").style.display = "block";
+            state.palette.reset_settings_window_pos();
         }
         
         this.colors = [];
@@ -73,7 +77,12 @@ class Palette{
 
         var resizer = document.getElementById("palette-resizer");
         resizer.onmousedown = set_active_element;
-        resizer.mousedrag_actions = resize_sidebar_window(document.getElementById("palette-body"));
+        resizer.mousedrag_actions = resize_sidebar_window(this.palette_body);
+    }
+
+    reset_settings_window_pos(){
+        this.palette_settings_wrapper.style.left = this.palette_body.getBoundingClientRect().x - 200 + "px";
+        this.palette_settings_wrapper.style.top = this.palette_body.getBoundingClientRect().y + "px";
     }
 
     validate_settings(){

@@ -208,7 +208,7 @@ function fill(x, y, new_color, old_color) {
         reach_right = false;
         while(y++ < selection_y + state.selection.h - 1 && matchStartColor(pixel_pos)){
             var containing_tile = state.tile_manager.get_containing_tile(x, y);
-            var target_tile = state.current_layer.painted_tiles[containing_tile[0] + containing_tile[1] * state.tiles_x];
+            var target_tile = state.current_layer.tilemap[containing_tile[0] + containing_tile[1] * state.tiles_x];
             if(target_tile != null){
                 state.tile_manager.tiles[target_tile].ctx.fillStyle = state.color_picker.color;
                 state.tile_manager.tiles[target_tile].ctx.fillRect(x - containing_tile[0] * state.tile_w, y - containing_tile[1] * state.tile_h, 1, 1);

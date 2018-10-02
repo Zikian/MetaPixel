@@ -1,72 +1,25 @@
 #palette-settings{
-    display: none;
-    position: absolute;
-    top: 30px;
-    right: 320px;
-    z-index: 100;
     width: 180px;
+    z-index: 100;
 }
 
-#palette-settings-body{
-    background-color: white;
-    height: 113px;
-}
 #palette-settings-body span{
-    font-size: 10pt;
     float:left;
-    color: black;
     line-height: 30px;
-    margin-top: 6px;
-    margin-left: 6px;
+    margin: 6px 0 0 6px;
 }
 
 #palette-width-setting, #palette-height-setting{
-    border: 1px solid gray;
     width: 110px;
-    height: 30px;
-    border-radius: 4px;
-    outline: none;
-    color: black;
-    font-size: 10pt;
-    padding-left: 10px;
-    box-sizing: border-box;
-    margin-left: 5%;
-    margin-top: 6px;
     float:right;
-    margin-right: 6px;
+    margin: 6px 6px 0 5%;
 }
 
 #palette-height-setting{
     margin-bottom: 6px;
 }
 
-#palette-width-setting:focus, #palette-height-setting:focus{
-    border-bottom: 2px solid rgb(64, 64, 202);
-}
-
 #palette-settings-buttons{
-    position: absolute;
-    bottom: 19px;
-    left: 7px;
     width: 164px;
-    height: 30px;
-    margin: 0 auto 0 auto;
-}
-
-#palette-settings button{
-    height: 28px;
-    width: 80px;
-    border-radius: 14px;
-    outline: none;
-    color: black;
-    font-family: Montserrat-Regular;
-    border: 1px solid black;
-    font-size: 10pt;
-    background-color: transparent;
-}
-
-#palette-settings button:active{
-    border: 1px solid rgb(64, 64, 202);
-    background-color: rgb(64, 64, 202);
-    color: white;
+    margin: 0 auto 5px auto;
 }

@@ -1,29 +1,15 @@
-@keyframes expand-settings-window{
-    from{height: 0px;}
-    to{height: 255px;}
-}
-
 #new-document-panel{
-    display: none;
-    position: absolute;
     width: 250px;
     z-index: 100;
-    box-shadow: 0px 0px 11px 2px rgba(0,0,0,0.57);
 }
 
 #new-document-body{
-    overflow: hidden;
-    display: grid;
-    background-color: white;
-    /* animation-name: expand-settings-window; */
-    animation-duration: 0.7s;
     display: grid;
     grid-template-rows: 25px 55px 55px 55px 30px 35px;
     grid-template-columns: 50% 50%;
 }
 
 #new-document-body span{
-    font-size: 10pt;
     line-height: 25px;
     float: left;
 }
@@ -115,7 +101,6 @@
     float: left;
     height: 25px;
     margin: 0 5px 0 0;
-    color: rgb(64, 64, 202);
 }
 
 /* Buttons */
@@ -123,26 +108,4 @@
 #submit-buttons-wrapper{
     grid-area: 6 / 1 / span 1 / span 2;
     justify-self: center;
-}
-
-#new-document-body button{
-    height: 28px;
-    width: 80px;
-    border-radius: 14px;
-    outline: none;
-    color: black;
-    font-family: Montserrat-Regular;
-    border: 1px solid black;
-    font-size: 10pt;
-    background-color: transparent;
-}
-
-#new-document-body button:active{
-    border: 1px solid rgb(64, 64, 202);
-    background-color: rgb(64, 64, 202);
-    color: white;
-}
-
-#new-document-ok{
-    margin-right: 10px;
 }

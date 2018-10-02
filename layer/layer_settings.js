@@ -24,7 +24,13 @@ class Layer_Settings{
         this.header.mousedrag_actions  = function(){ drag_element(state.layer_settings.wrapper, state.delta_mouse); }
     }
 
+    reset_position(){
+        this.wrapper.style.left = state.layer_manager.layers_body.getBoundingClientRect().x - 220 + "px";
+        this.wrapper.style.top = state.layer_manager.layers_body.getBoundingClientRect().y + "px";
+    }
+
     open(target){
+        this.reset_position();
         this.target = target;
         this.name_input.value = this.target.name_elem.innerHTML;
         this.opacity_input.input.value = this.target.opacity * 255;

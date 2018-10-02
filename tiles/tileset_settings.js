@@ -29,9 +29,14 @@ class Tileset_Settings{
         document.getElementById("tileset-settings-button").onclick = function(){
             state.tileset_settings.wrapper.style.display = "block";
             state.tileset_settings.width_input.value = state.tile_manager.tileset_w;
+            state.tileset_settings.update_window_position();
         }
     }
 
+    update_window_position(){
+        this.wrapper.style.top = state.tile_manager.tiles_body.getBoundingClientRect().y + "px";
+        this.wrapper.style.left = state.tile_manager.tiles_body.getBoundingClientRect().x - 220 + "px";
+    }
     
     submit_settings(){
         var prev_tileset_w = state.tile_manager.tileset_w;
