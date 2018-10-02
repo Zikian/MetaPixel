@@ -8,10 +8,14 @@ class Header{
         this.export = document.getElementById("export-button");
         
         this.undo = document.getElementById("undo");
-        this.undo.onclick = function() { state.history_manager.undo_last(); }
+        this.undo.onclick = function() { 
+            state.history_manager.undo_last(); 
+        }
 
         this.redo = document.getElementById("redo");
-        this.redo.onclick = function(){ state.history_manager.redo_last(); }
+        this.redo.onclick = function(){ 
+            state.history_manager.redo_last(); 
+        }
 
         this.clear.onclick = function(){
             // var encoder = new GIFEncoder();

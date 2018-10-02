@@ -185,6 +185,11 @@ class Selection_Tool extends Tool{
         state.selection_size_element.style.display = "none";
         state.selection.forming = false;
         state.selection.being_dragged = false;
+
+        var prev_selection = JSON.stringify(state.history_manager.prev_selection_state);
+        var new_selection = JSON.stringify(state.selection.get_state());
+        if(prev_selection == new_selection){ return; }
+
         state.selection.get_intersection();
         state.history_manager.add_history("selection")
     }
@@ -552,28 +557,32 @@ class Frame_Setter_Tool extends Tool{
     }
 
     mouseleft_actions(){
-        if(state.hovered_tile == null || state.current_anim == null) { return; }
-        state.anim_start_rect.style.left = tile_x(state.hovered_tile[0]) - 2 + "px";
-        state.anim_start_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
-        state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 1) + state.tile_w * state.zoom / 2 - 2 + "px";
-        state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
+        if(!state.hovered_tile || !state.current_anim) { return; }
+
+        state.anim_start_rect.style.left = tile_x(state.hovered_tile[0]) - 1 + "px";
+        state.anim_start_rect.style.top = tile_y(state.hovered_tile[1]) - 1.5 + "px";
+        state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 1) + state.tile_w * state.zoom / 2 + "px";
+        state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
+        state.frame_indicator.style.left = tile_x(state.hovered_tile[0]) + "px";
+        state.frame_indicator.style.top = tile_y(state.hovered_tile[1]) + "px";
+        
         this.start_pos = state.hovered_tile;
-        this.end_pos = [state.hovered_tile[0], state.hovered_tile[1] + 1];
-        state.current_frame_indicator.style.left = tile_x(state.hovered_tile[0]) - 1 + "px";
-        state.current_frame_indicator.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
+        this.end_pos = [this.start_pos[0], this.start_pos[1] + 1];
+        state.frame_pos = null;
     }
     
     mousedrag_actions(){
-        if(state.hovered_tile == null || state.current_anim == null ){ return; } 
+        if(!state.hovered_tile || !state.current_anim){ return; } 
+        if(!this.start_pos) { this.mouseleft_actions(); }
         if(state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x > this.start_pos[0] + this.start_pos[1] * state.tiles_x){
-            state.anim_end_rect.style.left = tile_x(state.hovered_tile[0]) + state.tile_w * state.zoom / 2 - 2 + "px";
-            state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 2 + "px";
+            state.anim_end_rect.style.left = tile_x(state.hovered_tile[0]) + state.tile_w * state.zoom / 2 + "px";
+            state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
             this.end_pos = state.hovered_tile;
         }
     }
 
     mouseup_actions(){
-        if(this.start_pos == null){ return; }
+        if(!this.start_pos){ return; }
         var start_index = this.start_pos[0] + this.start_pos[1] * state.tiles_x;
         var end_index = this.end_pos[0] + this.end_pos[1] * state.tiles_x
         state.current_anim.populate_frames(start_index, end_index - start_index + 1);

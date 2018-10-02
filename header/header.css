@@ -42,7 +42,7 @@
 #dropdown{
     display: none;
     position: absolute;
-    width: 250px;
+    width: 200px;
     height: auto;
     background-color: rgb(59, 59, 65);
     border-radius: 0 5px 5px 5px;
@@ -59,12 +59,12 @@
     font-family: Montserrat-Regular;
     font-size: 10pt;
     color: white;
-    line-height: 40px;
+    line-height: 30px;
     padding-left: 20px;
 }
 
 #dropdown li i{
-    font-size: 14pt;
+    font-size: 13pt;
     margin-right: 5px;
 }
 

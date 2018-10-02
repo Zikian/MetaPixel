@@ -1,5 +1,5 @@
 function draw_pixel(color, x, y){
-    // if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
+    if (state.prev_pixel.color == rgba(color) && state.prev_pixel.x == x && state.prev_pixel.y == y) { return; }
 
     //Get intersection rectangle of brush and selection
     var new_x1 = Math.max(state.selection.x, x);
@@ -57,11 +57,11 @@ function draw_pixel(color, x, y){
         state.canvas_handler.draw_ctx.fillRect(new_x1 - state.pixel_hidden_x, new_y1 - state.pixel_hidden_y, new_w, new_h);
     }
 
+    state.prev_pixel = { color: rgba(color), x: x, y: y };
+    
     if(state.frame_pos == null) { return; }
     state.frame_canvas.ctx.fillStyle = rgba(color);
     state.frame_canvas.ctx.fillRect(new_x1 - state.frame_pos[0], new_y1 - state.frame_pos[1], new_w, new_h);
-
-    // state.prev_pixel = { color: rgba(color), x: x, y: y };
 }
 
 function erase_pixel(x, y) {

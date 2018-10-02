@@ -49,7 +49,7 @@ class Canvas_Handler{
         correct_canvas_position();
         update_mouse_indicator();
         state.preview_canvas.update_visible_rect();
-        state.animator.update_anim_bounds_size();
+        state.animator.resize_anim_bounds();
 
         state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
         state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
@@ -80,7 +80,7 @@ class Canvas_Handler{
         
         state.selection.update();
         state.preview_canvas.update_visible_rect();
-        state.animator.update_current_frame_indicator();
+        state.animator.update_frame_indicator();
         state.tile_manager.reposition_indices();
         this.render_draw_canvas();
         state.animator.reposition_anim_bounds(state.current_anim);

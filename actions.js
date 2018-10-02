@@ -1,7 +1,10 @@
 window.addEventListener('mouseup', function(e) {
     state.drawbuffer = [];
 
-    state.tool_handler.current_tool.mouseup_actions();
+    if(state.active_element == state.editor || state.active_element == state.frame_canvas.wrapper){
+        state.tool_handler.current_tool.mouseup_actions();
+    }
+
     if (state.active_element.className == "tile") {
         var index_a = state.active_element.owner_tile_index;
         var index_b = state.tile_manager.get_target_swap_tile(event.clientX, event.clientY)
@@ -178,9 +181,11 @@ state.editor.mousedrag_actions = function(){
 
 state.editor.addEventListener("dblclick",  function(){
     if(state.tool_handler.current_tool.id == "select" && !state.input.prevent_doubleclick){
+        state.history_manager.prev_selection_state = state.selection.get_state();
         var x1 = state.hovered_tile[0] * state.tile_w;
         var y1 = state.hovered_tile[1] * state.tile_h;
-        state.selection.draw_selection(x1, y1, state.tile_w, state.tile_w)
+        state.selection.draw_selection(x1, y1, state.tile_w, state.tile_w);
+        state.history_manager.add_history("selection")
     }
 })
 

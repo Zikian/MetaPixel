@@ -56,10 +56,10 @@ class Selection{
         this.y = y;
         this.exists = true;
 
-        this.selection_rect.style.left = x * state.zoom + canvas_x() + "px";
-        this.selection_rect.style.top = y * state.zoom + canvas_y() + "px"
-        this.selection_rect.style.width = w * state.zoom + "px";
-        this.selection_rect.style.height = h * state.zoom + "px";
+        this.selection_rect.style.left = x * state.zoom + canvas_x() + 1 + "px";
+        this.selection_rect.style.top = y * state.zoom + canvas_y() + 0.5 + "px"
+        this.selection_rect.style.width = w * state.zoom - 1 + "px";
+        this.selection_rect.style.height = h * state.zoom - 0.5 + "px";
 
         this.selection_rect.style.display = "block";
 

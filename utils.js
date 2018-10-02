@@ -196,7 +196,7 @@ function correct_canvas_position(){
     state.canvas_handler.render_draw_canvas();
     state.tile_manager.reposition_indices()
     state.animator.reposition_anim_bounds(state.current_anim);
-    state.animator.update_current_frame_indicator();
+    state.animator.update_frame_indicator();
     state.selection.update();
 }
 

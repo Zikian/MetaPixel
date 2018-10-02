@@ -1,21 +1,26 @@
 class Animator{
     constructor(){
         this.animations = [];
-
         this.wrapper = document.getElementById("animator-body");
+        this.animations_window_body = document.getElementById("animations-window-body")
+        this.frames_window_body = document.getElementById("frames-window-body")
+
+        var input_func = function(){
+            var delay = state.animator.frame_delay_input.input.value;
+            if(delay.length == 0) { delay = 1; }
+            state.current_anim.current_frame().delay = delay;
+        }
+        this.frame_delay_input = new Input("number", "frame-delay-input", "Frame Delay", 60, 100, 5, input_func);
 
         var resizer = document.getElementById("animator-resizer");
         resizer.onmousedown = set_active_element;
         resizer.mousedrag_actions = function(){
             var height = document.body.offsetHeight - event.clientY - 10;
-            if(height > 0){
-                state.animator.wrapper.style.height = clamp(height, 0, 300) + "px"
-            } else {
-                state.animator.wrapper.style.height = "0px"
-            }
+            state.animator.wrapper.style.height = height > 0
+                ? clamp(height, 0, 600) + "px"
+                : 0;
         }
 
-        this.animations_window_body = document.getElementById("animations-window-body")
         var animations_window_resizer = document.getElementById("animations-window-resizer");
         animations_window_resizer.onmousedown = set_active_element;
         animations_window_resizer.mousedrag_actions = function(){
@@ -23,71 +28,58 @@ class Animator{
             document.getElementById("animations-window-body").style.width = clamp(width, 100, 300) - 4 + "px";
         }
 
-        this.frames_window_body = document.getElementById("frames-window-body")
-
-        var add_animation_button = document.getElementById("add-animation");
-        add_animation_button.onclick = function(){
+        document.getElementById("add-animation").onclick = function(){
             state.animator.add_animation();
             state.history_manager.add_history("add-animation");
         }
 
-        var delete_animation_button = document.getElementById("delete-animation");
-        delete_animation_button.onclick = function(){
+        document.getElementById("delete-animation").onclick = function(){
             if(state.animator.animations.length == 0) { return; };
             state.history_manager.add_history("delete-animation", [state.current_anim])
             state.animator.delete_animation(state.current_anim.index);
         }
 
-        var prev_frame_button = document.getElementById("prev-frame");
-        prev_frame_button.onclick = function(){
+        document.getElementById("prev-frame").onclick = function(){
             state.animator.change_frame("prev");
         }
 
-        var next_frame_button = document.getElementById("next-frame");
-        next_frame_button.onclick = function(){
+        document.getElementById("next-frame").onclick = function(){
             state.animator.change_frame("next");
         }
 
-        var input_func = function(){
-            var delay = state.animator.frame_delay_input.input.value;
-            if(delay.length == 0) { delay = 1; }
-            state.current_anim.frames[state.current_anim.current_frame].delay = delay;
-        }
-        this.frame_delay_input = new Input("number", "frame-delay-input", "Frame Delay", 60, 100, 5, input_func);
-
-        this.update_anim_bounds_size();
+        this.resize_anim_bounds();
     }
 
-    update_anim_bounds_size(){
+    resize_anim_bounds(){
         var w = state.tile_w * state.zoom;
         var h = state.tile_h * state.zoom;
         state.anim_start_rect.style.width = w / 2 + "px";
-        state.anim_start_rect.style.height = h + "px";
+        state.anim_start_rect.style.height = h - 0.5 + "px";
         state.anim_end_rect.style.width = w / 2 + "px";
-        state.anim_end_rect.style.height = h + "px"; 
-        state.current_frame_indicator.style.width = w + "px";
-        state.current_frame_indicator.style.height = h + "px"; 
+        state.anim_end_rect.style.height = h - 1 + "px"; 
+        state.frame_indicator.style.width = w - 1 + "px";
+        state.frame_indicator.style.height = h - 1 + "px"; 
     }
 
     reposition_anim_bounds(anim){
-        if(this.animations.length == 0) { return; }
-        state.anim_start_rect.style.left = tile_x(anim.frames[0].x) - 2 + "px";
-        state.anim_start_rect.style.top = tile_y(anim.frames[0].y) - 1 + "px";
-        state.anim_end_rect.style.left = tile_x(anim.frames[anim.frames.length - 1].x) + state.tile_w * state.zoom / 2 + "px";
-        state.anim_end_rect.style.top = tile_y(anim.frames[anim.frames.length - 1].y) - 1 + "px";
+        if(!this.animations.length) { return; }
+        state.anim_start_rect.style.left = tile_x(anim.frames[0].x) - 1 + "px";
+        state.anim_start_rect.style.top = tile_y(anim.frames[0].y) - 1.5 + "px";
+        state.anim_end_rect.style.left = tile_x(anim.frames[anim.length - 1].x) + state.tile_w * state.zoom / 2 + "px";
+        state.anim_end_rect.style.top = tile_y(anim.frames[anim.length - 1].y) - 1 + "px";
     }
 
-    update_current_frame_indicator(){
-        if(this.animations.length == 0) { return; }
-        var current_frame = state.current_anim.frames[state.current_anim.current_frame];
-        state.current_frame_indicator.style.left = tile_x(current_frame.x) - 1 + "px";
-        state.current_frame_indicator.style.top = tile_y(current_frame.y) - 1 + "px";
+    update_frame_indicator(){
+        if(!this.animations.length) { return; }
+        var frame = state.current_anim.current_frame();
+        state.frame_indicator.style.left = tile_x(frame.x) + "px";
+        state.frame_indicator.style.top = tile_y(frame.y) + "px";
     }
 
     hide_anim_rects(){
         state.anim_start_rect.style.left = "-9999px";
         state.anim_end_rect.style.left = "-9999px";
-        state.current_frame_indicator.style.left = "-9999px";
+        state.frame_indicator.style.left = "-9999px";
     }
 
     add_animation(){
@@ -98,11 +90,14 @@ class Animator{
     delete_animation(index){
         this.animations[index].delete();
         this.animations.splice(index, 1);
-        if(this.animations.length == 0) { 
+
+        if(!this.animations.length) { 
             this.hide_anim_rects();
             state.frame_pos = null;
+            state.frame_canvas.clear();
             return; 
         }
+
         this.change_animation(0);
         this.reposition_animations();
     }
@@ -115,47 +110,55 @@ class Animator{
     }
 
     change_frame(direction){
-        if(state.current_anim.frames.length == 0) { return; }
+        if(!state.current_anim.length) { return; }
 
-        if(direction == "next"){
-            state.current_anim.current_frame += 1;
-
-        } else if (direction == "prev") {
-            state.current_anim.current_frame -= 1;
-            if(state.current_anim.current_frame < 0) { 
-                state.current_anim.current_frame = state.current_anim.frames.length - 1;
-            }
+        switch(direction){
+            case "next":
+                state.current_anim.frame_index += 1;
+                break;
+            case "prev":
+                state.current_anim.frame_index = state.current_anim.frame_index == 0
+                    ? state.current_anim.length - 1
+                    : state.current_anim.frame_index - 1;
+                break;
         }
-        state.current_anim.current_frame %= state.current_anim.frames.length;
 
+        state.current_anim.frame_index %= state.current_anim.length;
+        
         state.current_anim.update_frame_pos();
-        this.frame_delay_input.input.value = state.current_anim.frames[state.current_anim.current_frame].delay;
-        this.update_current_frame_indicator();
+        this.update_delay_input();
+        this.update_frame_indicator();
         state.frame_canvas.render();
         state.frame_canvas.update_selection();
     }
 
     change_animation(index){
-        if(state.current_anim != null){
-            state.current_anim.wrapper.style.backgroundColor = "rgb(59, 59, 65)";
-        }
+        if(state.current_anim){ state.current_anim.set_inactive(); }
         state.current_anim = this.animations[index];
-        state.current_anim.wrapper.style.backgroundColor = "rgb(38, 38, 43)";
-        if(state.current_anim.frames.length == 0){
-            state.anim_start_rect.style.left = -9999 + "px";
-            state.anim_end_rect.style.left = -9999 + "px";
+        state.current_anim.set_active();
+
+        if(!state.current_anim.length){
+            this.hide_anim_rects();
+            state.frame_canvas.clear();
         } else {
             this.reposition_anim_bounds(state.current_anim);
-            this.update_current_frame_indicator();
+            this.update_frame_indicator();
             state.current_anim.update_frame_pos();
+            state.frame_canvas.render();
         }
+    }
+
+    update_delay_input(){
+        this.frame_delay_input.input.value = state.current_anim.current_frame().delay;
     }
 }
 
 class Animation{
     constructor(index){
         this.index = index;
-        this.current_frame = 0;
+        this.frame_index = 0;
+        this.frames = [];
+        this.length = 0;
 
         this.wrapper = document.createElement("div");
         this.wrapper.className = "animation";
@@ -172,7 +175,18 @@ class Animation{
         this.wrapper.appendChild(this.name_elem);
         state.animator.animations_window_body.appendChild(this.wrapper);
 
-        this.frames = [];
+    }
+
+    current_frame(){
+        return this.frames[this.frame_index];
+    }
+
+    set_inactive(){
+        this.wrapper.style.backgroundColor = "rgb(59, 59, 65)";
+    }
+
+    set_active(){
+        this.wrapper.style.backgroundColor = "rgb(38, 38, 43)";
     }
 
     delete(){
@@ -180,33 +194,23 @@ class Animation{
     }
 
     update_frame_pos(){
-        var x = state.current_anim.frames[state.current_anim.current_frame].x * state.tile_w;
-        var y = state.current_anim.frames[state.current_anim.current_frame].y * state.tile_h;
+        var x = this.current_frame().x * state.tile_w;
+        var y = this.current_frame().y * state.tile_h;
         state.frame_pos = [x, y];
     }
 
     populate_frames(start_index, anim_length){
-        var start_x = start_index % state.tiles_x;
-        var start_y = Math.floor(start_index / state.tiles_x);
-        if(this.frames.length == 0){
-            for(var i = 0; i < anim_length; i++){
-                var frame = {
-                    x: (start_index + i) % state.tiles_x,
-                    y: Math.floor((start_index + i) / state.tiles_x),
-                    delay: 100
-                };
-                this.frames.push(frame);
-            }
-        } else if (anim_length > this.frames.length || this.frames[0].x != start_x || this.frames[0].y != start_y){
-            for(var i = 0; i < anim_length - this.frames.length; i++){
-                this.frames.push({ delay: 100 });
-            }
-            this.update_frame_positions(start_index);
+        for(var i = 0; i < anim_length - this.length; i++){
+            this.frames.push({ 
+                delay: 100
+            });
         }
+        this.length = anim_length;
+        this.update_frame_positions(start_index);
     }
 
     update_frame_positions(start_index){
-        for(var i = 0; i < this.frames.length; i++){
+        for(var i = 0; i < this.length; i++){
             this.frames[i].x = (start_index + i) % state.tiles_x;
             this.frames[i].y = Math.floor((start_index + i) / state.tiles_x);
         }
@@ -338,7 +342,7 @@ class Frame_Canvas{
 class Anim_Preview{
     constructor(){
         this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18];
-        this.current_frame = 0;
+        this.frame_index = 0;
         this.drew_frame = false;
         this.prev_time = (new Date()).getTime();
         this.repeat = false;
@@ -400,21 +404,21 @@ class Anim_Preview{
     play_animation(owner){
         return function(){
             if(!owner.drew_frame){
-                owner.draw_frame(state.current_anim, owner.current_frame);
+                owner.draw_frame(state.current_anim, owner.frame_index);
                 owner.drew_frame = true;
             }
             
             var current_time = (new Date()).getTime();
-            var frame_delay = state.current_anim.frames[owner.current_frame].delay;
+            var frame_delay = state.current_anim.frames[owner.frame_index].delay;
             if(current_time - owner.prev_time >= frame_delay){
-                owner.current_frame++;
-                owner.current_frame %= state.current_anim.frames.length;
+                owner.frame_index++;
+                owner.frame_index %= state.current_anim.length;
                 owner.prev_time = current_time;
                 owner.drew_frame = false;
             }
 
-            if(owner.current_frame == state.current_anim.frames.length - 1 && !owner.repeat){ 
-                owner.current_frame = 0;
+            if(owner.frame_index == state.current_anim.length - 1 && !owner.repeat){ 
+                owner.frame_index = 0;
                 owner.toggle_play();
             }
             if(!owner.playing) { return; }

@@ -89,7 +89,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     
     state.anim_start_rect = document.getElementById("anim-start-rect");
     state.anim_end_rect = document.getElementById("anim-end-rect");
-    state.current_frame_indicator = document.getElementById("current-frame-indicator");
+    state.frame_indicator = document.getElementById("current-frame-indicator");
     state.animator = new Animator();
     state.anim_preview = new Anim_Preview();
     state.frame_canvas = new Frame_Canvas();
@@ -226,10 +226,9 @@ function swap_tiles_test(){
 function animation_test(){
     state.animator.add_animation();
     state.current_anim.populate_frames(1, 10)
-    // state.animator.add_animation();
-    // state.animator.change_animation(1);
-    // play_animation();
+    state.animator.add_animation();
+    state.animator.change_animation(1);
+    state.current_anim.populate_frames(5, 5)
     state.animator.change_animation(0);
 }
 animation_test()
-state.anim_preview.play_animation(state.anim_preview)()
