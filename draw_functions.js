@@ -17,7 +17,7 @@ function draw_pixel(color, x, y){
     //Get the tiles and tile positions that will be affected by the brush
     var containing_tiles = state.tile_manager.get_containing_tiles(new_x1, new_y1, new_w, new_h);
     var target_tiles = state.current_layer.get_painted_tiles(containing_tiles);
-    var tile_index = target_tiles.indices.length;
+    var tile_index = target_tiles.indices.length; 
 
     if(tile_index){
         //One or more tiles were targeted
