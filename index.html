@@ -25,7 +25,8 @@
         <link rel="stylesheet" href="export_image_window/export_image_window.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
-    <body oncontextmenu="return false;">
+    <!-- <body oncontextmenu="return false;"> -->
+    <body>
         <div id="toolbar">
             <div id="file" class="button">
                 <i class="far fa-file-image" id="file-icon"></i>
@@ -310,6 +311,11 @@
 
             <div id="website-body-center">
                 <div id="editor">
+                    <ul id="info-wrapper">
+                        <li id="zoom-info"></li>
+                        <li id="pixel-pos-info"></li>
+                        <li id="size-info"></li>
+                    </ul>
                     <div id="current-frame-indicator"></div>
                     <div id="anim-start-rect"></div>
                     <div id="anim-end-rect"></div>
@@ -380,6 +386,12 @@
                                 <div id="anim-preview-repeat" class="button sidebar-window-button">
                                     <i class="fas fa-redo sidebar-window-button-icon"></i>
                                 </div>
+                                <div id="anim-preview-zoom-in" class="button sidebar-window-button">
+                                        <i class="fas fa-search-plus sidebar-window-button-icon"></i>
+                                </div>
+                                <div id="anim-preview-zoom-out" class="button sidebar-window-button">
+                                    <i class="fas fa-search-minus sidebar-window-button-icon"></i>
+                                </div>
                             </div>
                             <div id="anim-preview-resizer" class="vertical-resizer"><i class="fas fa-bars"></i></div>
                         </div>
@@ -409,7 +421,7 @@
                             <canvas id="preview-canvas"></canvas>
                             <div id="canvas-visible-rect"></div>
                         </div>
-                        <div class="horizontal-resizer sidebar-resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
+                        <div class="horizontal-resizer sidebar-window-resizer" id="preview-resizer"><i class="fas fa-bars"></i></div>
                     </div>
 
                     <div id="layers" class="sidebar-window">
@@ -429,7 +441,7 @@
                             </div>
                         </div>
                         <div id="layers-body" class="sidebar-window-body"></div>
-                        <div class="horizontal-resizer sidebar-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
+                        <div class="horizontal-resizer sidebar-window-resizer" id="layers-resizer"><i class="fas fa-bars"></i></div>
 
                     </div>
 
@@ -482,7 +494,7 @@
                             </div>
                         </div>
                         <div id="tiles-body" class="sidebar-window-body"></div>
-                        <div id="tiles-resizer" class="horizontal-resizer sidebar-resizer"><i class="fas fa-bars"></i></div>
+                        <div id="tiles-resizer" class="horizontal-resizer sidebar-window-resizer"><i class="fas fa-bars"></i></div>
                         
                     </div>
 
@@ -512,7 +524,7 @@
                         <div id="palette-body" class="sidebar-window-body">
                             <div id="palette-wrapper"></div>
                         </div>
-                        <div class="horizontal-resizer sidebar-resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
+                        <div class="horizontal-resizer sidebar-window-resizer" id="palette-resizer"><i class="fas fa-bars"></i></div>
                     </div>
                     
                     <div id="palette-settings" class="window">

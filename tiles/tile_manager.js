@@ -63,6 +63,14 @@ class Tile_Manager{
         this.reposition_indices()
     }
 
+    resize_tile_placer_rect(){
+        state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
+        state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
+        if(state.hovered_tile == null) { return; }
+        state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
+        state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
+    }
+
     get_target_swap_tile(mouse_x, mouse_y){
         var relative_x = mouse_x - this.tiles_body.getBoundingClientRect().x;
         var relative_y = mouse_y - this.tiles_body.getBoundingClientRect().y;
@@ -272,13 +280,22 @@ class Tile_Manager{
         for(var x = 0; x < state.tiles_x; x++){
             for(var y = 0; y < state.tiles_y; y++){
                 if(this.indices_visible){
-                    this.tile_indices[x][y].style.display = "none";
-                } else {
                     this.tile_indices[x][y].style.display = "block";
+                } else {
+                    this.tile_indices[x][y].style.display = "none";
                 }
             }
         }
-        this.indices_visible = !this.indices_visible;
+    }
+
+    hide_indices(){
+        this.indices_visible = false;
+        this.toggle_indices();
+    }
+    
+    show_indices(){
+        this.indices_visible = true;
+        this.toggle_indices();
     }
 
     zoom_tileset(direction){

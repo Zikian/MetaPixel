@@ -6,6 +6,10 @@ var state = {
     tile_placer_rect: document.getElementById("tile-placer-rect"),
     drawbuffer: [],
 
+    zoom_info: document.getElementById("zoom-info"),
+    size_info: document.getElementById("size-info"),
+    pixel_pos_info: document.getElementById("pixel-pos-info"),
+
     input: {
         ctrl: false,
         shift: false,
@@ -57,6 +61,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.tiles_x = state.doc_w / state.tile_w;
     state.tiles_y = state.doc_h / state.tile_h;
     
+    
     state.hidden_x = 0;
     state.hidden_y = 0;
     state.pixel_hidden_x = 0;
@@ -79,6 +84,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.mouse_end = null;
     state.frame_pos = null;
     state.rect_size = null;
+
     
     state.new_document_panel = new New_Document_Panel();
     state.history_manager = new History_Manager();
@@ -101,6 +107,10 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.frame_canvas = new Frame_Canvas();
     state.color_picker = new Color_Picker();
     state.export_image_window = new Export_Image_Window();
+    
+    state.size_info.innerHTML = `Size: ${doc_w}x${doc_h}`;
+    state.pixel_pos_info.innerHTML = `X: ${0} Y: ${0}`;
+    state.zoom_info.innerHTML = `Zoom: ${state.zoom}x`;
     
     var eyedropper_canvas = document.createElement("canvas");
     eyedropper_canvas.width = state.doc_h;
@@ -236,9 +246,10 @@ function swap_tiles_test(){
 
 function animation_test(){
     state.animator.add_animation();
-    state.current_anim.populate_frames(1, 10)
-    state.animator.add_animation();
-    state.animator.change_animation(1);
-    state.current_anim.populate_frames(5, 5)
-    state.animator.change_animation(0);
+    state.current_anim.populate_frames(0, 4)
+    // state.animator.add_animation();
+    // state.animator.change_animation(1);
+    // state.current_anim.populate_frames(5, 5)
+    // state.animator.change_animation(0);
 }
+animation_test();

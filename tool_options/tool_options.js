@@ -16,8 +16,8 @@ class Tool_Options{
         this.opacity_input = new Input_Slider("opacity-input", "", 255, 255, input_function);
 
         this.tile_indices_input = document.getElementById("tile-indices-input");
-        this.tile_indices_input.onchange = function(){
-            state.tile_manager.toggle_indices();
+        this.tile_indices_input.oninput = function(){
+            this.checked ? state.tile_manager.show_indices() : state.tile_manager.hide_indices();
         }
     }
 }

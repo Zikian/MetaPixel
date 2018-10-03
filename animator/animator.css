@@ -16,7 +16,7 @@
 #animator-body{
     height: 250px;
     display: grid;
-    grid-template-columns: auto 1fr 250px;
+    grid-template-columns: auto 1fr auto;
 }
 
 #animations-window{
@@ -192,6 +192,7 @@
     grid-column: 2;
     grid-row: 2;
     display: grid;
+    width: 250px;
     background-color: rgb(85, 85, 92);
     position: relative;
     overflow: hidden;
@@ -212,7 +213,6 @@
 }
 
 #anim-preview-play{
-    position: absolute;
     left: 0;
 }
 
@@ -230,8 +230,15 @@
 }
 
 #anim-preview-repeat{
-    position: absolute;
     left: 30px;
+}
+
+#anim-preview-zoom-in{
+    left: 60px
+}
+
+#anim-preview-zoom-out{
+    left: 90px;
 }
 
 #anim-preview-resizer{

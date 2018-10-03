@@ -2,7 +2,7 @@ class Animator{
     constructor(){
         this.animations = [];
         this.wrapper = document.getElementById("animator-body");
-        this.animations_window_body = document.getElementById("animations-window-body")
+        this.animations_window_body = document.getElementById("animations-window-body");
         this.frames_window_body = document.getElementById("frames-window-body")
 
         var input_func = function(){
@@ -19,13 +19,14 @@ class Animator{
             state.animator.wrapper.style.height = height > 0
                 ? clamp(height, 0, 600) + "px"
                 : 0;
+            state.canvas_handler.move_canvas(0, 0); //Reset canvas clip because editor is resized
         }
 
         var animations_window_resizer = document.getElementById("animations-window-resizer");
         animations_window_resizer.onmousedown = set_active_element;
         animations_window_resizer.mousedrag_actions = function(){
             var width = event.clientX - state.animator.animations_window_body.offsetLeft;
-            document.getElementById("animations-window-body").style.width = clamp(width, 100, 300) - 4 + "px";
+            document.getElementById("animations-window-body").style.width = clamp(width, 100, 500) - 4 + "px";
         }
 
         document.getElementById("add-animation").onclick = function(){
@@ -62,6 +63,11 @@ class Animator{
     }
 
     reposition_anim_bounds(anim){
+        if(state.tile_w * state.zoom < 32 || state.tile_h * state.zoom < 32) {
+            this.hide_anim_rects();
+            return;
+        }
+        
         if(!this.animations.length) { return; }
         state.anim_start_rect.style.left = tile_x(anim.frames[0].x) - 1 + "px";
         state.anim_start_rect.style.top = tile_y(anim.frames[0].y) - 1.5 + "px";
@@ -251,13 +257,10 @@ class Frame_Canvas{
         this.wrapper.style.width = state.tile_w * this.zoom + "px";
         this.wrapper.style.height = state.tile_h * this.zoom + "px";
 
-        var zoom_in_button = document.getElementById("frame-zoom-in");
-        zoom_in_button.onclick = function(){
+        document.getElementById("frame-zoom-in").onclick = function(){
             state.frame_canvas.zoom_canvas("in");
         }
-
-        var zoom_out_button = document.getElementById("frame-zoom-out");
-        zoom_out_button.onclick = function(){
+        document.getElementById("frame-zoom-out").onclick = function(){
             state.frame_canvas.zoom_canvas("out");
         }
 
@@ -347,6 +350,7 @@ class Anim_Preview{
         this.prev_time = (new Date()).getTime();
         this.repeat = false;
         this.playing = false;
+
         
         var anim_preview_body = document.getElementById("anim-preview-body")
         var zoom = Math.floor(Math.min(anim_preview_body.offsetWidth / state.tile_w, anim_preview_body.offsetHeight / state.tile_h));
@@ -356,17 +360,26 @@ class Anim_Preview{
             }
         }
         
+        var anim_preview_resizer = document.getElementById("anim-preview-resizer");
+        anim_preview_resizer.onmousedown = set_active_element;
+        anim_preview_resizer.mousedrag_actions = function(){
+            var width = anim_preview_body.getBoundingClientRect().x + anim_preview_body.offsetWidth - event.clientX;
+            anim_preview_body.style.width = clamp(width, 150, 500) - 4 + "px";
+        }
+        
         this.canvas = document.getElementById("anim-preview-canvas");
         this.canvas.width = state.tile_w;
         this.canvas.height = state.tile_h;
         this.canvas.style.width = state.tile_w * this.zoom + "px";
         this.canvas.style.height = state.tile_h * this.zoom + "px";
         this.ctx = this.canvas.getContext("2d");
-
+        
         var owner = this;
         this.play_button = document.getElementById("anim-preview-play");
         this.play_button.onclick = function(){
             owner.toggle_play();
+            owner.prev_time = (new Date()).getTime();
+            owner.drew_frame = false;
             owner.play_animation(owner)();
         }
         this.play_icon = this.play_button.getElementsByClassName("fa-caret-right")[0];
@@ -380,6 +393,28 @@ class Anim_Preview{
                 ? this.style.backgroundColor = "rgb(26, 27, 32)"
                 : this.style.backgroundColor = "transparent";
         }
+
+        document.getElementById("anim-preview-zoom-in").onclick = function(){
+            owner.zoom_preview("in");
+        }
+        document.getElementById("anim-preview-zoom-out").onclick = function(){
+            owner.zoom_preview("out");
+        }
+
+
+    }
+
+    zoom_preview(direction){
+        var current_zoom_index = this.zoom_stages.indexOf(this.zoom);
+        if(direction == "in" && current_zoom_index < this.zoom_stages.length - 1){
+            this.zoom = this.zoom_stages[current_zoom_index + 1];
+        }
+        if(direction == "out" && current_zoom_index > 0){
+            this.zoom = this.zoom_stages[current_zoom_index - 1];
+        }
+
+        this.canvas.style.width = state.tile_w * this.zoom + "px";
+        this.canvas.style.height = state.tile_h * this.zoom + "px";
     }
 
     toggle_play(){
@@ -408,20 +443,21 @@ class Anim_Preview{
                 owner.drew_frame = true;
             }
             
-            var current_time = (new Date()).getTime();
-            var frame_delay = state.current_anim.frames[owner.frame_index].delay;
-            if(current_time - owner.prev_time >= frame_delay){
-                owner.frame_index++;
-                owner.frame_index %= state.current_anim.length;
-                owner.prev_time = current_time;
-                owner.drew_frame = false;
-            }
-
             if(owner.frame_index == state.current_anim.length - 1 && !owner.repeat){ 
                 owner.frame_index = 0;
                 owner.toggle_play();
             }
             if(!owner.playing) { return; }
+            
+            var current_time = (new Date()).getTime();
+            var frame_delay = state.current_anim.frames[owner.frame_index].delay;
+            if(current_time - owner.prev_time >= frame_delay){
+                owner.prev_time = current_time;
+                owner.frame_index++;
+                owner.frame_index %= state.current_anim.length
+                owner.drew_frame = false;
+            }
+            
 
             window.requestAnimationFrame(owner.play_animation(owner));
         }

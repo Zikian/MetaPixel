@@ -1,12 +1,13 @@
 class Canvas_Handler{
     constructor(){
-        this.zoom_stages = [1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 200];
+        this.zoom_stages = [0.125, 0.250, 0.333, 0.5, 1, 2, 3, 4, 5, 6, 8, 12, 18, 28, 38, 50, 70, 200];
         var zoom = Math.floor(Math.min(state.editor.offsetWidth / state.doc_w, state.editor.offsetHeight / state.doc_h));
         for(var i = 0; i < this.zoom_stages.length - 1; i++){
             if(this.zoom_stages[i] <= zoom && zoom <= this.zoom_stages[i+1]){
                 state.zoom = this.zoom_stages[i];
             }
         }
+        if(zoom < this.zoom_stages[0]){ state.zoom = this.zoom_stages[0]; }
         state.prev_zoom = state.zoom;
 
         this.background_canvas = document.createElement("canvas");
@@ -43,18 +44,23 @@ class Canvas_Handler{
             state.zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }
 
+        
         state.canvas_x += state.pixel_pos[0] * (prev_zoom - state.zoom);
         state.canvas_y += state.pixel_pos[1] * (prev_zoom - state.zoom);
-
+        
         correct_canvas_position();
         update_mouse_indicator();
         state.preview_canvas.update_visible_rect();
         state.animator.resize_anim_bounds();
+        state.tile_manager.resize_tile_placer_rect();
+        
+        if(state.tile_w * state.zoom < 32 || state.tile_h * state.zoom < 32){
+            state.tile_manager.hide_indices();
+        } else {
+            state.tile_manager.show_indices();
+        }
 
-        state.tile_placer_rect.style.width = state.tile_w * state.zoom + 1 + "px";
-        state.tile_placer_rect.style.height = state.tile_w * state.zoom + 1 + "px";
-        state.tile_placer_rect.style.left = state.tile_w * state.zoom * state.hovered_tile[0] + canvas_x() + "px";
-        state.tile_placer_rect.style.top = state.tile_h * state.zoom * state.hovered_tile[1] + canvas_y() + "px";
+        state.zoom_info.innerHTML = `Zoom: ${state.zoom}x`;
     }
     
     move_canvas(delta_x, delta_y){
@@ -139,6 +145,8 @@ class Canvas_Handler{
     }
 
     render_tile_grid(){
+        if(state.tile_w * state.zoom < 32 || state.tile_h * state.zoom < 32) { return; }
+
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.beginPath()
         this.draw_ctx.strokeStyle = "rgb(160, 160, 160)"

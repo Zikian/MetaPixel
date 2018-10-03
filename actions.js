@@ -75,6 +75,8 @@ window.addEventListener("mousemove", function(e){
     state.active_element.mousedrag_actions();
 
     state.tool_handler.current_tool.mousemove_actions();
+
+    state.pixel_pos_info.innerHTML = `X: ${state.pixel_pos[0]} Y: ${state.pixel_pos[1]}`;
 });
 
 document.addEventListener("keydown", function(event){
@@ -210,7 +212,6 @@ document.getElementById("sidebar-right-resizer").mousedrag_actions =  function()
     state.preview_canvas.update_visible_rect();
 }
 
-editor.onresize = function(){
-    correct_canvas_position();
+window.onresize = function(){
+    state.canvas_handler.move_canvas(0, 0); //Reset canvas clip because editor is resized
 }
-
