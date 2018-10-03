@@ -27,6 +27,12 @@ function destroy_prev_document(){
     }
 
     state.layer_manager.layers.forEach(layer => { layer.delete(); });
+
+    state.animator.animations.forEach(anim => {
+        anim.delete();
+    })
+    state.animator.hide_anim_rects();
+
 }
 
 function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
@@ -105,6 +111,11 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.download_canvas.width = state.doc_w;
     state.download_canvas.height = state.doc_h;
     state.download_ctx = state.download_canvas.getContext("2d");
+
+    state.temp_canvas = document.createElement("canvas");
+    state.temp_canvas.width = state.doc_w;
+    state.temp_canvas.height = state.doc_h;
+    state.temp_ctx = state.temp_canvas.getContext("2d");
     
     if (!state.transparency){
         state.canvas_handler.draw_canvas.style.background = "none";
@@ -125,7 +136,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.preview_canvas.update_visible_rect();
 }
 
-init("tiled", 4, 4, 16, 16, true, "Untitled");
+init("tiled", 4, 4, 32, 32, true, "Untitled");
 
 function tile_test(){
     state.brush_size = 10;
@@ -231,4 +242,3 @@ function animation_test(){
     state.current_anim.populate_frames(5, 5)
     state.animator.change_animation(0);
 }
-animation_test()

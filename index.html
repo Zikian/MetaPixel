@@ -22,11 +22,10 @@
         <link rel="stylesheet" href="palette/palette_settings.css">
         <link rel="stylesheet" href="preview/preview.css">
         <link rel="stylesheet" href="widgets/widgets.css">
-        <link rel="stylesheet" href="export_window/export_window.css">
+        <link rel="stylesheet" href="export_image_window/export_image_window.css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     </head>
-    <!-- <body oncontextmenu="return false;"> -->
-    <body>
+    <body oncontextmenu="return false;">
         <div id="toolbar">
             <div id="file" class="button">
                 <i class="far fa-file-image" id="file-icon"></i>
@@ -36,7 +35,7 @@
                 <ul>
                     <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="export-button" class="button"><i class="far fa-save"></i>Export Image</li>
+                    <li id="export-image-button" class="button"><i class="far fa-save"></i>Export</li>
                 </ul>
             </div>
 
@@ -75,12 +74,12 @@
                 </div>
                     
                 <div id="document-width-wrapper">
-                    <span>Width (px):</span>
+                    <span id="document-width-span">Width (px):</span>
                     <input id="document-width-input" class="window-input" type="number" value="0" min="0">
                 </div>
 
                 <div id="document-height-wrapper">
-                    <span>Height (px):</span>
+                    <span id="document-height-span">Height (px):</span>
                     <input type="number" id="document-height-input" class="window-input" value="0" min="0">
                 </div>
 
@@ -107,13 +106,18 @@
             <div class="window-footer"></div>
         </div>
 
-        <div id="export-window" class="window">
-            <div id="export-window-header" class="window-header">
-                <span class="window-header-title">Export Image</span>
-                <i id="export-window-cross" class="fas fa-times window-cross"></i>
+        <div id="export-image-window" class="window">
+            <div id="export-image-header" class="window-header">
+                <span class="window-header-title">Export</span>
+                <i id="export-image-cross" class="fas fa-times window-cross"></i>
             </div>
 
-            <form name="export-image-form" id="export-window-body" autocomplete="off" onsubmit="return false">
+            <form name="export-image-form" id="export-image-body" autocomplete="off" onsubmit="return false">
+                <div id="export-type-wrapper">
+                    <div id="image-type"><span>Image</span></div>
+                    <div id="anim-type"><span>Animation</span></div>
+                </div>
+
                 <div id="pixel-size-wrapper">
                     <span>Pixel Scale:</span>
                     <input name="pixel-scale" type="text" id="pixel-size-input" class="window-input" value="1">
@@ -124,14 +128,14 @@
                     <input name="file-name" type="text" id="file-name-input" class="window-input">
                 </div>
 
-                <div id="download-layers-wrapper">
-                    <input name="download-layers" type="checkbox" id="download-layers-checkbox">
-                    <span>Layers as separate files</span>
+                <div id="export-all-wrapper">
+                    <input name="export-all" type="checkbox" id="export-all-checkbox">
+                    <span id="export-all-span">Layers as separate files</span>
                 </div>
 
-                <div id="download-current-layer-wrapper">
-                    <input name="download-current-layer" type="checkbox" >
-                    <span>Only current layer</span>
+                <div id="export-current-wrapper">
+                    <input name="export-current" type="checkbox" >
+                    <span id="export-current-span">Only current layer</span>
                 </div>
 
                 <button name="download-image" id="image-download-button">Download</button>
@@ -657,7 +661,7 @@
         <script src="color_picker/color_operations.js"></script>
         <script src="color_picker/color_picker.js"></script>
         <script src="new_document_panel/new_document_panel.js"></script>
-        <script src="export_window/export_window.js"></script>
+        <script src="export_image_window/export_image_window.js"></script>
         <script src="tools/tools.js"></script>
         <script src="tool_options/tool_options.js"></script>
         <script src="header/header.js"></script>

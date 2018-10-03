@@ -5,7 +5,7 @@ class Header{
         this.file = document.getElementById("file");
         this.file_dropdown = document.getElementById("dropdown");
         this.clear = document.getElementById("clear-button");
-        this.export = document.getElementById("export-button");
+        this.export = document.getElementById("export-image-button");
         
         this.undo = document.getElementById("undo");
         this.undo.onclick = function() { 

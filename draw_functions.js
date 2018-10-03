@@ -196,7 +196,7 @@ function fill(x, y, new_color, old_color) {
         x = new_pos[0];
         y = new_pos[1];
         
-        pixel_pos = (y * state.doc_w + x) * 4;
+        pixel_pos = (x + y * state.doc_w) * 4;
         while(y-- >= selection_y && matchStartColor(pixel_pos)) {
             pixel_pos -= state.doc_w * 4;
         }

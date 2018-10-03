@@ -217,7 +217,7 @@ function download_drawing(name, pixel_scale){
     download_img(name, state.download_canvas.toDataURL());
 }
 
-function download_all_layers(name, pixel_scale){
+function download_all_layers(pixel_scale){
     reset_download_canvas(pixel_scale);
 
     state.layer_manager.layers.forEach(layer => {
@@ -230,7 +230,7 @@ function download_all_layers(name, pixel_scale){
 
         state.download_ctx.globalAlpha = layer.opacity;
         state.download_ctx.drawImage(layer.render_canvas, 0, 0);
-        download_img(name, state.download_canvas.toDataURL());
+        download_img(layer.name_elem.innerHTML, state.download_canvas.toDataURL());
     })
 }
 
@@ -245,6 +245,88 @@ function download_current_layer(name, pixel_scale){
     state.download_ctx.globalAlpha = state.current_layer.opacity;
     state.download_ctx.drawImage(state.current_layer.render_canvas, 0, 0);
     download_img(name, state.download_canvas.toDataURL());
+}
+
+function download_current_anim(name, pixel_scale){
+    state.download_canvas.width = state.tile_w * pixel_scale;
+    state.download_canvas.height = state.tile_h * pixel_scale;
+    state.download_ctx.mozImageSmoothingEnabled = false;
+    state.download_ctx.webkitImageSmoothingEnabled = false;
+    state.download_ctx.imageSmoothingEnabled = false;
+    state.download_ctx.scale(pixel_scale, pixel_scale);
+
+    var encoder = new GIFEncoder();
+    encoder.setRepeat(0);
+    encoder.start();
+    encoder.setQuality(1);
+    
+    state.temp_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
+    state.temp_ctx.drawImage(state.canvas_handler.background_canvas, 0, 0);
+    state.temp_ctx.drawImage(state.canvas_handler.foreground_canvas, 0, 0);
+
+    var img_data = state.temp_ctx.getImageData(0, 0, state.doc_w, state.doc_h);
+    remove_transparency(img_data, state.doc_w, state.doc_h);
+    state.temp_ctx.putImageData(img_data, 0, 0);
+
+    state.current_anim.frames.forEach(frame => {
+        var frame_rect = [0, 0, state.tile_w, state.tile_h];
+        state.download_ctx.clearRect(...frame_rect);
+        var target_rect = [frame.x * state.tile_w, frame.y * state.tile_h, state.tile_w, state.tile_h];
+        state.download_ctx.drawImage(state.temp_canvas, ...target_rect, ...frame_rect);
+        encoder.setDelay(frame.delay);
+        encoder.addFrame(state.download_ctx);
+    });
+    
+    encoder.finish();
+    var data_url = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+    download_img(name, data_url);
+}
+
+function download_all_anims(pixel_scale){
+    state.download_canvas.width = state.tile_w * pixel_scale;
+    state.download_canvas.height = state.tile_h * pixel_scale;
+    state.download_ctx.mozImageSmoothingEnabled = false;
+    state.download_ctx.webkitImageSmoothingEnabled = false;
+    state.download_ctx.imageSmoothingEnabled = false;
+    state.download_ctx.scale(pixel_scale, pixel_scale);
+
+    state.temp_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
+    state.temp_ctx.drawImage(state.canvas_handler.background_canvas, 0, 0);
+    state.temp_ctx.drawImage(state.canvas_handler.foreground_canvas, 0, 0);
+
+    var img_data = state.temp_ctx.getImageData(0, 0, state.doc_w, state.doc_h);
+    remove_transparency(img_data, state.doc_w, state.doc_h);
+    state.temp_ctx.putImageData(img_data, 0, 0);
+
+    state.animator.animations.forEach(anim => {
+        var encoder = new GIFEncoder();
+        encoder.setRepeat(0);
+        encoder.start();
+
+        anim.frames.forEach(frame => {
+            var frame_rect = [0, 0, state.tile_w, state.tile_h];
+            state.download_ctx.clearRect(...frame_rect);
+            var target_rect = [frame.x * state.tile_w, frame.y * state.tile_h, state.tile_w, state.tile_h];
+            state.download_ctx.drawImage(state.temp_canvas, ...target_rect, ...frame_rect);
+            encoder.setDelay(frame.delay);
+            encoder.addFrame(state.download_ctx);            
+        });
+
+        encoder.finish();
+        var data_url = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
+        download_img(anim.name_elem.innerHTML, data_url);
+    })
+
+}
+
+function remove_transparency(img_data, w, h){
+    var pixel_pos = 3;
+    for(var x = 0; x < w; x++){
+        for(var y = 0; y < h; y++){
+            img_data.data[pixel_pos] = 255;
+            pixel_pos += 4;
+        }
+    }
 }
 
 function download_img(name, url){

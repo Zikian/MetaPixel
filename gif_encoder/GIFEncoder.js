@@ -356,7 +356,24 @@ GIFEncoder = function() {
 
 		// get closest match to transparent color if specified
 		if (transparent !== null) {
-			transIndex = findClosest(transparent);
+			if (transparent != null) {
+				transIndex = findClosest(transparent);
+			
+				var r = colorTab[transIndex*3];
+				var g = colorTab[transIndex*3+1];
+				var b = colorTab[transIndex*3+2];
+				var trans_indices = [];
+				for (var i=0; i<colorTab.length; i+=3)
+				{
+					var index = i / 3;
+					if (!usedEntry[index]) continue;
+					if (colorTab[i] == r && colorTab[i+1] == g && colorTab[i+2] == b)
+						trans_indices.push(index);
+				}
+				for (var i=0; i<indexedPixels.length; i++)
+					if (trans_indices.indexOf(indexedPixels[i]) >= 0)
+						indexedPixels[i] = transIndex;
+			}
 		}
 	};
 

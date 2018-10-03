@@ -91,9 +91,12 @@ class New_Document_Panel{
             this.document_height_wrapper.style.gridArea = "4 / 1 / span 1 / span 2"
             this.width_input.style.width = "96%";
             this.height_input.style.width = "96%";
+
+            document.getElementById("document-width-span").innerHTML = "Width (px):"
+            document.getElementById("document-height-span").innerHTML = "Height (px):"
         } else {
             this.document_type = "tiled"
-
+            
             clicked.style.backgroundColor = "transparent";
             this.single_image_button.style.backgroundColor = rgb([195, 213, 236]);
             
@@ -105,6 +108,9 @@ class New_Document_Panel{
             
             this.tile_width_wrapper.style.display = "block"
             this.tile_height_wrapper.style.display = "block"
+
+            document.getElementById("document-width-span").innerHTML = "Width (tiles):"
+            document.getElementById("document-height-span").innerHTML = "Height (tiles):"
         }
     }
 
@@ -128,7 +134,10 @@ class New_Document_Panel{
     }
 
     show_panel(owner){
-        return function(){ owner.panel.style.display = "block"; }
+        return function(){ 
+            owner.panel.style.display = "block"; 
+            owner.switch_document_type(owner.single_image_button);
+        }
     }
 
     hide_panel(owner){

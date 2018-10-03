@@ -561,7 +561,7 @@ class Frame_Setter_Tool extends Tool{
 
         state.anim_start_rect.style.left = tile_x(state.hovered_tile[0]) - 1 + "px";
         state.anim_start_rect.style.top = tile_y(state.hovered_tile[1]) - 1.5 + "px";
-        state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 1) + state.tile_w * state.zoom / 2 + "px";
+        state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 0.5) + "px";
         state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
         state.frame_indicator.style.left = tile_x(state.hovered_tile[0]) + "px";
         state.frame_indicator.style.top = tile_y(state.hovered_tile[1]) + "px";
@@ -574,8 +574,8 @@ class Frame_Setter_Tool extends Tool{
     mousedrag_actions(){
         if(!state.hovered_tile || !state.current_anim){ return; } 
         if(!this.start_pos) { this.mouseleft_actions(); }
-        if(state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x > this.start_pos[0] + this.start_pos[1] * state.tiles_x){
-            state.anim_end_rect.style.left = tile_x(state.hovered_tile[0]) + state.tile_w * state.zoom / 2 + "px";
+        if(state.hovered_tile[0] + state.hovered_tile[1] * state.tiles_x >= this.start_pos[0] + this.start_pos[1] * state.tiles_x){
+            state.anim_end_rect.style.left = tile_x(state.hovered_tile[0] + 0.5) + "px";
             state.anim_end_rect.style.top = tile_y(state.hovered_tile[1]) - 1 + "px";
             this.end_pos = state.hovered_tile;
         }
