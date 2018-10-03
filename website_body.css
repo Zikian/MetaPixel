@@ -89,13 +89,13 @@
     list-style: none;
     margin: 5px 0 0 8px;
     padding: 0;
+    font-family: Montserrat;
 }
 
 #info-wrapper li{
     height: 20px;
     float: left;
     clear: left;
-    font-family: Montserrat;
     color: rgb(104, 104, 112);
     font-size: 10pt;
     display: inline-block;

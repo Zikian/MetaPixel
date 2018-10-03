@@ -146,7 +146,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.preview_canvas.update_visible_rect();
 }
 
-init("tiled", 4, 4, 32, 32, true, "Untitled");
+init("single-image", 100, 100, 0, 0, true, "Untitled");
 
 function tile_test(){
     state.brush_size = 10;
@@ -252,4 +252,3 @@ function animation_test(){
     // state.current_anim.populate_frames(5, 5)
     // state.animator.change_animation(0);
 }
-animation_test();
