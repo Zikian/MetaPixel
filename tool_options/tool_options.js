@@ -4,7 +4,7 @@ class Tool_Options{
 
         input_function = function(){
             var brush_size = parseInt(state.tool_options.brush_size_input.input.value);
-            state.brush_size = brush_size;
+            state.brush_size = [brush_size, brush_size];
             state.frame_canvas.mouse_indicator.style.width = state.brush_size * state.frame_canvas.zoom + "px";
             state.frame_canvas.mouse_indicator.style.height = state.brush_size * state.frame_canvas.zoom + "px";
         }

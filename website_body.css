@@ -86,7 +86,6 @@
 }
 
 #info-wrapper{
-    list-style: none;
     margin: 5px 0 0 8px;
     padding: 0;
     font-family: Montserrat;
@@ -98,7 +97,6 @@
     clear: left;
     color: rgb(104, 104, 112);
     font-size: 10pt;
-    display: inline-block;
 }
 
 #draw-canvas{
@@ -138,4 +136,57 @@
     line-height: 30px;
     font-size: 10pt;
     color: white;
+}
+
+.selection-resizer{
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    outline: 3px solid lightgray;
+    background-color: rgba(0, 0, 0, 0.603);
+    display: none;
+}
+
+.selection-resizer:hover{
+    outline: 3px solid rgb(36, 36, 36);
+}
+
+.TL-resizer{
+    top: -5px;
+    left: -5px;
+}
+
+.TM-resizer{
+    top: -5px;
+    left: 49%;
+}
+
+.TR-resizer{
+    top: -5px;
+    right: -5px;
+}
+
+.ML-resizer{
+    top: 49%;
+    left: -5px;
+}
+
+.MR-resizer{
+    top: 49%;
+    right: -5px;
+}
+
+.BL-resizer{
+    bottom: -5px;
+    left: -5px;
+}
+
+.BM-resizer{
+    bottom: -5px;
+    left: 49%;
+}
+
+.BR-resizer{
+    bottom: -5px;
+    right: -5px;
 }

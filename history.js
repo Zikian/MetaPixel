@@ -5,6 +5,8 @@ class History_Manager{
         this.prev_data = null;
         this.prev_selection_state = null;
         
+        this.prev_copy_data = null;
+
         this.prev_tile_data = [];
         this.prev_tile_indices = [];
         this.prev_tile_positions = [];
@@ -12,7 +14,7 @@ class History_Manager{
 
     add_history(type, args){
         this.redo_history = []
-        if(this.history.length > 30){
+        if(this.history.length > 80){
             this.history.shift();
         }
         switch(type){
@@ -68,16 +70,27 @@ class History_Manager{
             case "delete-animation":
                 this.history.push(new Delete_Animation(...args));
                 break;
-            }
-
+            case "commit-selection":
+                this.history.push(new Commit_Selection(this.prev_data, this.prev_tile_data, this.prev_copy_data));
+                break;
+            case "detach-selection":
+                this.history.push(new Detach_Selection(this.prev_data, this.prev_tile_data, this.prev_selection_state));
+                break;
+            case "load-clipboard":
+                this.history.push(new Load_Clipboard(this.prev_selection_state));
+                break;
+            case "paste-selection":
+                this.history.push(new Paste_Selection(this.prev_data, this.prev_tile_data, this.prev_selection_state));
+                break;
+        }
     }
 
     undo_last(){
         if(this.history.length == 0) { return; }
         this.history[this.history.length - 1].undo();
-        this.redo_history.push(this.history.pop());
-        
+        this.redo_history.push(this.history.pop());    
     }
+    
     redo_last(){
         if(this.redo_history.length == 0) { return; }
         this.redo_history[this.redo_history.length - 1].redo();
@@ -93,7 +106,7 @@ class Pen_Stroke{
         this.prev_tile_data = prev_tile_data;
         this.new_tile_data = state.tile_manager.get_tile_data();
     }
-
+    
     undo(){
         state.layer_manager.layers[this.layer_index].draw_data(this.prev_data);
         state.tile_manager.draw_data(this.prev_tile_data);
@@ -115,10 +128,14 @@ class Selection_History{
 
     undo(){
         state.selection.load_from_state(this.prev_selection_state);
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
     }
-
+    
     redo(){
         state.selection.load_from_state(this.new_selection_state);
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
     }
 }
 
@@ -364,5 +381,106 @@ class Delete_Animation{
 
     redo(){
         state.animator.delete_animation(this.deleted_animation.index);
+    }
+}
+
+class Commit_Selection{
+    constructor(prev_data, prev_tile_data, prev_copy_data){
+        this.new_selection_state = state.selection.get_state();
+        this.pen_stroke = new Pen_Stroke(prev_data, prev_tile_data);
+        this.copy_data = prev_copy_data;
+        this.prev_selection_w = state.selection.prev_selection_w;
+        this.prev_selection_h = state.selection.prev_selection_h;
+    }
+
+    undo(){
+        this.pen_stroke.undo();
+
+        state.selection.transform = true;
+        state.selection.toggle_resizers();
+
+        state.selection.copy_canvas.width = this.prev_selection_w;
+        state.selection.copy_canvas.height = this.prev_selection_h;
+        state.selection.copy_ctx.putImageData(this.copy_data, 0, 0);
+
+        state.selection.draw_paste_canvas();
+
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
+        state.frame_canvas.render();
+    }
+
+    redo(){
+        state.selection.load_from_state(this.new_selection_state);
+        state.selection.draw_paste_canvas();
+        state.selection.commit();
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
+    }
+}
+
+class Detach_Selection{
+    constructor(prev_data, prev_tile_data, prev_selection_state){
+        this.prev_selection_state = prev_selection_state;
+        this.pen_stroke = new Pen_Stroke(prev_data, prev_tile_data)
+    }
+
+    undo(){
+        state.selection.transform = false;
+        state.selection.toggle_resizers();
+
+        this.pen_stroke.undo();
+        state.selection.load_from_state(this.prev_selection_state);
+
+        state.selection.copy_canvas.width = state.selection.copy_canvas.width
+        state.selection.paste_canvas.width = state.selection.paste_canvas.width
+
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
+        state.frame_canvas.render();
+    }
+
+    redo(){
+        state.selection.detach();
+    }
+}
+
+class Paste_Selection{
+    constructor(prev_data, prev_tile_data, prev_selection_state){
+        this.prev_selection_state = prev_selection_state;
+        this.new_selection_state = state.selection.get_state();
+        this.pen_stroke = new Pen_Stroke(prev_data, prev_tile_data);
+    }
+
+    undo(){
+        state.selection.load_from_state(this.prev_selection_state)
+        this.pen_stroke.undo();
+    }
+    
+    redo(){
+        state.selection.load_from_state(this.new_selection_state)
+        this.pen_stroke.redo();
+    }
+}
+
+class Load_Clipboard{
+    constructor(prev_selection_state){
+        this.prev_selection_state = prev_selection_state;
+    }
+
+    undo(){
+        state.selection.load_from_state(this.prev_selection_state);
+        state.selection.transform = false;
+        state.selection.toggle_resizers();
+
+        state.selection.copy_canvas.width = state.selection.copy_canvas.width;
+        state.selection.paste_canvas.width = state.selection.paste_canvas.width;
+
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.redraw();
+    }
+
+    redo(){
+        state.selection.load_clipboard();
     }
 }

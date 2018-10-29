@@ -62,3 +62,8 @@ span, img, .button, button, div{
     width: 0px;
     background: transparent;
 }
+
+ul{
+    list-style: none;
+    
+}

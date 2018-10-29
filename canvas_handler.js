@@ -43,7 +43,6 @@ class Canvas_Handler{
         } else if (direction == "out" && zoom_stage_index > 0) {
             state.zoom = this.zoom_stages[zoom_stage_index - 1]; 
         }
-
         
         state.canvas_x += state.pixel_pos[0] * (prev_zoom - state.zoom);
         state.canvas_y += state.pixel_pos[1] * (prev_zoom - state.zoom);
@@ -88,7 +87,7 @@ class Canvas_Handler{
         state.preview_canvas.update_visible_rect();
         state.animator.update_frame_indicator();
         state.tile_manager.reposition_indices();
-        this.render_draw_canvas();
+        this.render_drawing();
         state.animator.reposition_anim_bounds(state.current_anim);
     }
     
@@ -119,16 +118,17 @@ class Canvas_Handler{
         this.redraw_foreground();
     }
 
-    render_draw_canvas(){
-        this.draw_ctx.clearRect(0, 0, this.draw_canvas.width, this.draw_canvas.height);
+    render_drawing(){
+        this.draw_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
+        this.draw_ctx.drawImage(state.selection.paste_canvas, state.selection.x, state.selection.y);
         this.draw_ctx.drawImage(this.foreground_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
         this.render_tile_grid();
     }
 
     render_background(){
-        this.draw_ctx.clearRect(0, 0, this.draw_canvas.width, this.draw_canvas.height)
+        this.draw_ctx.clearRect(0, 0, state.doc_w, state.doc_h)
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
 
@@ -137,7 +137,7 @@ class Canvas_Handler{
     }
     
     render_foreground(){
-        this.draw_ctx.imageSmoothingEnabled = false;
+        this.draw_ctx.imageSmoothingEnabled = false;    
         this.draw_ctx.drawImage(this.foreground_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
         this.render_tile_grid();
 

@@ -1,7 +1,7 @@
 window.addEventListener('mouseup', function(e) {
     state.drawbuffer = [];
 
-    if(state.active_element == state.editor || state.active_element == state.frame_canvas.wrapper){
+    if(state.active_element == state.editor || state.active_element == state.frame_canvas.wrapper || state.active_element == state.selection.frame_selection_rect){
         state.tool_handler.current_tool.mouseup_actions();
     }
 
@@ -21,23 +21,25 @@ window.addEventListener('mouseup', function(e) {
 }, false);
 
 window.addEventListener('mousedown', function(e) {
-    if (state.active_element == state.frame_canvas.wrapper) {
+    state.drawbuffer.push(state.pixel_pos);
+    state.mouse_start = state.pixel_pos;
+    state.mouse_end = state.mouse_start;            
+    state.rect_size = [0, 0];
+    
+    if (state.active_element == state.frame_canvas.wrapper || state.active_element.className.includes("frame-selection-resizer")) {
         pixel_pos_from_frame();
     }
-
+    
     if(state.active_element != state.editor && state.active_element != state.frame_canvas.wrapper) { return; }
 
+    state.selection_start = calc_true_pixel_pos();
+    
     // Right Click
     if(e.button == 2){
         state.tool_handler.current_tool.mouseright_actions();
     } 
     // Left Click
     else if (e.button == 0){
-        state.drawbuffer.push(state.pixel_pos);
-        state.mouse_start = state.pixel_pos;
-        state.mouse_end = state.mouse_start;
-        state.rect_size = [0, 0];
-        state.selection_start = calc_true_pixel_pos();
         state.tool_handler.current_tool.mouseleft_actions();
     }
 
@@ -56,7 +58,7 @@ window.addEventListener("mousemove", function(e){
     state.frame_pixel_pos = calc_frame_pixel_pos();
     state.frame_canvas.update_mouse_indicator();  
     
-    if(state.active_element == state.frame_canvas.wrapper) {
+    if(state.active_element == state.frame_canvas.wrapper || state.active_element == state.selection.frame_selection_rect || state.active_element.className.includes("frame-selection-resizer")) {
         pixel_pos_from_frame();
     }
     state.delta_pixel_pos = [state.pixel_pos[0] - prev_pixel_pos[0], state.pixel_pos[1] - prev_pixel_pos[1]];
@@ -84,7 +86,9 @@ document.addEventListener("keydown", function(event){
     switch(event.keyCode){
         case 8: // BACKSPACE
             if(!state.selection.exists){ return; }
+            state.history_manager.prev_data = state.current_layer.get_data();
             clear_selection_contents();
+            state.history_manager.add_history("pen-stroke");
             break;
         case 32: // SPACE
             if(state.input.space) { return; }
@@ -95,13 +99,20 @@ document.addEventListener("keydown", function(event){
             state.input.ctrl = true;
             break;
         case 18: // ALT
-            state.tool_handler.change_tool("eyedropper");
+            state.input.alt = true;
+            if(state.tool_handler.current_tool.id != "select"){
+                state.tool_handler.change_tool("eyedropper");
+            }
             break;
         case 67: // C
-            state.color_picker.old_color = state.color_picker.rgb;
-            state.color_picker.old_alpha = state.color_picker.alpha;
-            state.color_picker.toggle_display();
-            state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.color;
+            if(state.input.ctrl && !state.selection.transform){
+                state.selection.copy();
+            } else {
+                state.color_picker.old_color = state.color_picker.rgb;
+                state.color_picker.old_alpha = state.color_picker.alpha;
+                state.color_picker.toggle_display();
+                state.color_picker.old_color_rect.style.backgroundColor = state.color_picker.color;
+            }
             break;
         case 68: // D
             state.tool_handler.change_tool("drawtool");
@@ -120,6 +131,15 @@ document.addEventListener("keydown", function(event){
             break;
         case 83: // S
             state.tool_handler.change_tool("select");
+            break;
+        case 86: // V
+            if(state.input.ctrl){
+                state.selection.prev_selection_w = state.selection.w;
+                state.selection.prev_selection_h = state.selection.h;
+                state.history_manager.prev_selection_state = state.selection.get_state();
+                state.selection.load_clipboard();
+                state.history_manager.add_history("load-clipboard")
+            }
             break;
         case 88: // X
             state.color_picker.update_color("switch-colors");
@@ -157,7 +177,8 @@ document.addEventListener("keyup", function(event){
             }
             break;
         case 18: // ALT
-            if(state.tool_handler.prev_tool.id != "select"){
+            state.input.alt = false;
+            if(state.tool_handler.prev_tool.id != "select" && state.tool_handler.current_tool.id != "select"){
                 state.tool_handler.change_tool(state.tool_handler.prev_tool.elem.id);
             }
             break;
@@ -186,7 +207,7 @@ state.editor.addEventListener("dblclick",  function(){
         state.history_manager.prev_selection_state = state.selection.get_state();
         var x1 = state.hovered_tile[0] * state.tile_w;
         var y1 = state.hovered_tile[1] * state.tile_h;
-        state.selection.draw_selection(x1, y1, state.tile_w, state.tile_w);
+        state.selection.form_selection(x1, y1, state.tile_w, state.tile_w);
         state.history_manager.add_history("selection")
     }
 })

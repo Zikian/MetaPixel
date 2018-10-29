@@ -69,6 +69,9 @@ class Preview_Canvas{
                 this.ctx.globalAlpha = layer.opacity;
                 this.ctx.drawImage(layer.render_canvas, 0, 0);
             }
+            if(layer == state.current_layer){
+                this.ctx.drawImage(state.selection.paste_canvas, state.selection.x * this.zoom, state.selection.y * this.zoom);
+            }
         })
     }
 

@@ -80,10 +80,9 @@ class Layer {
     }
 
     draw_data(data){
-        this.clear();
         this.render_ctx.putImageData(data, 0, 0);
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
         state.preview_canvas.redraw();
     }
 
@@ -91,7 +90,7 @@ class Layer {
         this.opacity = settings.opacity;
         this.name_elem.innerHTML = settings.name;
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
     }
 
     clear() {
@@ -107,7 +106,7 @@ class Layer {
         }
         this.visible = !this.visible;
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
         state.preview_canvas.redraw();
     }
 

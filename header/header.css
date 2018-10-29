@@ -1,10 +1,44 @@
 #toolbar{
     display: grid;
-    grid-template-columns: 100px 100px 100px;
+    grid-template-columns: 100px 100px 100px 100px;
     grid-column: 1;
     grid-row: 1;
     background-color: rgb(59, 59, 65);
     z-index: 10;
+}
+
+.dropdown{
+    display: none;
+    position: absolute;
+    width: 200px;
+    height: auto;
+    background-color: rgb(73, 73, 82);
+    border-radius: 0 5px 5px 5px;
+    top: 30px;
+    box-shadow: 0px 8px 22px -2px rgba(0,0,0,0.75);
+}
+
+.dropdown ul{
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown li{
+    font-family: Montserrat-Regular;
+    font-size: 10pt;
+    color: white;
+    line-height: 30px;
+    padding-left: 15px;
+}
+
+.dropdown li:hover{
+    background-color: rgb(92, 92, 105);
+}
+
+.dropdown li i{
+    font-size: 13pt;
+    margin-right: 7px;
+    line-height: 30px;
 }
 
 #file{
@@ -15,10 +49,6 @@
     text-align: center;
     height: 30px;
     float: left;
-}
-
-#file * {
-    pointer-events: none;
 }
 
 #file #file-icon{
@@ -39,33 +69,13 @@
     justify-self: left;
 }
 
-#dropdown{
-    display: none;
-    position: absolute;
-    width: 200px;
-    height: auto;
-    background-color: rgb(59, 59, 65);
-    border-radius: 0 5px 5px 5px;
-    top: 30px;
+#new-button{
+    border-top-right-radius: 5px;
 }
 
-#dropdown ul{
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-#dropdown li{
-    font-family: Montserrat-Regular;
-    font-size: 10pt;
-    color: white;
-    line-height: 30px;
-    padding-left: 20px;
-}
-
-#dropdown li i{
-    font-size: 13pt;
-    margin-right: 5px;
+#export-image-button{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 #undo{
@@ -152,4 +162,56 @@
     font-size: 20pt;
     left: 67px;
     top: -15px;
+}
+
+#selection-settings{
+    position: relative;
+    grid-column: 4;
+    height: 30px;
+    float: left;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+}
+
+#selection-settings-icon{
+    float: left;
+    grid-column: 1;
+    font-size: 12pt;
+    color: white;
+    margin-right: 5px;
+    line-height: 30px;
+    justify-self: right;
+}
+
+#selection-settings-span{
+    grid-column: 2;
+    font-size: 9pt;
+    color: white;
+    font-family: Montserrat-Regular;
+    line-height: 30px;
+    justify-self: left;
+}
+
+#selection-dropdown{
+    left: 300px;
+}
+
+#selection-dropdown li i{
+    font-size: 13pt;
+    margin-right: 5px;
+}
+
+#flip-horizontal{
+    padding-left: 11px;
+    border-top-right-radius: 5px;
+}
+
+#flip-vertical{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#flip-vertical i{
+    margin-right: 9px !important;
 }

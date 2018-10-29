@@ -135,7 +135,7 @@ class Animator{
         this.update_delay_input();
         this.update_frame_indicator();
         state.frame_canvas.render();
-        state.frame_canvas.update_selection();
+        state.selection.update_frame_selection();
     }
 
     change_animation(index){
@@ -267,21 +267,6 @@ class Frame_Canvas{
         this.mouse_indicator = document.getElementById("frame-mouse-indicator");
         this.mouse_indicator.style.width = this.zoom + "px";
         this.mouse_indicator.style.height = this.zoom + "px";
-
-        this.selection_rect = document.getElementById("frame-selection-rect");
-    }
-
-    update_selection(){
-        if(state.frame_pos == null) { return; }
-        this.selection_rect.style.left = (state.selection.x - state.frame_pos[0]) * this.zoom + "px";
-        this.selection_rect.style.top = (state.selection.y - state.frame_pos[1]) * this.zoom + "px";
-        this.selection_rect.style.width = state.selection.w * this.zoom + "px";
-        this.selection_rect.style.height = state.selection.h * this.zoom + "px";
-        if(state.selection.exists){
-            this.selection_rect.style.display = "block"
-        } else {
-            this.selection_rect.style.display = "none"
-        }
     }
 
     contains_mouse(){
@@ -305,7 +290,7 @@ class Frame_Canvas{
         this.mouse_indicator.style.width = this.zoom + "px";
         this.mouse_indicator.style.height = this.zoom + "px";
 
-        this.update_selection();
+        state.selection.update_frame_selection();
     }
 
     update_mouse_indicator(){
@@ -323,6 +308,7 @@ class Frame_Canvas{
         var target_rect = [...state.frame_pos, state.tile_w, state.tile_h];
         var frame_rect = [0, 0, state.tile_w, state.tile_h];
         this.ctx.drawImage(state.canvas_handler.background_canvas, ...target_rect, ...frame_rect);
+        this.ctx.drawImage(state.selection.paste_canvas, state.selection.x - state.frame_pos[0], state.selection.y - state.frame_pos[1]);
         this.ctx.drawImage(state.canvas_handler.foreground_canvas, ...target_rect, ...frame_rect);
     }
     

@@ -60,7 +60,7 @@ class Layer_Manager{
 
         state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
     }
 
     update_layer_indices(){
@@ -83,7 +83,7 @@ class Layer_Manager{
         this.update_layer_indices();
         state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
     }
 
     clear_layers(){

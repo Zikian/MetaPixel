@@ -193,7 +193,7 @@ function correct_canvas_position(){
     state.canvas_handler.draw_ctx.scale(state.zoom, state.zoom);
 
     state.canvas_handler.render_tile_grid();
-    state.canvas_handler.render_draw_canvas();
+    state.canvas_handler.render_drawing();
     state.tile_manager.reposition_indices()
     state.animator.reposition_anim_bounds(state.current_anim);
     state.animator.update_frame_indicator();

@@ -11,7 +11,7 @@ class Layer_Settings{
             var opacity = state.layer_settings.opacity_input.input.value / 255;
             state.layer_settings.target.opacity = opacity;
             state.canvas_handler.redraw_layers();
-            state.canvas_handler.render_draw_canvas();
+            state.canvas_handler.render_drawing();
         }
         this.opacity_input = new Input_Slider("opacity-setting", "Opacity", 255, 255, input_function);
         this.ok_button = document.getElementById("layer-settings-ok");
@@ -65,7 +65,7 @@ class Layer_Settings{
             owner.wrapper.style.display = "none"
             owner.target.opacity = owner.prev_opacity;
             state.canvas_handler.redraw_layers();
-            state.canvas_handler.render_draw_canvas();
+            state.canvas_handler.render_drawing();
         }
     }
 }

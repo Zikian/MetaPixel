@@ -1,5 +1,4 @@
 var state = {
-    header: new Header(),
     editor: document.getElementById("editor"),
     mouse_indicator: document.getElementById("mouse-indicator"),
     selection_size_element: document.getElementById("selection-size"),
@@ -13,6 +12,7 @@ var state = {
     input: {
         ctrl: false,
         shift: false,
+        alt: false,
         last_shortcut: null,
         space: false,
         prevent_doubleclick: false
@@ -60,7 +60,6 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.doc_h = doc_h;
     state.tiles_x = state.doc_w / state.tile_w;
     state.tiles_y = state.doc_h / state.tile_h;
-    
     
     state.hidden_x = 0;
     state.hidden_y = 0;
@@ -146,7 +145,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.preview_canvas.update_visible_rect();
 }
 
-init("single-image", 100, 100, 0, 0, true, "Untitled");
+init("tiled", 4, 4, 32, 32, true, "Untitled");
 
 function tile_test(){
     state.brush_size = 10;
@@ -161,9 +160,9 @@ function tile_test(){
     state.tile_manager.place_tile(state.tile_manager.tiles[1], 2, 1);
     state.tile_manager.place_tile(state.tile_manager.tiles[2], 3, 0);
     state.tile_manager.place_tile(state.tile_manager.tiles[3], 3, 1);
-    draw_pixel([0, 0, 0, 255], 10, 10);
+    // draw_pixel([0, 0, 0, 255], 10, 10);
     state.brush_size = 3;
-    draw_pixel([0, 0, 0, 255], 20, 20);
+    // draw_pixel([0, 0, 0, 255], 20, 20);
 }
 
 function layer_tile_test(){
@@ -248,7 +247,9 @@ function animation_test(){
     state.animator.add_animation();
     state.current_anim.populate_frames(0, 4)
     // state.animator.add_animation();
-    // state.animator.change_animation(1);
+    state.animator.change_animation(0);
     // state.current_anim.populate_frames(5, 5)
     // state.animator.change_animation(0);
 }
+
+animation_test();

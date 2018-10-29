@@ -115,6 +115,9 @@
     position: relative;
     justify-self: center;
     align-self: center;
+}
+
+#frame-canvas-container{
     overflow: hidden;
 }
 

@@ -32,11 +32,11 @@
                 <i class="far fa-file-image" id="file-icon"></i>
                 <span>File</span>
             </div>
-            <div id="dropdown">
+            <div id="file-dropdown" class="dropdown">
                 <ul>
-                    <li id="new-button" class="button"><i class="far fa-file"></i>New</li>
-                    <li id="clear-button" class="button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="export-image-button" class="button"><i class="far fa-save"></i>Export</li>
+                    <li id="new-button"><i class="far fa-file"></i>New</li>
+                    <li id="clear-button"><i class="far fa-trash-alt"></i>Clear</li>
+                    <li id="export-image-button"><i class="far fa-save"></i>Export</li>
                 </ul>
             </div>
 
@@ -56,6 +56,17 @@
                     <span>Redo (CTRL+SHIFT+Z)</span>
                     <i class="fas fa-caret-up" style="color: black;"></i>
                 </div>
+            </div>
+
+            <div id="selection-settings" class="button">
+                <i class="fas fa-cog" id="selection-settings-icon"></i>
+                <span id="selection-settings-span">Selection</span>
+            </div>
+            <div id="selection-dropdown" class="dropdown">
+                <ul>
+                    <li id="flip-horizontal"><i class="fas fa-arrows-alt-h"></i>Flip Horizontal</li>
+                    <li id="flip-vertical"><i class="fas fa-arrows-alt-v"></i>Flip Vertical</li>
+                </ul>
             </div>
         </div>
 
@@ -195,7 +206,9 @@
                     <div id="select-tooltip" class="tooltip">
                         <span>Select Tool (S)</span>
                         <span>Drag to move selection</span>
-                        <span>DEL to erase contents</span>
+                        <span>Erase contents (DEL)</span>
+                        <span>Transform (Shift + Click)</span>
+                        <span>Paste (Alt + Click)</span>
                         <i class="fas fa-caret-left" style="color: black;"></i>
                     </div>
                 </div>
@@ -316,12 +329,21 @@
                         <li id="pixel-pos-info"></li>
                         <li id="size-info"></li>
                     </ul>
+                    <canvas id="draw-canvas"></canvas>
                     <div id="current-frame-indicator"></div>
                     <div id="anim-start-rect"></div>
                     <div id="anim-end-rect"></div>
                     <div id="tile-placer-rect"></div>
-                    <div id="selection-rect"></div>
-                    <canvas id="draw-canvas"></canvas>
+                    <div id="selection-rect">
+                        <div class="selection-resizer TL-resizer"></div>
+                        <div class="selection-resizer TM-resizer"></div>
+                        <div class="selection-resizer TR-resizer"></div>
+                        <div class="selection-resizer ML-resizer"></div>
+                        <div class="selection-resizer MR-resizer"></div>
+                        <div class="selection-resizer BL-resizer"></div>
+                        <div class="selection-resizer BM-resizer"></div>
+                        <div class="selection-resizer BR-resizer"></div>
+                    </div>
                     <div id="mouse-indicator"></div>
                 </div>
 
@@ -346,9 +368,20 @@
                             <div id="frames-window-header"><span>Frame Editor</span></div>
                             <div id="frames-window-body">
                                 <div id="frame-canvas-wrapper">
-                                    <div id="frame-mouse-indicator"></div>
-                                    <div id="frame-selection-rect"></div>
-                                    <canvas id="anim-frame-canvas"></canvas>
+                                    <div id="frame-canvas-container">
+                                        <div id="frame-mouse-indicator"></div>
+                                        <canvas id="anim-frame-canvas"></canvas>
+                                    </div>
+                                    <div id="frame-selection-rect">
+                                        <div class="selection-resizer TL-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer TM-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer TR-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer ML-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer MR-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer BL-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer BM-resizer frame-selection-resizer"></div>
+                                        <div class="selection-resizer BR-resizer frame-selection-resizer"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div id="frames-window-footer">

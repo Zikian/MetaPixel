@@ -124,7 +124,7 @@ class Eraser_Tool extends Tool{
         state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
         erase_pixel(...state.pixel_pos)
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
     }
 
     mousedrag_actions(){
@@ -132,7 +132,7 @@ class Eraser_Tool extends Tool{
             draw_line(...state.drawbuffer[0], ...state.drawbuffer[1], true)
             state.drawbuffer.shift()
             state.canvas_handler.redraw_layers();
-            state.canvas_handler.render_draw_canvas();
+            state.canvas_handler.render_drawing();
         }
     }
 
@@ -156,13 +156,31 @@ class Selection_Tool extends Tool{
 
     mouseleft_actions(){
         state.history_manager.prev_selection_state = state.selection.get_state();
-        if((state.active_element == state.editor || state.active_element == state.frame_canvas.wrapper) && !state.selection.contains_mouse()){
-            state.input.prevent_doubleclick = false;
-            state.selection.clear();
+        state.history_manager.prev_data = state.current_layer.get_data();
+        state.history_manager.prev_tile_data = state.tile_manager.get_tile_data();
+
+        var contains_mouse = state.selection.contains_mouse()
+        
+        if(!contains_mouse){ 
+            if(state.selection.transform){
+                state.history_manager.prev_copy_data = state.selection.copy_ctx.getImageData(0, 0, state.selection.w, state.selection.h);
+                state.selection.commit();
+                state.history_manager.add_history("commit-selection");
+            } else {
+                state.selection.clear();
+            }
+        } else if (!state.selection.transform && state.input.shift) {
+            state.selection.prev_selection_w = state.selection.w;
+            state.selection.prev_selection_h = state.selection.h;
+            state.selection.detach(); 
+            state.history_manager.add_history("detach-selection");
+        } else if (state.selection.transform && state.input.alt){
+            state.selection.paste();
+            state.history_manager.add_history("paste-selection");
         }
-        if (!state.selection.contains_mouse() || !state.selection.exists){
-            state.selection.forming = true;
-        }
+
+        state.input.prevent_doubleclick = contains_mouse;
+        state.selection.forming = !contains_mouse || !state.selection.exists;
     }
     
     mousedrag_actions(){
@@ -172,12 +190,14 @@ class Selection_Tool extends Tool{
             if(state.input.shift){
                 state.selection_end = rect_to_square(state.selection_end);
             }
-            state.selection.form_selection();
+            state.selection.draw();
             update_rect_size_preview(state.selection.w, state.selection.h)
         } 
         if (state.selection.exists && state.selection.contains_mouse() && !state.selection.forming || state.selection.being_dragged){
             state.selection.being_dragged = true;
             state.selection.drag();
+            state.canvas_handler.render_drawing();
+            state.preview_canvas.redraw();
         }
     }
 
@@ -190,8 +210,10 @@ class Selection_Tool extends Tool{
         var new_selection = JSON.stringify(state.selection.get_state());
         if(prev_selection == new_selection){ return; }
 
-        state.selection.get_intersection();
-        state.history_manager.add_history("selection")
+        if(!state.selection.transform) { 
+            state.selection.get_intersection(); 
+            state.history_manager.add_history("selection");
+        }
     }
 
     on_exit(){
@@ -229,7 +251,7 @@ class Fill_Tool extends Tool{
 
         state.preview_canvas.redraw();
         state.canvas_handler.redraw_layers();
-        state.canvas_handler.render_draw_canvas();
+        state.canvas_handler.render_drawing();
 
         state.frame_canvas.render();
     }
@@ -359,14 +381,12 @@ class Horizontal_Mirror_Tool extends Tool{
     }
 
     mousedrag_actions(){
-        if (state.drawbuffer.length == 2){
-            draw_line(...state.drawbuffer[0], ...state.drawbuffer[1])
-            var start_x = state.doc_w - state.drawbuffer[0][0];
-            var end_x = state.doc_w - state.drawbuffer[1][0];
-            draw_line(start_x, state.drawbuffer[0][1], end_x, state.drawbuffer[1][1]);
-            state.drawbuffer.shift()
-            state.canvas_handler.render_foreground();
-        }
+        draw_line(...state.drawbuffer[0], ...state.drawbuffer[1])
+        var start_x = state.doc_w - state.drawbuffer[0][0];
+        var end_x = state.doc_w - state.drawbuffer[1][0];
+        draw_line(start_x, state.drawbuffer[0][1], end_x, state.drawbuffer[1][1]);
+        state.drawbuffer.shift()
+        state.canvas_handler.render_foreground();
     }
 
     mouseup_actions(){
