@@ -50,10 +50,20 @@ class Selection{
         }
 
         for(var i = 0; i < 16; i++){
-            this.resizers[i].resize_action = this.resize_actions[i % 8];
+            this.resizers[i].resize_action = this.resize_actions[i];
             this.resizers[i].onmousedown = function(){
                 pauseEvent(event);
                 state.active_element = this;
+                state.selection.update_resize_state(this.resize_action);
+            }
+        }
+        
+        for(var i = 8; i < 16; i++){
+            this.resizers[i].resize_action = this.resize_actions[i - 8]
+            this.resizers[i].onmousedown = function(){
+                pauseEvent(event);
+                state.active_element = this;
+                pixel_pos_from_frame();
                 state.selection.update_resize_state(this.resize_action);
             }
         }
