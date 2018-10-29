@@ -40,7 +40,7 @@ class Selection{
             4: "middle-right",
             5: "bottom-left",
             6: "bottom-middle",
-            7: "botton-right",
+            7: "bottom-right",
         }
 
         for(var i = 0; i < 16; i++){
@@ -49,7 +49,7 @@ class Selection{
             }
         }
 
-        for(var i = 0; i < 16; i++){
+        for(var i = 0; i < 8; i++){
             this.resizers[i].resize_action = this.resize_actions[i];
             this.resizers[i].onmousedown = function(){
                 pauseEvent(event);
