@@ -324,7 +324,7 @@ class Selection{
     copy(){
         this.clipboard_canvas.width = this.w;
         this.clipboard_canvas.height = this.h;
-        this.clipboard_ctx.drawImage(state.current_layer.render_canvas, this.x, this.y, this.w, this.h, 0, 0, this.w, this.h);
+        this.clipboard_ctx.drawImage(state.current_layer.render_canvas, this.x - state.pixel_hidden_x, this.y - state.pixel_hidden_y, this.w, this.h, 0, 0, this.w, this.h);
     }
 
     load_clipboard(){

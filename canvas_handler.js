@@ -122,7 +122,7 @@ class Canvas_Handler{
         this.draw_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
         this.draw_ctx.imageSmoothingEnabled = false;
         this.draw_ctx.drawImage(this.background_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
-        this.draw_ctx.drawImage(state.selection.paste_canvas, state.selection.x, state.selection.y);
+        this.draw_ctx.drawImage(state.selection.paste_canvas, state.selection.x - state.pixel_hidden_x, state.selection.y - state.pixel_hidden_y);
         this.draw_ctx.drawImage(this.foreground_canvas, -state.pixel_hidden_x, -state.pixel_hidden_y);
         this.render_tile_grid();
     }
