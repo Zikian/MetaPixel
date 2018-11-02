@@ -145,6 +145,7 @@ class Canvas_Handler{
     }
 
     render_tile_grid(){
+        if(state.document_type != "tiled") { return; } 
         if(state.tile_w * state.zoom < 32 || state.tile_h * state.zoom < 32) { return; }
 
         this.draw_ctx.imageSmoothingEnabled = false;

@@ -55,6 +55,7 @@ function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){
     state.brush_size = 1;
     state.transparency = transparency;
     state.document_name = name;
+    state.document_type = document_type;
     state.prev_pixel = {};
     state.doc_w = doc_w;
     state.doc_h = doc_h;
