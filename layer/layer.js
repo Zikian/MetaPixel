@@ -83,7 +83,8 @@ class Layer {
         this.render_ctx.putImageData(data, 0, 0);
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
+        state.frame_canvas.render();
     }
 
     update_settings(settings){
@@ -91,6 +92,8 @@ class Layer {
         this.name_elem.innerHTML = settings.name;
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
+        state.preview_canvas.render();
+        state.frame_canvas.render();
     }
 
     clear() {
@@ -107,7 +110,8 @@ class Layer {
         this.visible = !this.visible;
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
+        state.frame_canvas.render();
     }
 
     reposition() {

@@ -56,7 +56,6 @@ function draw_pixel(color, x, y){
 
     state.current_layer.render_ctx.fillRect(new_x1, new_y1, new_w, new_h);
     state.canvas_handler.draw_ctx.fillRect(new_x1 - state.pixel_hidden_x, new_y1 - state.pixel_hidden_y, new_w, new_h);
-    
     state.canvas_handler.draw_ctx.globalAlpha = 1;
 
     state.prev_pixel = { color: rgba(color), x: x, y: y };
@@ -116,6 +115,7 @@ function erase_pixel(x, y) {
         }
     }
     state.current_layer.render_ctx.clearRect(new_x1, new_y1, new_w, new_h);
+    state.frame_canvas.render();
 }
 
 function draw_line(x0, y0, x1, y1, erase) {
@@ -267,7 +267,7 @@ function clear_selection_contents(){
     erase_pixel(state.selection.x, state.selection.y);
     state.brush_size = prev_brush_size;
 
-    state.preview_canvas.redraw();
+    state.preview_canvas.render();
     state.canvas_handler.redraw_layers()
     state.canvas_handler.render_drawing();
 
@@ -275,13 +275,17 @@ function clear_selection_contents(){
 }
 
 function paint_tile(tile, x, y){
-    state.canvas_handler.draw_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
-    state.canvas_handler.draw_ctx.drawImage(tile.canvas, x * state.tile_w, y * state.tile_h);
     state.current_layer.render_ctx.clearRect(x * state.tile_w, y * state.tile_h, state.tile_w, state.tile_h)
     state.current_layer.render_ctx.drawImage(tile.canvas, x * state.tile_w, y * state.tile_h);
+    state.canvas_handler.redraw_background();
+    state.canvas_handler.render_drawing();
+    state.preview_canvas.render();
+    state.frame_canvas.render();
 }
 
 function preview_pixel(color, x, y){
+    if(x < state.selection.x || y < state.selection.y) { return; }
+    
     var x = Math.max(state.selection.x, x);
     var y = Math.max(state.selection.y, y);
     var w = Math.min(state.selection.x + state.selection.w, x + state.brush_size) - x;
@@ -290,7 +294,7 @@ function preview_pixel(color, x, y){
     if(w < 0 || h < 0) { return; }
 
     state.canvas_handler.draw_ctx.fillStyle = rgba(color);
-    state.canvas_handler.draw_ctx.fillRect(x, y, w, h);
+    state.canvas_handler.draw_ctx.fillRect(x - state.pixel_hidden_x, y - state.pixel_hidden_y, w, h);
 
     if(state.frame_pos == null) { return; }
     state.frame_canvas.ctx.fillStyle = rgba(color);

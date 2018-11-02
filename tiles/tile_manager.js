@@ -245,12 +245,15 @@ class Tile_Manager{
 
     place_tile(tile, x, y){
         var prev_index = state.current_layer.tilemap[x + y * state.tiles_x];
-        if(tile.index == null){
+        if(tile.index != null){
+            this.tile_indices[x][y].innerHTML = tile.index;
+            if(prev_index != null){
+                this.tiles[prev_index].remove_position(x, y);
+            }
+            tile.painted_positions.push([x, y])
+        } else {
             this.tile_indices[x][y].innerHTML = "X";
             this.tiles[prev_index].remove_position(x, y);
-        } else {
-            this.tile_indices[x][y].innerHTML = tile.index;
-            tile.painted_positions.push([x, y])
         }
         state.current_layer.tilemap[x + y * state.tiles_x] = tile.index;
     }

@@ -129,13 +129,13 @@ class Selection_History{
     undo(){
         state.selection.load_from_state(this.prev_selection_state);
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
     
     redo(){
         state.selection.load_from_state(this.new_selection_state);
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 }
 
@@ -406,7 +406,7 @@ class Commit_Selection{
         state.selection.draw_paste_canvas();
 
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.frame_canvas.render();
     }
 
@@ -415,7 +415,7 @@ class Commit_Selection{
         state.selection.draw_paste_canvas();
         state.selection.commit();
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 }
 
@@ -436,7 +436,7 @@ class Detach_Selection{
         state.selection.paste_canvas.width = state.selection.paste_canvas.width
 
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.frame_canvas.render();
     }
 
@@ -477,7 +477,7 @@ class Load_Clipboard{
         state.selection.paste_canvas.width = state.selection.paste_canvas.width;
 
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     redo(){

@@ -106,7 +106,7 @@ class Draw_Tool extends Tool{
         }
 
         state.canvas_handler.redraw_layers();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
 
         state.history_manager.add_history("pen-stroke");
     }
@@ -138,7 +138,7 @@ class Eraser_Tool extends Tool{
 
     mouseup_actions(){
         state.history_manager.add_history("pen-stroke");
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     on_exit(){
@@ -169,7 +169,7 @@ class Selection_Tool extends Tool{
             } else {
                 state.selection.clear();
             }
-        } else if (!state.selection.transform && state.input.shift) {
+        } else if (!state.selection.transform && state.input.shift && state.selection.exists) {
             state.selection.prev_selection_w = state.selection.w;
             state.selection.prev_selection_h = state.selection.h;
             state.selection.detach(); 
@@ -188,7 +188,7 @@ class Selection_Tool extends Tool{
             state.input.prevent_doubleclick = true;
             state.selection_end = calc_true_pixel_pos();
             if(state.input.shift){
-                state.selection_end = rect_to_square(state.selection_end);
+                state.selection_end = rect_to_square(...state.mouse_start, ...state.selection_end);
             }
             state.selection.draw();
             update_rect_size_preview(state.selection.w, state.selection.h)
@@ -197,7 +197,7 @@ class Selection_Tool extends Tool{
             state.selection.being_dragged = true;
             state.selection.drag();
             state.canvas_handler.render_drawing();
-            state.preview_canvas.redraw();
+            state.preview_canvas.render();
         }
     }
 
@@ -249,7 +249,7 @@ class Fill_Tool extends Tool{
 
         state.history_manager.add_history("pen-stroke");
 
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
 
@@ -306,7 +306,7 @@ class Rectangle_Tool extends Tool{
         rectangle(...state.mouse_start, ...state.mouse_end);
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_foreground();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.selection_size_element.style.display = "none";
         state.history_manager.add_history("pen-stroke");
     }
@@ -339,7 +339,7 @@ class Ellipse_Tool extends Tool{
         ellipse(...state.mouse_start, ...state.mouse_end);
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_foreground();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.selection_size_element.style.display = "none";
         if(!state.input.shift) { this.draw_type = "ellipse"}
         state.history_manager.add_history("pen-stroke");
@@ -391,7 +391,7 @@ class Horizontal_Mirror_Tool extends Tool{
 
     mouseup_actions(){
         state.history_manager.add_history("pen-stroke")
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 }
 
@@ -419,7 +419,7 @@ class Vertical_Mirror_Tool extends Tool{
 
     mouseup_actions(){  
         state.history_manager.add_history("pen-stroke")
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 }
 
@@ -495,7 +495,7 @@ class Tile_Painter_Tool extends Tool{
     }
     
     mouseup_actions(){
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.history_manager.add_history("paint-tile", []);
     }
 
@@ -561,7 +561,7 @@ class Tile_Remover_Tool extends Tool{
 
     mouseup_actions(){
         state.history_manager.add_history("paint-tile", []);
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     on_exit(){

@@ -154,10 +154,10 @@ class Input_Slider{
         this.caret.onmousedown = function(e){
             pauseEvent(e);
             state.active_element = owner.selector;
+            owner.slider.style.display = "block";
             var mouse_offset = event.clientY - owner.wrapper.getBoundingClientRect().y;
             owner.slider.style.top = mouse_offset - 100 + owner.input_to_slider(owner.input.value) + "px";
             owner.update_slider();
-            owner.slider.style.display = "block";
         }
         this.selector.mousedrag_actions = function(){
             owner.update_slider();
@@ -189,9 +189,9 @@ class Input_Slider{
     	return function(){
             var leading_zero = /^0[0-9].*$/;
             if(leading_zero.test(this.value)){
-              this.value = parseInt(this.value, 10);
+                this.value = parseInt(this.value, 10);
             } else if (this.value > owner.max_val){
-								this.value = 255;
+			    this.value = owner.max_val;
             } else if (this.value.length == 0){
                 this.value = 0;
             }

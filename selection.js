@@ -152,7 +152,7 @@ class Selection{
         this.flip_paste_canvas(this.flip_x, this.flip_y);
 
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     flip_paste_canvas(flip_x, flip_y){
@@ -343,7 +343,7 @@ class Selection{
         this.draw_paste_canvas();
 
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     paste(){
@@ -388,7 +388,7 @@ class Selection{
 
         state.canvas_handler.redraw_background();
         state.canvas_handler.render_drawing();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
     }
 
     toggle_resizers(){

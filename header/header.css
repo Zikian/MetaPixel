@@ -73,7 +73,7 @@
     border-top-right-radius: 5px;
 }
 
-#export-image-button{
+#export-button{
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
@@ -214,4 +214,9 @@
 
 #flip-vertical i{
     margin-right: 9px !important;
+}
+
+#open-image-button{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }

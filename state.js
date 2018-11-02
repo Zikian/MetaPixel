@@ -36,7 +36,7 @@ function destroy_prev_document(){
         anim.delete();
     })
     state.animator.hide_anim_rects();
-
+    state.selection.clear();
 }
 
 function init(document_type, doc_w, doc_h, tile_w, tile_h, transparency, name){

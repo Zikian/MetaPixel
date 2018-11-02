@@ -36,7 +36,7 @@
                 <ul>
                     <li id="new-button"><i class="far fa-file"></i>New</li>
                     <li id="clear-button"><i class="far fa-trash-alt"></i>Clear</li>
-                    <li id="export-image-button"><i class="far fa-save"></i>Export</li>
+                    <li id="export-button"><i class="far fa-save"></i>Export</li>
                     <li id="open-image-button"><i class="far fa-file-image"></i>Open Image</li>
                     <input type="file" id="file-input" style="display: none;">
                 </ul>
@@ -120,39 +120,41 @@
             <div class="window-footer"></div>
         </div>
 
-        <div id="export-image-window" class="window">
-            <div id="export-image-header" class="window-header">
+        <div id="export-window" class="window">
+            <div id="export-header" class="window-header">
                 <span class="window-header-title">Export</span>
-                <i id="export-image-cross" class="fas fa-times window-cross"></i>
+                <i id="export-cross" class="fas fa-times window-cross"></i>
             </div>
 
-            <form name="export-image-form" id="export-image-body" autocomplete="off" onsubmit="return false">
+            <form name="export-form" id="export-body" autocomplete="off" onsubmit="return false">
                 <div id="export-type-wrapper">
                     <div id="image-type"><span>Image</span></div>
                     <div id="anim-type"><span>Animation</span></div>
+                    <div id="tileset-type"><span>Tileset</span></div>
                 </div>
 
-                <div id="pixel-size-wrapper">
+                <div id="pixel-scale-wrapper">
                     <span>Pixel Scale:</span>
-                    <input name="pixel-scale" type="text" id="pixel-size-input" class="window-input" value="1">
+                    <input name="pixel-scale" type="number" id="pixel-scale-input" class="window-input" value="1">
                 </div>
                 
                 <div id="file-name-wrapper">
                     <span>File Name:</span>
                     <input name="file-name" type="text" id="file-name-input" class="window-input">
                 </div>
-
-                <div id="export-all-wrapper">
-                    <input name="export-all" type="checkbox" id="export-all-checkbox">
-                    <span id="export-all-span">Layers as separate files</span>
+                
+                <div id="first-option-wrapper">
+                    <input name="first-option" type="checkbox" id="first-option-checkbox">
+                    <span id="first-option-span">Layers as separate files</span>
+                    <input name="padding-pixels" type="number" id="padding-pixels-input" class="window-input" value="0">
                 </div>
 
-                <div id="export-current-wrapper">
-                    <input name="export-current" type="checkbox" >
-                    <span id="export-current-span">Only current layer</span>
+                <div id="second-option-wrapper">
+                    <input name="second-option" type="checkbox" >
+                    <span id="second-option-span">Only current layer</span>
                 </div>
 
-                <button name="download-image" id="image-download-button">Download</button>
+                <button name="download-button" id="image-download-button">Download</button>
             </form>
 
             <div class="window-footer"></div>

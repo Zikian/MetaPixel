@@ -57,7 +57,7 @@ class Preview_Canvas{
         this.canvas_visible_rect.style.height = h + "px";
     }
 
-    redraw(){
+    render(){
         this.clear();
         this.ctx.mozImageSmoothingEnabled = false;
         this.ctx.webkitImageSmoothingEnabled = false;

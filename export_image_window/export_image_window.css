@@ -1,49 +1,55 @@
-#export-image-window{
+#export-window{
     top: 100px;
     left: 200px;
     z-index: 100;
-    width: 230px;
+    width: 260px;
 }
 
-#export-image-body{
+#export-body{
     display: grid;
-    grid-template-rows: 25px 40px 40px 30px 30px;
+    grid-template-rows: 25px 40px 40px 40px 30px;
 }
 
 #export-type-wrapper{
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     text-align: center;
     align-content: center;
+    background-color: rgb(195, 213, 236);
 }
 
 #export-type-wrapper span{
     line-height: 25px;
 }
 
-#image-type{
-    height: 25px;
-}
-
-#anim-type{
-    height: 25px
-}
-
-#pixel-size-wrapper{
+#pixel-scale-wrapper{
     margin-left: 10px;
     align-self: center;
 }
 
-#pixel-size-input{
+#pixel-scale-input{
     width: 60px;
+    margin-left: 5px;
+}
+
+#padding-pixels-wrapper{
+    grid-row: 4;
+    margin-left: 10px;
+    align-self: center;
+}
+
+#padding-pixels-input{
+    width: 60px;
+    margin-left: 5px;
 }
 
 #file-name-wrapper{
     margin-left: 10px;
+    align-self: center;
 }
 
 #file-name-input{
-    width: 133px;
+    width: 159px;
     float: right;
     margin-right: 10px;
 }
@@ -52,12 +58,29 @@
     line-height: 30px;
 }
 
-#export-all-wrapper{
-    margin-left: 5px;
+#first-option-wrapper{
+    margin-left: 10px;
+    align-self: center;
 }
 
-#export-current-wrapper{
-    margin-left: 5px;
+#first-option-span{
+    line-height: 30px;
+    float: left;
+}
+
+#first-option-checkbox{
+    float: left;
+    margin-top: 9px;
+    margin-right: 7px;
+}
+
+#padding-pixels-input{
+    width: 60px;
+    float: left;
+}
+
+#second-option-wrapper{
+    margin-left: 10px;
 }
 
 #image-download-button{

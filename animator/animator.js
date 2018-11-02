@@ -443,7 +443,6 @@ class Anim_Preview{
                 owner.frame_index %= state.current_anim.length
                 owner.drew_frame = false;
             }
-            
 
             window.requestAnimationFrame(owner.play_animation(owner));
         }

@@ -250,9 +250,7 @@ function download_current_layer(name, pixel_scale){
 function download_current_anim(name, pixel_scale){
     state.download_canvas.width = state.tile_w * pixel_scale;
     state.download_canvas.height = state.tile_h * pixel_scale;
-    state.download_ctx.mozImageSmoothingEnabled = false;
-    state.download_ctx.webkitImageSmoothingEnabled = false;
-    state.download_ctx.imageSmoothingEnabled = false;
+    disable_smoothing(state.download_ctx);
     state.download_ctx.scale(pixel_scale, pixel_scale);
 
     var encoder = new GIFEncoder();
@@ -285,9 +283,7 @@ function download_current_anim(name, pixel_scale){
 function download_all_anims(pixel_scale){
     state.download_canvas.width = state.tile_w * pixel_scale;
     state.download_canvas.height = state.tile_h * pixel_scale;
-    state.download_ctx.mozImageSmoothingEnabled = false;
-    state.download_ctx.webkitImageSmoothingEnabled = false;
-    state.download_ctx.imageSmoothingEnabled = false;
+    disable_smoothing(state.download_ctx);
     state.download_ctx.scale(pixel_scale, pixel_scale);
 
     state.temp_ctx.clearRect(0, 0, state.doc_w, state.doc_h);
@@ -316,7 +312,46 @@ function download_all_anims(pixel_scale){
         var data_url = 'data:image/gif;base64,'+encode64(encoder.stream().getData());
         download_img(anim.name_elem.innerHTML, data_url);
     })
+}
 
+function download_tileset(name, pixel_scale, padding){
+    var total_tiles = state.tile_manager.tiles.length;
+    var tileset_w = state.tile_manager.tileset_w;
+    var tiles_high = Math.ceil(total_tiles / tileset_w);
+    var tiles_wide = total_tiles >= tileset_w ? tileset_w : total_tiles;
+
+    state.download_canvas.width = tiles_wide * state.tile_w * pixel_scale + padding * (tiles_wide - 1);
+    state.download_canvas.height = tiles_high * state.tile_h * pixel_scale + padding * (tiles_high - 1);
+    state.download_ctx.scale(pixel_scale, pixel_scale);
+
+    state.download_ctx.fillStyle = "white"
+    state.download_ctx.fillRect(0, 0, state.download_canvas.width, state.download_canvas.height);
+
+    for(var i = 0; i < total_tiles; i++){
+        var x = (i % tileset_w) * (state.tile_w + padding);
+        var y = Math.floor(i / tileset_w) * (state.tile_h + padding);
+        state.download_ctx.drawImage(state.tile_manager.tiles[i].canvas, x, y);
+    }
+
+    download_img(name, state.download_canvas.toDataURL());
+}
+
+function download_all_tiles(name, pixel_scale){
+    state.download_ctx.width = state.tile_w * pixel_scale;
+    state.download_ctx.height = state.tile_h * pixel_scale;
+    state.download_ctx.scale(pixel_scale, pixel_scale);
+
+    for(var i = 0; i < state.tile_manager.tiles.length; i++){
+        state.download_ctx.clearRect(0, 0, state.tile_w * pixel_scale, state.tile_h * pixel_scale);
+        state.download_ctx.drawImage(state.tile_manager.tiles[i].canvas, 0, 0);
+        download_img(name + "_" + i, state.download_canvas.toDataURL());
+    }
+}
+
+function disable_smoothing(ctx){
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
 }
 
 function remove_transparency(img_data, w, h){

@@ -7,20 +7,22 @@ document.getElementById("redo").onclick = function(){
 }
 
 document.getElementById("clear-button").onclick = function(){
-    if(confirm("Are you sure?")){
+    if(confirm("Are you sure? (This cannot be undone)")){
         state.layer_manager.clear_layers();
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.render();
     }
 }
 
 document.getElementById("file").onclick = function(){
     document.getElementById("file-dropdown").style.display = "block";
-    this.style.backgroundColor = "rgb(116, 116, 124)";
 };
 
-document.getElementById("file").onmouseout = function () {
-    document.getElementById("file-dropdown").style.display = "none";
-    this.style.backgroundColor = "transparent";
-}
+// document.getElementById("file").onmouseout = function () {
+//     event.preventDefault();
+//     document.getElementById("file-dropdown").style.display = "none";
+// }
 
 document.getElementById("file-dropdown").onmouseover = function () {
     this.style.display = "block";
@@ -30,7 +32,7 @@ document.getElementById("file-dropdown").onmouseout = function () {
     this.style.display = "none";
 }
 
-document.getElementById("export-image-button").onclick = function(){
+document.getElementById("export-button").onclick = function(){
     state.export_image_window.open();
 }
 
@@ -77,7 +79,7 @@ document.getElementById("file-input").onchange = function(){
             state.current_layer.render_ctx.drawImage(this, 0, 0);
             state.canvas_handler.redraw_background();
             state.canvas_handler.render_drawing();
-            state.preview_canvas.redraw();
+            state.preview_canvas.render();
         }
         img.src = event.target.result;
     }

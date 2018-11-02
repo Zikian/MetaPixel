@@ -12,6 +12,8 @@ class Layer_Settings{
             state.layer_settings.target.opacity = opacity;
             state.canvas_handler.redraw_layers();
             state.canvas_handler.render_drawing();
+            state.preview_canvas.render();
+            state.frame_canvas.render();
         }
         this.opacity_input = new Input_Slider("opacity-setting", "Opacity", 255, 255, input_function);
         this.ok_button = document.getElementById("layer-settings-ok");

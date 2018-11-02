@@ -58,9 +58,10 @@ class Layer_Manager{
         this.update_layer_indices(state.current_layer);
         this.change_layer(0)
 
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
+        state.frame_canvas.render();
     }
 
     update_layer_indices(){
@@ -81,14 +82,15 @@ class Layer_Manager{
     swap_layers(layer_a, layer_b){
         this.layers.swapItems(layer_a.index, layer_b.index);
         this.update_layer_indices();
-        state.preview_canvas.redraw();
+        state.preview_canvas.render();
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
+        state.frame_canvas.render();
     }
 
     clear_layers(){
-        for(var i = 0; i < this.layers.length; i++){
-            this.layers[i].clear();
-        }
+        this.layers.forEach(layer => {
+            layer.clear();
+        });
     }
 }
