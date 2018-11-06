@@ -18,6 +18,14 @@
     right: 27px;
 }
 
+#merge-layer-down{
+    right: 54px;
+    background-image: url(../images/merge_down.svg);
+    background-size: 20px 20px;
+    background-position: 4px 4px;
+    background-repeat: no-repeat;
+}
+
 #layers-body{
     position: relative;
     overflow: scroll;

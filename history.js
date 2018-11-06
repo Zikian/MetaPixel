@@ -82,7 +82,11 @@ class History_Manager{
             case "paste-selection":
                 this.history.push(new Paste_Selection(this.prev_data, this.prev_tile_data, this.prev_selection_state));
                 break;
-        }
+            case "merge-layers":
+                this.history.push(new Merge_Layers(...args));
+                break;
+            }
+            console.log(type)
     }
 
     undo_last(){
@@ -154,23 +158,18 @@ class Add_Layer{
 }
 
 class Delete_Layer{
-    constructor(layer_state, tilemap){
+    constructor(layer_state){
         this.layer_state = layer_state;
-        this.tilemap = tilemap;
     }
 
     undo(){
-        var new_layer = new Layer(this.layer_state.index);
-        new_layer.index = this.layer_state.index;
-        new_layer.name_elem.innerHTML = this.layer_state.name;
-        new_layer.tilemap = this.tilemap;
+        var new_layer = new Layer(this.layer_state.index);;
         
         state.layer_manager.layers.splice(new_layer.index, 0, new_layer);
         state.layer_manager.update_layer_indices();
         state.layer_manager.change_layer(new_layer.index);
         
-        if(!this.layer_state.visible){ new_layer.toggle_visibility(); }
-        new_layer.draw_data(this.layer_state.data);
+        new_layer.load_from_state(this.layer_state);
     }
 
     redo(){
@@ -482,5 +481,35 @@ class Load_Clipboard{
 
     redo(){
         state.selection.load_clipboard();
+    }
+}
+
+class Merge_Layers{
+    constructor(prev_bottom_layer_data, top_layer_state){
+        this.layer_index = top_layer_state.index;
+        this.prev_bottom_layer_data = prev_bottom_layer_data;
+        this.top_layer_state = top_layer_state;
+    }
+
+    undo(){
+        state.layer_manager.change_layer(this.layer_index);
+        state.layer_manager.add_layer();
+        state.layer_manager.layers[this.layer_index + 1].draw_data(this.prev_bottom_layer_data);
+        state.layer_manager.layers[this.layer_index].load_from_state(this.top_layer_state);
+
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.render();
+        state.frame_canvas.render();
+    }
+    
+    redo(){
+        state.layer_manager.change_layer(this.layer_index);
+        state.layer_manager.merge_layer_down(this.layer_index);
+
+        state.canvas_handler.redraw_layers();
+        state.canvas_handler.render_drawing();
+        state.preview_canvas.render();
+        state.frame_canvas.render();
     }
 }

@@ -71,8 +71,21 @@ class Layer {
             data: this.get_data(),
             index: this.index,
             name: this.name_elem.innerHTML,
-            visible: this.visible
+            visible: this.visible,
+            tilemap: this.tilemap,
+            opacity: this.opacity
         }
+    }
+
+    load_from_state(new_state){
+        this.name_elem.innerHTML = new_state.name;
+        this.index = new_state.index;
+        this.tilemap = new_state.tilemap;
+        this.opacity = new_state.opacity;
+        if(this.visible != new_state.visible){
+            this.toggle_visibility();
+        }
+        this.draw_data(new_state.data);
     }
 
     get_data(){

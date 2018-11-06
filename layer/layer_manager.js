@@ -14,7 +14,7 @@ class Layer_Manager{
         }
         
         document.getElementById("delete-layer").onclick = function(){
-            state.history_manager.add_history("delete-layer", [state.current_layer.get_state(), state.current_layer.tilemap]);
+            state.history_manager.add_history("delete-layer", [state.current_layer.get_state()]);
             layer_manager.delete_layer(state.current_layer.index);
         }
 
@@ -36,6 +36,18 @@ class Layer_Manager{
                 layer_manager.swap_layers(layer_a, layer_b);
                 state.history_manager.add_history("swap-layers", [layer_a, layer_b]);
             }
+        }
+
+        document.getElementById("merge-layer-down").onclick = function(){
+            var index = state.current_layer.index;
+            if(index == state.layer_manager.layers.length - 1) { return; } 
+
+            var top_layer_state = state.current_layer.get_state();
+            var bottom_layer_data = state.layer_manager.layers[index + 1].get_data();
+
+            state.layer_manager.merge_layer_down(index);
+            
+            state.history_manager.add_history("merge-layers", [bottom_layer_data, top_layer_state]);
         }
 
         //Attach function to resize window to resizer
@@ -86,6 +98,15 @@ class Layer_Manager{
         state.canvas_handler.redraw_layers();
         state.canvas_handler.render_drawing();
         state.frame_canvas.render();
+    }
+
+    merge_layer_down(index){
+        var top_layer = this.layers[index];
+        var bottom_layer = this.layers[index + 1];
+        bottom_layer.render_ctx.drawImage(top_layer.render_canvas, 0, 0);
+
+        this.delete_layer(index);
+        this.change_layer(index);
     }
 
     clear_layers(){
