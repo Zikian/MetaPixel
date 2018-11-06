@@ -7,7 +7,7 @@
 
 #export-body{
     display: grid;
-    grid-template-rows: 25px 40px 40px 40px 30px;
+    grid-template-rows: 24px 40px 40px 40px 27px;
 }
 
 #export-type-wrapper{
@@ -19,7 +19,7 @@
 }
 
 #export-type-wrapper span{
-    line-height: 25px;
+    line-height: 24px;
 }
 
 #pixel-scale-wrapper{
@@ -49,13 +49,13 @@
 }
 
 #file-name-input{
-    width: 159px;
+    width: 165px;
     float: right;
     margin-right: 10px;
 }
 
 #file-name-wrapper span{
-    line-height: 30px;
+    line-height: 27px;
 }
 
 #first-option-wrapper{
@@ -64,7 +64,7 @@
 }
 
 #first-option-span{
-    line-height: 30px;
+    line-height: 27px;
     float: left;
 }
 

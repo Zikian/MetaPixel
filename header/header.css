@@ -1,6 +1,6 @@
 #toolbar{
     display: grid;
-    grid-template-columns: 100px 100px 100px 100px;
+    grid-template-columns: 90px 90px 90px 90px;
     grid-column: 1;
     grid-row: 1;
     background-color: rgb(59, 59, 65);
@@ -14,7 +14,7 @@
     height: auto;
     background-color: rgb(73, 73, 82);
     border-radius: 0 5px 5px 5px;
-    top: 30px;
+    top: 27px;
     box-shadow: 0px 8px 22px -2px rgba(0,0,0,0.75);
 }
 
@@ -25,9 +25,9 @@
 
 .dropdown li{
     font-family: Montserrat-Regular;
-    font-size: 10pt;
+    font-size: 9pt;
     color: white;
-    line-height: 30px;
+    line-height: 27px;
     padding-left: 15px;
 }
 
@@ -38,34 +38,34 @@
 .dropdown li i{
     font-size: 13pt;
     margin-right: 7px;
-    line-height: 30px;
+    line-height: 27px;
 }
 
 #file{
     display: grid;
-    grid-template-columns: 47px 1fr;
+    grid-template-columns: 42px 1fr;
     position: relative;
     grid-column: 1;
     text-align: center;
-    height: 30px;
+    height: 27px;
     float: left;
 }
 
 #file #file-icon{
     grid-column: 1;
-    font-size: 14pt;
+    font-size: 13pt;
     color: white;
     margin-right: 5px;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: right;
 }
 
 #file span{
     grid-column: 2;
-    font-size: 10pt;
+    font-size: 9pt;
     color: white;
     font-family: Montserrat-Regular;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: left;
 }
 
@@ -81,10 +81,10 @@
 #undo{
     position: relative;
     grid-column: 2;
-    height: 30px;
+    height: 27px;
     float: left;
     display: grid;
-    grid-template-columns: 45px 1fr;
+    grid-template-columns: 40px 1fr;
 }
 
 #undo:hover #undo-tooltip{
@@ -106,10 +106,10 @@
 #undo #undo-icon{
     float: left;
     grid-column: 1;
-    font-size: 12pt;
+    font-size: 11pt;
     color: white;
     margin-right: 5px;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: right;
 }
 
@@ -118,25 +118,25 @@
     font-size: 9pt;
     color: white;
     font-family: Montserrat-Regular;
-    line-height: 30px;
+    line-height: 27px;
 }
 
 #redo{
     position: relative;
     grid-column: 3;
-    height: 30px;
+    height: 27px;
     float: left;
     display: grid;
-    grid-template-columns: 45px 1fr;
+    grid-template-columns: 40px 1fr;
 }
 
 #redo #redo-icon{
     float: left;
     grid-column: 1;
-    font-size: 12pt;
+    font-size: 11pt;
     color: white;
     margin-right: 5px;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: right;
 }
 
@@ -145,7 +145,7 @@
     font-size: 9pt;
     color: white;
     font-family: Montserrat-Regular;
-    line-height: 30px;
+    line-height: 27px;
 }
 
 #redo:hover #redo-tooltip{
@@ -154,7 +154,7 @@
 
 #redo-tooltip{
     width: 156px;
-    left: -25px;
+    left: -27px;
     top: 40px;
 }
 
@@ -167,20 +167,20 @@
 #selection-settings{
     position: relative;
     grid-column: 4;
-    height: 30px;
+    height: 27px;
     float: left;
     text-align: center;
     display: grid;
-    grid-template-columns: 30px 1fr;
+    grid-template-columns: 27px 1fr;
 }
 
 #selection-settings-icon{
     float: left;
     grid-column: 1;
-    font-size: 12pt;
+    font-size: 11pt;
     color: white;
     margin-right: 5px;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: right;
 }
 
@@ -189,12 +189,12 @@
     font-size: 9pt;
     color: white;
     font-family: Montserrat-Regular;
-    line-height: 30px;
+    line-height: 27px;
     justify-self: left;
 }
 
 #selection-dropdown{
-    left: 300px;
+    left: 270px;
 }
 
 #selection-dropdown li i{

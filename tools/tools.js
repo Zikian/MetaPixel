@@ -24,7 +24,7 @@ class Tool_Handler{
             mirrory: new Vertical_Mirror_Tool("mirrory"),
             tile_painter: new Tile_Painter_Tool("tile_painter"),
             tile_remover: new Tile_Remover_Tool("tile_remover"),
-            frame_setter: new Frame_Setter_Tool("frame_setter")
+            anim_bounds: new Frame_Setter_Tool("anim_bounds")
         }
         
         this.current_tool = this.tools.drawtool;

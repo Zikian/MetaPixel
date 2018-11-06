@@ -115,7 +115,7 @@ class Layer {
     }
 
     reposition() {
-        this.wrapper.style.top = 30 * this.index + "px";
+        this.wrapper.style.top = 27 * this.index + "px";
     }
 
     set_active() {

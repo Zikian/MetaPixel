@@ -7,34 +7,34 @@
 .sidebar-window-header{
     position: relative;
     text-align: center;
-    height: 30px;
+    height: 27px;
 }
 
 .sidebar-window-span{
     color: white;
-    font-size: 10pt;
-    line-height: 30px;
+    font-size: 9pt;
+    line-height: 27px;
 }
 
 .sidebar-window-button{
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 27px;
+    height: 27px;
     top: 0;
     text-align: center;
 }
 
 .sidebar-window-button-icon{
     color: white;
-    font-size: 14pt;
-    line-height: 30px !important;
+    font-size: 13pt;
+    line-height: 27px !important;
 }
 
 .sidebar-window-resizer{
-    height: 8px;
+    height: 7px;
 }
 
 .sidebar-window-body{
-    height: 170px;
+    height: 153px;
     background-color: rgb(85, 85, 92);
 }

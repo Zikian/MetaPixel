@@ -1,19 +1,19 @@
 /* INPUT */
 
 .input{
-  height: 25px;
+  height: 27px;
 }
 
 .input-name{
   color: white;
   font-size: 12pt;
-  line-height: 25px;
+  line-height: 24px;
   float: left;
 }
 
 .input input{
   margin-left: 10px;
-  height: 25px;
+  height: 24px;
   background-color: rgb(23, 23, 23);
   border-radius: 4px;
   border: 0;
@@ -46,7 +46,7 @@
 /* INPUT SLIDER */
 
 .input-slider{
-  height: 25px;
+  height: 27px;
   width: 65;
   background-color: transparent;
 }
@@ -55,14 +55,14 @@
   font-family: Montserrat-Regular;
   color: white;
   font-size: 12pt;
-  line-height: 25px;
+  line-height: 24px;
   float: left;
   margin-right: 5px;
 }
 
 .input-slider-wrapper{
   position: relative;
-  height: 25px;
+  height: 24px;
   width: 60px;
   float: right;
 }
@@ -85,7 +85,7 @@
 
 .input-slider i{
   position: absolute;
-  line-height: 25px;
+  line-height: 27px;
   color: white;
   right: 0;
   font-size: 15pt;

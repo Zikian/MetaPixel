@@ -1,12 +1,12 @@
 #color-picker{
     position: absolute;
     display: none;
-    grid-template-rows: 25px 1fr;
+    grid-template-rows: 22px 1fr;
     background-color:rgb(59, 59, 65);
     left: 200px;
     top: 200px;
     width: 550px;
-    height: 350px;
+    height: 344px;
     border-radius: 3px;
     box-shadow: 0px 0px 11px 2px rgba(0,0,0,0.57);
     z-index: 50;
@@ -22,14 +22,14 @@
 
 #color-picker header span{
     font-family: Montserrat-Regular;
-    line-height: 25px;
+    line-height: 22px;
     margin-left: 10px;
-    font-size: 12pt;
+    font-size: 10pt;
     color: black; 
     width: 200px;
 }
 
-#body{
+#color-picker-body{
     display: grid;
     grid-template-columns: 271px 40px 1fr;
     grid-template-rows: 271px 1fr;
@@ -37,7 +37,7 @@
     border-radius: 0 0 4px 4px;
 }
 
-#body #buttons{
+#color-picker-body #buttons{
     grid-area: 2 / 1 / span 1 / span 3;
     justify-self: center;
     align-self: center;
@@ -46,12 +46,12 @@
     overflow: auto;
 }
 
-#body #buttons button:active{
+#color-picker-body #buttons button:active{
     background-color: rgb(217, 217, 217);
     color: black; 
 }
 
-#body #buttons button{
+#color-picker-body #buttons button{
     height: 28px;
     width: 80px;
     border-radius: 14px;
@@ -61,10 +61,10 @@
     font-family: Montserrat-Regular;
     border: 1px solid rgb(217, 217, 217);
     background-color: transparent;
-    font-size: 10pt;
+    font-size: 9pt;
 }
 
-#body #color-square{
+#color-picker-body #color-square{
     position: absolute;
     grid-row: 1;
     grid-column: 1;
@@ -73,7 +73,7 @@
     margin: 40px 0 0 15px;
 }
 
-#body #color-slider{
+#color-picker-body #color-slider{
     position: absolute;
     grid-column: 1;
     top: 0;
@@ -115,7 +115,7 @@
 
 #values #new-color-alpha-img{
     position: absolute;
-    top: 41px;
+    top: 38px;
     right: 123px;
     height: 63px;
     width: 65px;
@@ -123,7 +123,7 @@
 
 #values #old-color-alpha-img{
     position: absolute;
-    top: 41px;
+    top: 38px;
     right: 58px;
     height: 63px;
     width: 65px;

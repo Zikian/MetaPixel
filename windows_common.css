@@ -7,28 +7,28 @@
 }
 
 .window span{
-    font-size: 10pt;
+    font-size: 9pt;
 }
 
 .window-header{
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    height: 25px;
+    height: 24px;
     background-color: rgb(64, 64, 202);
 }
 
 .window-header-title{
     color: white;
-    line-height: 25px;
-    font-size: 10pt;
+    line-height: 24px;
+    font-size: 9pt;
     margin-left: 7px;
 }
 
 .window-cross{
     color: white;
     float: right;
-    line-height: 25px !important;
-    font-size: 10pt;
+    line-height: 24px !important;
+    font-size: 9pt;
     margin-right: 7px;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .window-footer{
-    height: 15px;
+    height: 13px;
     background-color: rgb(64, 64, 202);
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
@@ -45,11 +45,11 @@
 
 .window-input{
     border: 1px solid gray;
-    height: 30px;
+    height: 27px;
     border-radius: 4px;
     outline: none;
     color: black;
-    font-size: 10pt;
+    font-size: 9pt;
     padding-left: 10px;
     box-sizing: border-box;
 }
@@ -66,7 +66,7 @@
     color: black;
     font-family: Montserrat-Regular;
     border: 1px solid black;
-    font-size: 10pt;
+    font-size: 9pt;
     background-color: transparent;
 }
 

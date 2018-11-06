@@ -98,8 +98,8 @@ function canvas_h(){
 }
 
 function calc_pixel_pos(){
-    var x = Math.round((event.clientX - 101 - state.canvas_x) / state.zoom - state.brush_size / 2);
-    var y = Math.round((event.clientY - 30 - state.canvas_y) / state.zoom - state.brush_size / 2);
+    var x = Math.round((event.clientX - 90 - state.canvas_x) / state.zoom - state.brush_size / 2);
+    var y = Math.round((event.clientY - 27 - state.canvas_y) / state.zoom - state.brush_size / 2);
     return [x, y];
 }
 

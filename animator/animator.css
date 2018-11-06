@@ -4,7 +4,7 @@
 }
 
 #animator-resizer{
-    height: 20px;
+    height: 18px;
     text-align: center;
 }
 
@@ -14,7 +14,7 @@
 }
 
 #animator-body{
-    height: 250px;
+    height: 225px;
     display: grid;
     grid-template-columns: auto 1fr auto;
 }
@@ -22,8 +22,8 @@
 #animations-window{
     grid-column: 1;
     display: grid;
-    grid-template-rows: 20px 1fr 30px;
-    grid-template-columns: auto 8px;
+    grid-template-rows: 18px 1fr 27px;
+    grid-template-columns: auto 7px;
     overflow: hidden;
 }
 
@@ -36,7 +36,7 @@
 
 #animations-window-header span{
     color: white;
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 20px;
 }
 
@@ -72,19 +72,19 @@
 .animation{
     width: 100%;
     position: absolute;
-    height: 30px;
+    height: 27px;
 }
 
 .animation span{
-    line-height: 30px;
+    line-height: 27px;
     margin-left: 10px;
     color: white;
-    font-size: 10pt;
+    font-size: 9pt;
 }
 
 #frames-window{
     display: grid;
-    grid-template-rows: 20px auto 30px;
+    grid-template-rows: 18px auto 27px;
     grid-column: 2;
     overflow: hidden;
 }
@@ -97,7 +97,7 @@
 
 #frames-window-header span{
     color: white;
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 20px;
 }
 
@@ -163,8 +163,8 @@
 }
 
 #frame-delay-input span{
-    font-size: 10pt;
-    line-height: 30px;
+    font-size: 9pt;
+    line-height: 27px;
 }
 
 #frame-delay-input input{
@@ -174,8 +174,8 @@
 #anim-preview-window{
     display: grid;
     grid-column: 3;
-    grid-template-rows: 20px auto 30px;
-    grid-template-columns: 8px auto;
+    grid-template-rows: 18px auto 27px;
+    grid-template-columns: 7px auto;
 }
 
 #anim-preview-header{
@@ -187,7 +187,7 @@
 
 #anim-preview-header span{
     color: white;
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 20px;
 }
 

@@ -5,12 +5,12 @@
 
 #new-document-body{
     display: grid;
-    grid-template-rows: 25px 55px 55px 55px 30px 35px;
+    grid-template-rows: 24px 55px 55px 55px 27px 35px;
     grid-template-columns: 50% 50%;
 }
 
 #new-document-body span{
-    line-height: 25px;
+    line-height: 24px;
     float: left;
 }
 
@@ -99,7 +99,7 @@
 
 #transparency-input{
     float: left;
-    height: 25px;
+    height: 24px;
     margin: 0 5px 0 0;
 }
 

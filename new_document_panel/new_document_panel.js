@@ -37,8 +37,8 @@ class New_Document_Panel{
             if(state.new_document_panel.document_type == "tiled"){
                 var tile_width = state.new_document_panel.tile_width_input.value;
                 var total_width = this.value * tile_width;
-                if (total_width > 10000){
-                    this.value = Math.floor(10000 / tile_width);
+                if (total_width > 2000){
+                    this.value = Math.floor(2000 / tile_width);
                 }
             }
         }
@@ -49,8 +49,8 @@ class New_Document_Panel{
             if(state.new_document_panel.document_type == "tiled"){
                 var tile_height = state.new_document_panel.tile_height_input.value;
                 var total_height = this.value * tile_height;
-                if (total_height > 10000){
-                    this.value = Math.floor(10000 / tile_height);
+                if (total_height > 2000){
+                    this.value = Math.floor(2000 / tile_height);
                 }
             }
         }
@@ -120,8 +120,8 @@ class New_Document_Panel{
             input_elem.value = parseInt(input_elem.value, 10);
         } else if (input_elem.value < 0){
             input_elem.value = 0;
-        } else if (input_elem.value > 10000) {
-            input_elem.value = 10000;
+        } else if (input_elem.value > 2000) {
+            input_elem.value = 2000;
         }
     }
 

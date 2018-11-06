@@ -110,7 +110,7 @@ class Animator{
 
     reposition_animations(){
         for(var i = 0; i < this.animations.length; i++){
-            this.animations[i].wrapper.style.top = i * 30 + "px";
+            this.animations[i].wrapper.style.top = i * 27 + "px";
             this.animations[i].index = i;
         }
     }
@@ -168,7 +168,7 @@ class Animation{
 
         this.wrapper = document.createElement("div");
         this.wrapper.className = "animation";
-        this.wrapper.style.top = index * 30 + "px";
+        this.wrapper.style.top = index * 27 + "px";
 
         var owner = this;
         this.wrapper.onclick = function(){

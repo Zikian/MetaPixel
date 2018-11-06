@@ -17,13 +17,13 @@
 
 .tile-index{
     position: absolute;
-    font-size: 10pt;
+    font-size: 9pt;
     color: red;
     z-index: 1000000;
 }
 
 #remove-tile{
-    left: 30px;
+    left: 27px;
 }
 
 #zoom-tileset-in{
@@ -31,7 +31,7 @@
 }
 
 #zoom-tileset-out{
-    right: 30px;
+    right: 27px;
 }
 
 #tileset-settings-button{
